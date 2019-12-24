@@ -12,5 +12,10 @@
     &lt;em&gt;most HTML tags may be used&lt;/em&gt;
     </description>
   <extensions defaultExtensionNs="com.intellij"/>
-  <actions/>
+  <actions>
+    <group id="Plugin" text="PMPlugin" description="Plugin for PMS">
+      <add-to-group group-id="MainMenu" anchor="last"/>
+      <action id="SelectTaskPlugin" class="com.fromLab.action.SelectTaskAction" text="SelectTaskPlugin" description="A plugin for selecting task"/>
+    </group>
+  </actions>
 </idea-plugin>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.fromLab.TestProject" tests="1" skipped="0" failures="0" errors="0" timestamp="2019-12-24T10:40:33" hostname="192.168.0.103" time="0.006">
-  <properties/>
-  <testcase name="test" classname="com.fromLab.TestProject" time="0.006"/>
-  <system-out><![CDATA[1
-]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
