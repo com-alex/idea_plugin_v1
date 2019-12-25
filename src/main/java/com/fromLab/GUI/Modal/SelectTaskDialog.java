@@ -111,7 +111,7 @@ public class SelectTaskDialog extends JDialog {
 
         this.setVisible(false);
         if(flag != null && flag.indexOf(SET_START_TIME_MODAL_FLAG) > -1){
-            if (selectedTaskVO.getStartTime() != null && "".equals(selectedTaskVO.getStartTime())) {
+            if ((selectedTaskVO.getStartTime() == null) || (selectedTaskVO.getStartTime() != null && "".equals(selectedTaskVO.getStartTime()))) {
 
                 SetTimeModal setStartTimeModal = new SetTimeModal(SET_START_TIME_MODAL_FLAG, this, selectedTaskVO);
             }
