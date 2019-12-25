@@ -82,8 +82,7 @@ public class SelectTaskDialog extends JDialog {
         TaskTableModel taskTableModel = new TaskTableModel(dataSource);
         taskTable = new JTable(taskTableModel);
 
-        taskTable.getSelectedColumn();
-        taskTable.getSelectedRow();
+
 
         taskTable.setBounds(0, 0, 1180, 340);
         JScrollPane scrollPane = new JScrollPane(taskTable);
@@ -159,6 +158,8 @@ public class SelectTaskDialog extends JDialog {
     public JTable getTaskTable(){
         return this.taskTable;
     }
+
+
 
 
 }
