@@ -2,6 +2,7 @@ package com.fromLab.test;
 
 import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
+import com.fromLab.entity.Task;
 import com.fromLab.service.TaskService;
 import com.fromLab.service.impl.TaskServiceImpl;
 import org.junit.Before;
@@ -29,5 +30,11 @@ public class TaskTest {
         System.out.println(taskDetailVO);
     }
 
+
+    @Test
+    public void testQueryTaskByTaskId(){
+        Task task = taskService.queryTaskByTaskId(4);
+        System.out.println(task);
+    }
 
 }

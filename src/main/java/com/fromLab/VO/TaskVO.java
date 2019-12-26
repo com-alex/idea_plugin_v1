@@ -29,6 +29,12 @@ public class TaskVO {
 
     private String dueTime;
 
+    private String status;
+
+    private String progress;
+
+    private Integer timeSpent;
+
     public Integer getTaskId() {
         return taskId;
     }
@@ -101,6 +107,30 @@ public class TaskVO {
         this.dueTime = dueTime;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getProgress() {
+        return progress;
+    }
+
+    public void setProgress(String progress) {
+        this.progress = progress;
+    }
+
+    public Integer getTimeSpent() {
+        return timeSpent;
+    }
+
+    public void setTimeSpent(Integer timeSpent) {
+        this.timeSpent = timeSpent;
+    }
+
     @Override
     public String toString() {
         return "TaskVO{" +
@@ -113,6 +143,9 @@ public class TaskVO {
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", dueTime='" + dueTime + '\'' +
+                ", status='" + status + '\'' +
+                ", progress='" + progress + '\'' +
+                ", timeSpent=" + timeSpent +
                 '}';
     }
 }

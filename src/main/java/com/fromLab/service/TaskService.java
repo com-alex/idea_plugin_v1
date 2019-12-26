@@ -34,6 +34,13 @@ public interface TaskService {
     List<Task> displayAllTask(Integer uid);
 
     /**
+     * 通过taskId查询某个任务
+     * @param taskId
+     * @return
+     */
+    Task queryTaskByTaskId(Integer taskId);
+
+    /**
      * 通过用户id查找所有显示的任务
      * @param uid
      * @return

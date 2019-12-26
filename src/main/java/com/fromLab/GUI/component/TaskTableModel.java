@@ -18,14 +18,15 @@ public class TaskTableModel extends AbstractTableModel {
      * 这里和刚才一样，定义列名和每个数据的值
      */
     String[] columnNames =
-            {"taskId", "task_name", "project_name", "task_priority", "task_type", "start_time", "end_time", "due_time"};
-    Object[][] data = new Object[5][8];
+            {"taskId", "task_name", "project_name", "task_priority", "task_type", "start_time", "end_time", "due_time", "status", "progress", "time_spent"};
+    Object[][] data;
 
     /**
      * 构造方法，初始化二维数组data对应的数据
      */
     public TaskTableModel(List<TaskVO> list)
     {
+        this.data = new Object[list.size()][this.columnNames.length];
         for(int i = 0; i < list.size(); i++){
             TaskVO task = list.get(i);
             List<Object> params = ReflectionUtils.getObjectParams(task);
@@ -87,9 +88,7 @@ public class TaskTableModel extends AbstractTableModel {
         return data[0][columnIndex].getClass();
     }
 
-    /**
-     * 指定设置数据单元是否可编辑.这里设置"姓名","学号"不可编辑
-     */
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex)
     {

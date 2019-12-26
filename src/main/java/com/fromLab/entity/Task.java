@@ -38,11 +38,17 @@ public class Task {
     private String endTime;
     @Column(column = "due_time")
     private String dueTime;
+    @Column(column = "status")
+    private String status;
+    @Column(column = "progress")
+    private String progress;
+    @Column(column = "time_spent")
+    private Integer timeSpent;
 
     public Task() {
     }
 
-    public Task(Integer taskId, Integer uid, String taskName, String projectName, Integer taskPriority, String taskType, String taskDetail, String startTime, String endTime, String dueTime) {
+    public Task(Integer taskId, Integer uid, String taskName, String projectName, Integer taskPriority, String taskType, String taskDetail, String startTime, String endTime, String dueTime, String status, String progress, Integer timeSpent) {
         this.taskId = taskId;
         this.uid = uid;
         this.taskName = taskName;
@@ -53,6 +59,9 @@ public class Task {
         this.startTime = startTime;
         this.endTime = endTime;
         this.dueTime = dueTime;
+        this.status = status;
+        this.progress = progress;
+        this.timeSpent = timeSpent;
     }
 
     public Integer getTaskId() {
@@ -135,6 +144,30 @@ public class Task {
         this.dueTime = dueTime;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getProgress() {
+        return progress;
+    }
+
+    public void setProgress(String progress) {
+        this.progress = progress;
+    }
+
+    public Integer getTimeSpent() {
+        return timeSpent;
+    }
+
+    public void setTimeSpent(Integer timeSpent) {
+        this.timeSpent = timeSpent;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
@@ -148,6 +181,9 @@ public class Task {
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", dueTime='" + dueTime + '\'' +
+                ", status='" + status + '\'' +
+                ", progress='" + progress + '\'' +
+                ", timeSpent=" + timeSpent +
                 '}';
     }
 }

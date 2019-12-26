@@ -12,6 +12,7 @@ import java.util.List;
  */
 public interface TaskDao {
 
+     Task queryTaskByTaskId(Integer taskId);
      List<Task> queryAllTask(Integer uid);
      List<TaskVO> queryAllShowTask(Integer uid);
      List<Task> queryTaskByProjectName(Integer uid, String project);

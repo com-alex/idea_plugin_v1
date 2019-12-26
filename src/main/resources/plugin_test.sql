@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 24/12/2019 20:41:34
+ Date: 26/12/2019 17:33:37
 */
 
 SET NAMES utf8mb4;
@@ -68,6 +68,9 @@ CREATE TABLE `task_info` (
   `start_time` varchar(60) DEFAULT NULL,
   `end_time` varchar(60) DEFAULT NULL,
   `due_time` varchar(60) DEFAULT NULL,
+  `status` varchar(60) DEFAULT NULL,
+  `progress` varchar(20) DEFAULT NULL,
+  `time_spent` int(11) DEFAULT '0',
   PRIMARY KEY (`task_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -75,13 +78,13 @@ CREATE TABLE `task_info` (
 -- Records of task_info
 -- ----------------------------
 BEGIN;
-INSERT INTO `task_info` VALUES (1, 3, 't1', 'p1', 1, 'develop', 'asdfasdfasdfasdf', '', '', '2019-01-17 10:14:00');
-INSERT INTO `task_info` VALUES (2, 1, 't2', 'p2', 2, 'design', '12312312', '', '', '2019-01-02 10:14:00');
-INSERT INTO `task_info` VALUES (3, 2, 't3', 'p3', 2, 'analyze', 'assdfgsdfgdsg', '', '', '2019-01-02 12:14:00');
-INSERT INTO `task_info` VALUES (4, 1, 't2', 'p3', 2, 'design', 'asdfsadfas', '', '2019-12-12 14:50:59', '2019-01-02 10:16:11');
-INSERT INTO `task_info` VALUES (12312, 1, 't4', 'p4', 3, 'consultant', 'wewoosdfs', '2019-12-12 14:50:59', '2019-12-12 14:50:59', '2019-01-17 01:14:13');
-INSERT INTO `task_info` VALUES (123412, 1, 't6', 'p6', 5, 'design', 'asasdfasdf', '2019-12-05 14:51:10', '2019-12-05 14:51:10', '2019-01-17 10:14:12');
-INSERT INTO `task_info` VALUES (11234123, 1, 't5', 'p5', 3, 'develop', 'asd打发士大夫卡刷点卡ff', '2019-12-09 14:51:14', '2019-12-09 14:51:14', '2019-01-17 20:14:00');
+INSERT INTO `task_info` VALUES (1, 3, 't1', 'p1', 1, 'develop', 'asdfasdfasdfasdf', '', '', '2019-01-17 10:14:00', 'New', '0%', 0);
+INSERT INTO `task_info` VALUES (2, 1, 't2', 'p2', 2, 'design', '12312312', '', '', '2019-01-02 10:14:00', 'Scheduled', '60%', 8);
+INSERT INTO `task_info` VALUES (3, 2, 't3', 'p3', 2, 'analyze', 'assdfgsdfgdsg', '', '', '2019-01-02 12:14:00', 'To be scheduled', '0%', 0);
+INSERT INTO `task_info` VALUES (4, 1, 't2', 'p3', 2, 'design', 'asdfsadfasdddddddddddddddddddfadfassdadaseqwioejqwiojeoij30ueioquroieqjifnd,mcnz,ncc.ndjaddasdasdasdaddddddddddddddd', '2019-12-26 14:57:11', '2019-12-26 15:11:01', '2019-01-02 10:16:11', 'Closed', '100%', 8);
+INSERT INTO `task_info` VALUES (12312, 1, 't4', 'p4', 3, 'consultant', 'wewoosdfs', '2019-12-12 14:50:59', '2019-12-12 14:50:59', '2019-01-17 01:14:13', 'In progress', '100%', 0);
+INSERT INTO `task_info` VALUES (123412, 1, 't6', 'p6', 5, 'design', 'asasdfasdf', '2019-12-05 14:51:10', '2019-12-05 14:51:10', '2019-01-17 10:14:12', 'In progress', '100%', 0);
+INSERT INTO `task_info` VALUES (11234123, 1, 't5', 'p5', 3, 'develop', 'asd打发士大夫卡刷点卡ff', '2019-12-09 14:51:14', '2019-12-09 14:51:14', '2019-01-17 20:14:00', 'In progress', '100%', 0);
 COMMIT;
 
 -- ----------------------------

@@ -23,6 +23,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public Task queryTaskByTaskId(Integer taskId) {
+        return taskDao.queryTaskByTaskId(taskId);
+    }
+
+
+    @Override
     public List<TaskVO> queryAllShowTask(Integer uid) {
         return taskDao.queryAllShowTask(uid);
     }

@@ -17,7 +17,7 @@ import java.awt.event.ActionListener;
  */
 public class TaskDetailModal extends JFrame {
 
-    private JDialog dialog;
+    private SelectTaskDialog dialog;
     private Integer taskId;
     private TaskDetailVO taskDetailVO;
     private TaskService taskService;
@@ -42,7 +42,7 @@ public class TaskDetailModal extends JFrame {
 
     }
 
-    public TaskDetailModal(JDialog dialog, Integer taskId){
+    public TaskDetailModal(SelectTaskDialog dialog, Integer taskId){
         this.dialog = dialog;
         this.taskId = taskId;
         this.taskService = new TaskServiceImpl();

@@ -16,6 +16,9 @@ public class SelectTaskDialog extends JDialog {
     private static final String SET_START_TIME_MODAL_FLAG = "start";
     private static final String SET_END_TIME_MODAL_FLAG = "end";
 
+    private Long startTime;
+    private Long endTime;
+
     private JPanel contentPane;
     private JPanel panel1;
     private JPanel tablePanel;
@@ -54,21 +57,9 @@ public class SelectTaskDialog extends JDialog {
 
         tablePanel.setLayout(null);
 
-        this.getDataSource();
+        this.setTableDataSource();
 
-        //设置表格的宽高
-        taskTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-        taskTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        taskTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-        taskTable.getColumnModel().getColumn(3).setPreferredWidth(100);
-        taskTable.getColumnModel().getColumn(4).setPreferredWidth(100);
-        taskTable.getColumnModel().getColumn(5).setPreferredWidth(150);
-        taskTable.getColumnModel().getColumn(6).setPreferredWidth(150);
-        taskTable.getColumnModel().getColumn(7).setPreferredWidth(166);
-        taskTable.setRowHeight(30);
-        taskTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        taskTable.setShowHorizontalLines(false);
-        taskTable.setShowVerticalLines(false);
+
 
         startButton = new JButton("Start");
         startButton.setBounds(0, 0, 50, 30);
@@ -103,29 +94,31 @@ public class SelectTaskDialog extends JDialog {
 
         chooseButton = new JButton("choose");
         chooseButton.setBounds(300, 0, 70, 30);
+        chooseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                chooseTask();
+
+            }
+        });
         panel1.add(chooseButton);
 
         stopButton = new JButton("stop");
         stopButton.setBounds(400, 0, 70, 30);
+        //默认停止工作按钮为不能按
+        stopButton.setEnabled(false);
+        stopButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stopTask();
+            }
+        });
         panel1.add(stopButton);
 
     }
 
     public void getDataSource(){
-        List<TaskVO> dataSource = taskService.queryAllShowTask(1);
-        this.uid = 1;
 
-        TaskTableModel taskTableModel = new TaskTableModel(dataSource);
-        taskTable = new JTable(taskTableModel);
-
-
-
-        taskTable.setBounds(0, 0, 1020, 340);
-        JScrollPane scrollPane = new JScrollPane(taskTable);
-
-        scrollPane.setBounds(0,0, 1020, 340);
-
-        tablePanel.add(scrollPane);
 
     }
 
@@ -197,10 +190,6 @@ public class SelectTaskDialog extends JDialog {
 
     private void viewTaskDetail(){
         int row = taskTable.getSelectedRow();
-//        List<Object> params = new ArrayList<>();
-//        for (int i = 0; i < taskTable.getColumnCount(); i++){
-//            params.add(taskTable.getValueAt(row, i));
-//        }
         Integer taskId = (Integer) taskTable.getValueAt(row, 0);
         System.out.println(taskId);
         new TaskDetailModal(this, taskId);
@@ -208,5 +197,86 @@ public class SelectTaskDialog extends JDialog {
     }
 
 
+    private void chooseTask(){
+        //按下选择工作按钮才能停止工作按钮
+        this.stopButton.setEnabled(true);
+        Long startTime = System.currentTimeMillis();
+        this.startTime = startTime;
+        System.out.println("Start Task  Time:" + this.startTime);
+    }
 
+    private void stopTask(){
+        int row = taskTable.getSelectedRow();
+        //获取所选行的task的id
+        Integer taskId = (Integer) taskTable.getValueAt(row, 0);
+        Long endTime = System.currentTimeMillis();
+        this.endTime = endTime;
+        System.out.println("Stop Task  Time:" + this.endTime);
+        Integer timeSpent = (int)((this.endTime - this.startTime) / 1000);
+        System.out.println("Stop Task! The Spent Time is: " + timeSpent + "s");
+        this.startTime = 0L;
+        this.endTime = 0L;
+        //获取所选行的task的progress
+        String progressString = (String) taskTable.getValueAt(row, 9);
+        Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
+        this.setVisible(false);
+        new StopTaskModal(taskId, progress, timeSpent, this);
+
+    }
+
+    public void setTableDataSource(){
+        //TODO uid为静态，需要进行动态变化
+        List<TaskVO> dataSource = taskService.queryAllShowTask(1);
+        this.uid = 1;
+
+        TaskTableModel taskTableModel = new TaskTableModel(dataSource);
+        taskTable = new JTable(taskTableModel);
+
+        //设置表格的宽高
+        taskTable.getColumnModel().getColumn(0).setPreferredWidth(100);
+        taskTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        taskTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        taskTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+        taskTable.getColumnModel().getColumn(4).setPreferredWidth(100);
+        taskTable.getColumnModel().getColumn(5).setPreferredWidth(150);
+        taskTable.getColumnModel().getColumn(6).setPreferredWidth(150);
+        taskTable.getColumnModel().getColumn(7).setPreferredWidth(166);
+        taskTable.getColumnModel().getColumn(8).setPreferredWidth(100);
+        taskTable.getColumnModel().getColumn(9).setPreferredWidth(100);
+        taskTable.getColumnModel().getColumn(10).setPreferredWidth(100);
+        taskTable.setRowHeight(30);
+        taskTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        taskTable.setShowHorizontalLines(false);
+        taskTable.setShowVerticalLines(false);
+        taskTable.setBounds(0, 0, 1020, 340);
+
+        JScrollPane scrollPane = new JScrollPane(taskTable);
+
+        scrollPane.setBounds(0,0, 1020, 340);
+
+        tablePanel.add(scrollPane);
+    }
+
+
+    public void resetTableDataSource(){
+        //TODO uid为静态，需要进行动态变化
+        //刷新表格数据源
+        List<TaskVO> dataSource = taskService.queryAllShowTask(1);
+        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        this.getTaskTable().getColumnModel().getColumn(0).setPreferredWidth(100);
+        this.getTaskTable().getColumnModel().getColumn(1).setPreferredWidth(150);
+        this.getTaskTable().getColumnModel().getColumn(2).setPreferredWidth(100);
+        this.getTaskTable().getColumnModel().getColumn(3).setPreferredWidth(100);
+        this.getTaskTable().getColumnModel().getColumn(4).setPreferredWidth(100);
+        this.getTaskTable().getColumnModel().getColumn(5).setPreferredWidth(150);
+        this.getTaskTable().getColumnModel().getColumn(6).setPreferredWidth(150);
+        this.getTaskTable().getColumnModel().getColumn(7).setPreferredWidth(166);
+        this.getTaskTable().getColumnModel().getColumn(8).setPreferredWidth(100);
+        this.getTaskTable().getColumnModel().getColumn(9).setPreferredWidth(100);
+        taskTable.getColumnModel().getColumn(10).setPreferredWidth(100);
+        this.getTaskTable().setRowHeight(30);
+        this.getTaskTable().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        this.getTaskTable().setShowHorizontalLines(false);
+        this.getTaskTable().setShowVerticalLines(false);
+    }
 }
