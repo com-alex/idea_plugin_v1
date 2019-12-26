@@ -1,6 +1,7 @@
 package com.fromLab.service.impl;
 
 import com.fromLab.DAO.impl.TaskDaoImpl;
+import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Task;
 import com.fromLab.service.TaskService;
@@ -77,5 +78,10 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Boolean saveOrUpdateTask(Object object) {
         return taskDao.saveOrUpdateTask(object);
+    }
+
+    @Override
+    public TaskDetailVO queryTaskDetailByTaskId(Integer taskId) {
+        return taskDao.queryTaskDetailByTaskId(taskId);
     }
 }

@@ -1,6 +1,7 @@
 package com.fromLab.DAO.impl;
 
 import com.fromLab.DAO.TaskDao;
+import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Task;
 import com.fromLab.utils.SqlBuilder;
@@ -126,5 +127,21 @@ public class TaskDaoImpl implements TaskDao {
         return false;
     }
 
-
+    @Override
+    public TaskDetailVO queryTaskDetailByTaskId(Integer taskId) {
+        TaskDetailVO taskDetailVO = new TaskDetailVO();
+        SqlBuilder sqlBuilder = SqlBuilder.getInstance();
+        sqlBuilder.select("task_name, project_name, due_time, task_detail")
+                .from("task_info")
+                .where()
+                .addEqualTo("task_id", taskId);
+        try {
+             taskDetailVO = ((List<TaskDetailVO>) sqlBuilder.createQuery(sqlBuilder.getSql(), sqlBuilder.getParams(), TaskDetailVO.class)).get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            SqlBuilder.closeAll();
+        }
+        return taskDetailVO;
+    }
 }

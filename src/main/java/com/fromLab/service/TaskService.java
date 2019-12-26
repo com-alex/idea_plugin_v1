@@ -1,5 +1,6 @@
 package com.fromLab.service;
 
+import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Task;
 
@@ -97,4 +98,11 @@ public interface TaskService {
      * @return
      */
     Boolean saveOrUpdateTask(Object object);
+
+    /**
+     * 根据taskId获取task的detail
+     * @param taskId
+     * @return
+     */
+    TaskDetailVO queryTaskDetailByTaskId(Integer taskId);
 }

@@ -1,5 +1,6 @@
 package com.fromLab.DAO;
 
+import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Task;
 
@@ -17,5 +18,6 @@ public interface TaskDao {
      List<Task> queryTaskByTaskType(Integer uid, String TaskType);
      List<Task> queryTaskByTaskPriority(Integer uid, Integer TaskPriority);
      Boolean saveOrUpdateTask(Object object);
+     TaskDetailVO queryTaskDetailByTaskId(Integer taskId);
 
 }

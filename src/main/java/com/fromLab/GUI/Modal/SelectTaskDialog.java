@@ -19,8 +19,11 @@ public class SelectTaskDialog extends JDialog {
     private JPanel contentPane;
     private JPanel panel1;
     private JPanel tablePanel;
-    private JButton confirmButton;
-    private JButton cancelButton;
+    private JButton startButton;
+    private JButton endButton;
+    private JButton chooseButton;
+    private JButton viewButton;
+    private JButton stopButton;
     private JTable taskTable;
     private TaskServiceImpl taskService;
     private Integer uid;
@@ -45,7 +48,7 @@ public class SelectTaskDialog extends JDialog {
         tablePanel = new JPanel();
         tablePanel.setLayout(null);
         tablePanel.setLocation(0, 100);
-        tablePanel.setBounds(0, 100, 1200, 400);
+        tablePanel.setBounds(0, 100, 1040, 400);
 
         panel1.add(tablePanel);
 
@@ -53,25 +56,58 @@ public class SelectTaskDialog extends JDialog {
 
         this.getDataSource();
 
-        confirmButton = new JButton("Start");
-        confirmButton.setBounds(0, 0, 50, 30);
-        confirmButton.addActionListener(new ActionListener() {
+        //设置表格的宽高
+        taskTable.getColumnModel().getColumn(0).setPreferredWidth(100);
+        taskTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        taskTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        taskTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+        taskTable.getColumnModel().getColumn(4).setPreferredWidth(100);
+        taskTable.getColumnModel().getColumn(5).setPreferredWidth(150);
+        taskTable.getColumnModel().getColumn(6).setPreferredWidth(150);
+        taskTable.getColumnModel().getColumn(7).setPreferredWidth(166);
+        taskTable.setRowHeight(30);
+        taskTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        taskTable.setShowHorizontalLines(false);
+        taskTable.setShowVerticalLines(false);
+
+        startButton = new JButton("Start");
+        startButton.setBounds(0, 0, 50, 30);
+        startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setTaskTime(SET_START_TIME_MODAL_FLAG);
             }
         });
-        panel1.add(confirmButton);
+        panel1.add(startButton);
 
-        cancelButton = new JButton("End");
-        cancelButton.setBounds(100, 0, 50, 30);
-        cancelButton.addActionListener(new ActionListener() {
+        endButton = new JButton("End");
+        endButton.setBounds(100, 0, 50, 30);
+        endButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setTaskTime(SET_END_TIME_MODAL_FLAG);
             }
         });
-        panel1.add(cancelButton);
+        panel1.add(endButton);
+
+        viewButton = new JButton("view");
+        viewButton.setBounds(200, 0, 70, 30);
+        viewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //查看task的detail
+                viewTaskDetail();
+            }
+        });
+        panel1.add(viewButton);
+
+        chooseButton = new JButton("choose");
+        chooseButton.setBounds(300, 0, 70, 30);
+        panel1.add(chooseButton);
+
+        startButton = new JButton("stop");
+        stopButton.setBounds(400, 0, 70, 30);
+        panel1.add(stopButton);
 
     }
 
@@ -84,10 +120,10 @@ public class SelectTaskDialog extends JDialog {
 
 
 
-        taskTable.setBounds(0, 0, 1180, 340);
+        taskTable.setBounds(0, 0, 1020, 340);
         JScrollPane scrollPane = new JScrollPane(taskTable);
 
-        scrollPane.setBounds(0,0, 1180, 340);
+        scrollPane.setBounds(0,0, 1020, 340);
 
         tablePanel.add(scrollPane);
 
@@ -159,6 +195,17 @@ public class SelectTaskDialog extends JDialog {
         return this.taskTable;
     }
 
+    private void viewTaskDetail(){
+        int row = taskTable.getSelectedRow();
+//        List<Object> params = new ArrayList<>();
+//        for (int i = 0; i < taskTable.getColumnCount(); i++){
+//            params.add(taskTable.getValueAt(row, i));
+//        }
+        Integer taskId = (Integer) taskTable.getValueAt(row, 0);
+        System.out.println(taskId);
+        new TaskDetailModal(this, taskId);
+        this.setVisible(false);
+    }
 
 
 
