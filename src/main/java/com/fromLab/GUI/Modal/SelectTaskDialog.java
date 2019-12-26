@@ -105,7 +105,7 @@ public class SelectTaskDialog extends JDialog {
         chooseButton.setBounds(300, 0, 70, 30);
         panel1.add(chooseButton);
 
-        startButton = new JButton("stop");
+        stopButton = new JButton("stop");
         stopButton.setBounds(400, 0, 70, 30);
         panel1.add(stopButton);
 
