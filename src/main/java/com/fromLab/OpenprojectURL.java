@@ -1,25 +1,28 @@
+package com.fromLab;
+
 public class OpenprojectURL {
     public static final String PROJECTS_URL ="/api/v3/projects";
     public static final String PROJECT_URL="/api/v3/projects/{0}";
-
     private static final String PATH_PARAM_ARG_PREFIX = "\\{";
     private static final String PATH_PARAM_ARG_SUFFIX = "\\}";
     private static final String KEY_QUERY_PARAM = "?key=";
     private static final String TOKEN_QUERY_PARAM = "&token=";
     private static final String FILTER_QUERY_PARAM = "&filter=";
+    private final String openProjectURL;
     private final String url;
     private final String[] pathParams;
     private final String apiKey;
     private String token = null;
     private String[] filters = null;
-    private OpenprojectURL(String apiKey,String url, String... pathParams){
+    private OpenprojectURL(String openProjectURL, String apiKey, String url, String... pathParams){
+        this.openProjectURL="https://plugin.openproject.com";
         this.apiKey = apiKey;
         this.url = url;
         this.pathParams = pathParams;
     }
-    public static OpenprojectURL create(String apiKey, String url,
-                                   String... pathParams) {
-        return new OpenprojectURL(apiKey, url, pathParams);
+    public static OpenprojectURL create(String openProjectURL, String apiKey, String url,
+                                        String... pathParams) {
+        return new OpenprojectURL(openProjectURL,apiKey, url, pathParams);
     }
     public OpenprojectURL filter(String... filters) {
         this.filters = isArrayEmpty(filters) ? null : filters;
@@ -35,6 +38,7 @@ public class OpenprojectURL {
         }
 
         return new StringBuilder()
+                .append(openProjectURL)
                 .append(createUrlWithPathParams())
                 .append(createAuthQueryString())
                 .append(createFilterQuery())
