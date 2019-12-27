@@ -18,6 +18,15 @@ dependencies {
     compile group: 'org.mybatis', name: 'mybatis', version: '3.4.5'
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+// https://mvnrepository.com/artifact/http-kit/http-kit
+    compile group: 'http-kit', name: 'http-kit', version: '2.3.0'
+// https://mvnrepository.com/artifact/org.apache.httpcosmponents/httpmime
+    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
+    // https://mvnrepository.com/artifact/log4j/log4j
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+
 
 }
 
