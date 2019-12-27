@@ -34,6 +34,24 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<TaskVO> queryAllShowTaskByTaskName(Integer uid, String taskName) {
+        return taskDao.queryAllShowTaskByTaskName(uid, taskName);
+    }
+
+    @Override
+    public List<TaskVO> queryAllShowTaskByStatus(Integer uid, String status) {
+        return taskDao.queryAllShowTaskByStatus(uid, status);
+    }
+
+    @Override
+    public List<TaskVO> queryShowTaskByCondition(Integer uid,
+                                                 String status,
+                                                 String fromDueTime,
+                                                 String toDueTime) {
+        return taskDao.queryShowTaskByCondition(uid, status, fromDueTime, toDueTime);
+    }
+
+    @Override
     public List<Task> queryTaskByProjectName(Integer uid, String project) {
         return taskDao.queryTaskByProjectName(uid,project);
     }

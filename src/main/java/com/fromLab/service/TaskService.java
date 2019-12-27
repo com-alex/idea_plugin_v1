@@ -48,6 +48,35 @@ public interface TaskService {
     List<TaskVO> queryAllShowTask(Integer uid);
 
     /**
+     * 通过用户id与task的名字模糊查询任务
+     * @param uid
+     * @param taskName
+     * @return
+     */
+    List<TaskVO> queryAllShowTaskByTaskName(Integer uid, String taskName);
+
+    /**
+     * 通过用户id与task的状态模糊查询任务
+     * @param uid
+     * @param status
+     * @return
+     */
+    List<TaskVO> queryAllShowTaskByStatus(Integer uid, String status);
+
+    /**
+     * 通过查询条件查询任务
+     * @param uid
+     * @param status
+     * @param fromDueTime
+     * @param toDueTime
+     * @return
+     */
+    List<TaskVO> queryShowTaskByCondition(Integer uid,
+                                          String status,
+                                          String fromDueTime,
+                                          String toDueTime);
+
+    /**
      * 通过用户id与主题查找任务
      * @param uid
      * @param porojectName

@@ -1,35 +1,57 @@
 package com.fromLab.GUI.Modal;
 
+import com.fromLab.GUI.component.DateChooserJButton;
 import com.fromLab.GUI.component.TaskTableModel;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.service.impl.TaskServiceImpl;
+import com.fromLab.utils.DateUtils;
 import com.fromLab.utils.ReflectionUtils;
 import com.fromLab.utils.SortUtils;
-import com.intellij.ui.GuiUtils;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+
+
+import java.util.Date;
 import java.util.List;
 
 public class SelectTaskDialog extends JDialog {
     //常量，防止出现魔法值
     private static final String SET_START_TIME_MODAL_FLAG = "start";
     private static final String SET_END_TIME_MODAL_FLAG = "end";
+    private static final String SET_FROM_DUE_TIME = "from";
+    private static final String SET_TO_DUE_TIME = "to";
 
     private Long startTime;
     private Long endTime;
     private List<TaskVO> dataSource;
     private Integer taskPriorityFlag = 0;
     private Integer taskDueTimeFlag = 0;
+    private Integer taskNameFlag = 0;
+    private String []statusDataSource = {"-- Please Choose --", "New", "To be scheduled", "Scheduled", "In progress", "Closed", "On hold", "Rejected"};
 
     private JPanel contentPane;
     private JPanel panel1;
+    private JPanel conditionPanel;
+    //查询条件控件
+    private JLabel statusPickerLabel;
+    private JComboBox statusPicker;
+    private JLabel dueTimeFromLabel;
+    private JButton fromDatePickerButton;
+    private JLabel dueTimeToLabel;
+    private JButton toDatePickerButton;
+
+    private JButton searchButton;
+
+
+
+    //数据显示控件
     private JPanel tablePanel;
     private JButton startButton;
     private JButton endButton;
@@ -38,7 +60,7 @@ public class SelectTaskDialog extends JDialog {
     private JButton stopButton;
     private JTable taskTable;
     private TaskServiceImpl taskService;
-    private Integer uid;
+    private Integer uid = 1;
 
     public SelectTaskDialog() {
 
@@ -56,10 +78,83 @@ public class SelectTaskDialog extends JDialog {
         panel1.setLocation(0,0);
         panel1.setLayout(null);
 
+        /**
+         * 查询条件部分
+         */
+        conditionPanel = new JPanel();
+        conditionPanel.setLayout(null);
+        conditionPanel.setBounds(0, 0, 1040, 100);
 
+        this.statusPickerLabel = new JLabel("Status: ");
+        this.statusPickerLabel.setBounds(0, 10, 100, 20);
+        conditionPanel.add(this.statusPickerLabel);
+
+        statusPicker = new JComboBox(this.statusDataSource);
+        this.statusPicker.setBounds(50, 5, 165, 30);
+        this.statusPicker.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    String selectedItem = (String) e.getItem();
+                    if(selectedItem.contains("Please")){
+                        selectedItem = "";
+                    }
+                    queryShowTaskByStatus(selectedItem);
+                }
+            }
+        });
+        conditionPanel.add(this.statusPicker);
+
+        this.dueTimeFromLabel = new JLabel("From");
+        this.dueTimeFromLabel.setBounds(300, 10, 100, 20);
+        conditionPanel.add(this.dueTimeFromLabel);
+
+        this.fromDatePickerButton = new JButton(DateUtils.date2String(new Date()));
+        this.fromDatePickerButton.setBounds(350, 5, 150, 30);
+        this.fromDatePickerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onDatePicker(SET_FROM_DUE_TIME);
+            }
+        });
+        conditionPanel.add(this.fromDatePickerButton);
+
+
+        this.dueTimeToLabel = new JLabel("to");
+        this.dueTimeToLabel.setBounds(520, 10, 100, 20);
+        conditionPanel.add(this.dueTimeToLabel);
+
+
+        this.toDatePickerButton = new JButton(DateUtils.date2String(DateUtils.plusOneDay(new Date())));
+        this.toDatePickerButton.setBounds(550, 5, 150, 30);
+        this.toDatePickerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onDatePicker(SET_TO_DUE_TIME);
+            }
+        });
+        conditionPanel.add(this.toDatePickerButton);
+
+
+        this.searchButton = new JButton("search");
+        searchButton.setBounds(750, 5, 70, 30);
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchDataSource();
+            }
+        });
+        conditionPanel.add(this.searchButton);
+
+        panel1.add(conditionPanel);
+
+
+        /**
+         * 数据显示部分
+         */
         tablePanel = new JPanel();
         tablePanel.setLayout(null);
-        tablePanel.setLocation(0, 100);
+
         tablePanel.setBounds(0, 100, 1040, 400);
 
         panel1.add(tablePanel);
@@ -70,8 +165,8 @@ public class SelectTaskDialog extends JDialog {
 
 
 
-        startButton = new JButton("Start");
-        startButton.setBounds(0, 0, 50, 30);
+        startButton = new JButton("start");
+        startButton.setBounds(0, 500, 70, 30);
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -80,8 +175,8 @@ public class SelectTaskDialog extends JDialog {
         });
         panel1.add(startButton);
 
-        endButton = new JButton("End");
-        endButton.setBounds(100, 0, 50, 30);
+        endButton = new JButton("end");
+        endButton.setBounds(100, 500, 70, 30);
         endButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -91,7 +186,7 @@ public class SelectTaskDialog extends JDialog {
         panel1.add(endButton);
 
         viewButton = new JButton("view");
-        viewButton.setBounds(200, 0, 70, 30);
+        viewButton.setBounds(200, 500, 70, 30);
         viewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -102,7 +197,7 @@ public class SelectTaskDialog extends JDialog {
         panel1.add(viewButton);
 
         chooseButton = new JButton("choose");
-        chooseButton.setBounds(300, 0, 70, 30);
+        chooseButton.setBounds(300, 500, 70, 30);
         chooseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -113,7 +208,7 @@ public class SelectTaskDialog extends JDialog {
         panel1.add(chooseButton);
 
         stopButton = new JButton("stop");
-        stopButton.setBounds(400, 0, 70, 30);
+        stopButton.setBounds(400, 500, 70, 30);
         //默认停止工作按钮为不能按
         stopButton.setEnabled(false);
         stopButton.addActionListener(new ActionListener() {
@@ -126,10 +221,7 @@ public class SelectTaskDialog extends JDialog {
 
     }
 
-    public void getDataSource(){
 
-
-    }
 
     /**
      * 设置开始时间与结束时间的模态框事件
@@ -293,12 +385,14 @@ public class SelectTaskDialog extends JDialog {
                     int pick = tableHeader.columnAtPoint(e.getPoint());
 
                     //进行优先级排序
-                    if(pick == 3){
+                    if(pick == 1){
+                        sortDataSourceOrderByTaskName();
+                    }
+                    else if(pick == 3){
                         sortDataSourceOrderByPriority();
                     }
                     //进行deadline排序
                     else if(pick == 7){
-                        System.out.println(1);
                         sortDataSourceOrderByDueTime();
                     }
 
@@ -340,5 +434,80 @@ public class SelectTaskDialog extends JDialog {
         this.taskDueTimeFlag++;
         this.getTaskTable().setModel(new TaskTableModel(dataSource));
         setTableStyle();
+    }
+
+    private void sortDataSourceOrderByTaskName(){
+        if(this.taskNameFlag % 2 == 0){
+            SortUtils.sort(this.dataSource,
+                    new String[]{"taskName","dueTime","taskPriority","taskType","taskId"},
+                    new boolean[]{true,true,false,true,true});
+        }else{
+            SortUtils.sort(this.dataSource,
+                    new String[]{"taskName","dueTime","taskPriority","taskType","taskId"},
+                    new boolean[]{false,true,false,true,true});
+        }
+        this.taskNameFlag++;
+        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        setTableStyle();
+    }
+
+    /**
+     * 界面状态下拉菜单触发查询事件
+     */
+    private void queryShowTaskByStatus(String status){
+        List<TaskVO> taskVOS = new ArrayList<>();
+        taskVOS = taskService.queryAllShowTaskByStatus(this.uid, status);
+        this.dataSource = taskVOS;
+        this.getTaskTable().setModel(new TaskTableModel(this.dataSource));
+        setTableStyle();
+    }
+
+    public JButton getFromDatePickerButton() {
+        return fromDatePickerButton;
+    }
+
+
+
+    public JButton getToDatePickerButton() {
+        return toDatePickerButton;
+    }
+
+    private void onDatePicker(String type){
+        this.setVisible(false);
+        if(SET_FROM_DUE_TIME.equals(type)){
+            new SetDueTimeModal(
+                    type, this,
+                    DateUtils.string2Date(this.fromDatePickerButton.getText()));
+        }
+        else{
+            new SetDueTimeModal(type, this,
+                    DateUtils.string2Date(this.toDatePickerButton.getText()));
+        }
+    }
+
+
+    private void searchDataSource(){
+        //获取条件
+        String queryStatus = (String) this.statusPicker.getSelectedItem();
+        if(queryStatus.contains("Please")){
+            queryStatus = "";
+        }
+        String fromDueTime = this.fromDatePickerButton.getText();
+        String toDueTime = this.toDatePickerButton.getText();
+        LocalDateTime fromLocalDateTime = DateUtils.string2LocalDateTime(fromDueTime);
+        LocalDateTime toLocalDateTime = DateUtils.string2LocalDateTime(toDueTime);
+        Duration duration = Duration.between(fromLocalDateTime, toLocalDateTime);
+        Long min = duration.toMillis();
+        if(min <= 0L){
+            this.setVisible(false);
+            showOptionDialog("Illegal time", JOptionPane.WARNING_MESSAGE);
+        }
+        else{
+            List<TaskVO> taskVOS = this.taskService.queryShowTaskByCondition(
+                    this.uid, queryStatus, fromDueTime, toDueTime);
+            this.dataSource = taskVOS;
+            this.getTaskTable().setModel(new TaskTableModel(dataSource));
+            setTableStyle();
+        }
     }
 }

@@ -15,7 +15,7 @@ public class SelectTaskAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         // TODO: insert action logic here
         Integer width = 1040;
-        Integer height = 500;
+        Integer height = 600;
         SelectTaskDialog selectTaskDialog = new SelectTaskDialog();
         selectTaskDialog.pack();
         selectTaskDialog.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);

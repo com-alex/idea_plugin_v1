@@ -11,6 +11,7 @@ import com.fromLab.utils.SqlBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -150,5 +151,31 @@ public class TaskTest {
             SqlBuilder.closeAll();
         }
     }
+
+    @Test
+    public void testQueryAllShowTaskByTaskName(){
+        List<TaskVO> taskVOS = new ArrayList<>();
+        taskVOS = taskService.queryAllShowTaskByTaskName(1, "2");
+        System.out.println(taskVOS);
+    }
+
+    @Test
+    public void testQueryAllShowTaskByStatus(){
+        List<TaskVO> taskVOS = new ArrayList<>();
+        taskVOS = taskService.queryAllShowTaskByStatus(1, "");
+        System.out.println(taskVOS);
+    }
+
+    @Test
+    public void testQueryShowTaskByCondition(){
+        List<TaskVO> taskVOS = new ArrayList<>();
+        taskVOS = taskService.queryShowTaskByCondition(
+                1,
+                "In progress",
+                "2019-01-17 10:14:12",
+                "2019-01-17 21:14:00");
+        System.out.println(taskVOS);
+    }
+
 
 }
