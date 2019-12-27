@@ -127,10 +127,15 @@ public class SelectTaskDialog extends JDialog {
      * @param flag
      */
     private void setTaskTime(String flag) {
-        int row = taskTable.getSelectedRow();
+        this.setVisible(false);
+        Integer row = taskTable.getSelectedRow();
+        if (row == -1) {
+            showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         List<Object> params = new ArrayList<>();
-        for (int i = 0; i < taskTable.getColumnCount(); i++){
-            if(i == 1){
+        for (int i = 0; i < taskTable.getColumnCount(); i++) {
+            if (i == 1) {
                 params.add(this.uid);
             }
             params.add(taskTable.getValueAt(row, i));
@@ -138,46 +143,24 @@ public class SelectTaskDialog extends JDialog {
         TaskVO selectedTaskVO = (TaskVO) ReflectionUtils.createObject(TaskVO.class, params);
         selectedTaskVO.setUid(this.uid);
 
-        this.setVisible(false);
-        if(flag != null && flag.indexOf(SET_START_TIME_MODAL_FLAG) > -1){
+
+        if (flag != null && flag.indexOf(SET_START_TIME_MODAL_FLAG) > -1) {
             if ((selectedTaskVO.getStartTime() == null) || (selectedTaskVO.getStartTime() != null && "".equals(selectedTaskVO.getStartTime()))) {
 
                 SetTimeModal setStartTimeModal = new SetTimeModal(SET_START_TIME_MODAL_FLAG, this, selectedTaskVO);
-            }
-            else{
-                JButton[] jButtons = new JButton[1];
-                JButton button = new JButton("ok");
-                jButtons[0] = button;
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Window win = SwingUtilities.getWindowAncestor(button);
-                        win.dispose();
-
-                    }
-                });
-                JOptionPane.showOptionDialog(null, "You have chosen start time!", "Tips", JOptionPane.WARNING_MESSAGE, 0, null, jButtons, jButtons[0]);
-                this.setVisible(true);
+            } else {
+                showOptionDialog("You have chosen start time!", JOptionPane.WARNING_MESSAGE);
             }
 
-        }else{
-            if (selectedTaskVO.getEndTime() != null && "".equals(selectedTaskVO.getEndTime())) {
-                SetTimeModal setStartTimeModal = new SetTimeModal(SET_END_TIME_MODAL_FLAG, this, selectedTaskVO);
-            }
-            else{
-                JButton[] jButtons = new JButton[1];
-                JButton button = new JButton("ok");
-                jButtons[0] = button;
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Window win = SwingUtilities.getWindowAncestor(button);
-                        win.dispose();
-
-                    }
-                });
-                JOptionPane.showOptionDialog(null, "You have chosen end time!", "Tips", JOptionPane.WARNING_MESSAGE, 0, null, jButtons, jButtons[0]);
-                this.setVisible(true);
+        } else {
+            if (selectedTaskVO.getStartTime() != null && !("".equals(selectedTaskVO.getStartTime()))) {
+                if (selectedTaskVO.getEndTime() != null && "".equals(selectedTaskVO.getEndTime())) {
+                    SetTimeModal setStartTimeModal = new SetTimeModal(SET_END_TIME_MODAL_FLAG, this, selectedTaskVO);
+                } else {
+                    showOptionDialog("You have chosen end time!", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                showOptionDialog("You need to set start time firstly!", JOptionPane.WARNING_MESSAGE);
             }
 
         }
@@ -278,5 +261,21 @@ public class SelectTaskDialog extends JDialog {
         this.getTaskTable().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         this.getTaskTable().setShowHorizontalLines(false);
         this.getTaskTable().setShowVerticalLines(false);
+    }
+
+    private void showOptionDialog(String info, Integer type){
+        JButton[] jButtons = new JButton[1];
+        JButton button = new JButton("ok");
+        jButtons[0] = button;
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Window win = SwingUtilities.getWindowAncestor(button);
+                win.dispose();
+
+            }
+        });
+        JOptionPane.showOptionDialog(null, info, "Tips", type, 0, null, jButtons, jButtons[0]);
+        this.setVisible(true);
     }
 }
