@@ -4,11 +4,17 @@ import com.fromLab.GUI.component.TaskTableModel;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.ReflectionUtils;
+import com.fromLab.utils.SortUtils;
+import com.intellij.ui.GuiUtils;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class SelectTaskDialog extends JDialog {
@@ -18,6 +24,9 @@ public class SelectTaskDialog extends JDialog {
 
     private Long startTime;
     private Long endTime;
+    private List<TaskVO> dataSource;
+    private Integer taskPriorityFlag = 0;
+    private Integer taskDueTimeFlag = 0;
 
     private JPanel contentPane;
     private JPanel panel1;
@@ -215,23 +224,12 @@ public class SelectTaskDialog extends JDialog {
         TaskTableModel taskTableModel = new TaskTableModel(dataSource);
         taskTable = new JTable(taskTableModel);
 
-        //设置表格的宽高
-        taskTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-        taskTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        taskTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-        taskTable.getColumnModel().getColumn(3).setPreferredWidth(100);
-        taskTable.getColumnModel().getColumn(4).setPreferredWidth(100);
-        taskTable.getColumnModel().getColumn(5).setPreferredWidth(150);
-        taskTable.getColumnModel().getColumn(6).setPreferredWidth(150);
-        taskTable.getColumnModel().getColumn(7).setPreferredWidth(166);
-        taskTable.getColumnModel().getColumn(8).setPreferredWidth(100);
-        taskTable.getColumnModel().getColumn(9).setPreferredWidth(100);
-        taskTable.getColumnModel().getColumn(10).setPreferredWidth(100);
-        taskTable.setRowHeight(30);
-        taskTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        taskTable.setShowHorizontalLines(false);
-        taskTable.setShowVerticalLines(false);
+        setTableStyle();
         taskTable.setBounds(0, 0, 1020, 340);
+
+        this.dataSource = dataSource;
+
+        setTableSort();
 
         JScrollPane scrollPane = new JScrollPane(taskTable);
 
@@ -246,6 +244,12 @@ public class SelectTaskDialog extends JDialog {
         //刷新表格数据源
         List<TaskVO> dataSource = taskService.queryAllShowTask(1);
         this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        setTableStyle();
+        this.dataSource = dataSource;
+        setTableSort();
+    }
+
+    public void setTableStyle(){
         this.getTaskTable().getColumnModel().getColumn(0).setPreferredWidth(100);
         this.getTaskTable().getColumnModel().getColumn(1).setPreferredWidth(150);
         this.getTaskTable().getColumnModel().getColumn(2).setPreferredWidth(100);
@@ -277,5 +281,64 @@ public class SelectTaskDialog extends JDialog {
         });
         JOptionPane.showOptionDialog(null, info, "Tips", type, 0, null, jButtons, jButtons[0]);
         this.setVisible(true);
+    }
+
+    private void setTableSort(){
+        int flag = 0;
+        final JTableHeader tableHeader = this.taskTable.getTableHeader();
+        tableHeader.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if(e.getClickCount() == 1){
+                    int pick = tableHeader.columnAtPoint(e.getPoint());
+
+                    //进行优先级排序
+                    if(pick == 3){
+                        sortDataSourceOrderByPriority();
+                    }
+                    //进行deadline排序
+                    else if(pick == 7){
+                        System.out.println(1);
+                        sortDataSourceOrderByDueTime();
+                    }
+
+                }
+            }
+        });
+    }
+
+    private void sortDataSourceOrderByPriority(){
+
+        //TODO 需进行修改，taskPriority是String类型
+
+        if(this.taskPriorityFlag % 2 == 0){
+            SortUtils.sort(this.dataSource,
+                    new String[]{"taskPriority","dueTime","projectName","taskType","taskId"},
+                    new boolean[]{false,true,true,true,true});
+        }else{
+            SortUtils.sort(this.dataSource,
+                    new String[]{"taskPriority","dueTime","projectName","taskType","taskId"},
+                    new boolean[]{true,true,true,true,true});
+        }
+        this.taskPriorityFlag++;
+        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        setTableStyle();
+    }
+
+    private void sortDataSourceOrderByDueTime(){
+
+        //TODO 需进行修改，将来时间的排序还得重写
+        if(this.taskDueTimeFlag % 2 == 0){
+            SortUtils.sort(this.dataSource,
+                    new String[]{"dueTime","taskPriority","projectName","taskType","taskId"},
+                    new boolean[]{true,false,true,true,true});
+        }else{
+            SortUtils.sort(this.dataSource,
+                    new String[]{"dueTime","taskPriority","projectName","taskType","taskId"},
+                    new boolean[]{false,false,true,true,true});
+        }
+        this.taskDueTimeFlag++;
+        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        setTableStyle();
     }
 }

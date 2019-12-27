@@ -75,7 +75,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> sortTaskWithDueTime(List<Task> taskList) {
-        String [] sortNameArr = {"DueTime","Project","TaskType","TaskPriority","TaskId"};
+        String [] sortNameArr = {"dueTime","taskPriority","taskType","projectName","taskId"};
         boolean [] isAscArr = {true,true,true,false,true};
         SortUtils.sort(taskList,sortNameArr,isAscArr);
         return  taskList;
