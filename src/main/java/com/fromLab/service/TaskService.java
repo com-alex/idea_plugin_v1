@@ -141,4 +141,8 @@ public interface TaskService {
      * @return
      */
     TaskDetailVO queryTaskDetailByTaskId(Integer taskId);
+
+
+
+    List<Task> getTasks(String sortby,String groupby,String ...filiters);
 }
