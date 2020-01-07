@@ -1,6 +1,5 @@
 package com.fromLab.GUI.Modal;
 
-import com.fromLab.GUI.component.DateChooserJButton;
 import com.fromLab.GUI.component.TaskTableModel;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.service.impl.TaskServiceImpl;
@@ -34,7 +33,10 @@ public class SelectTaskDialog extends JDialog {
     private Integer taskPriorityFlag = 0;
     private Integer taskDueTimeFlag = 0;
     private Integer taskNameFlag = 0;
+    private Integer taskProjectFlag = 0;
+    private Integer taskTypeFlag = 0;
     private String []statusDataSource = {"-- Please Choose --", "New", "To be scheduled", "Scheduled", "In progress", "Closed", "On hold", "Rejected"};
+    private String []priorityDataSource = {"1", "2", "3", "4", "5"};
 
     private JPanel contentPane;
     private JPanel panel1;
@@ -46,6 +48,13 @@ public class SelectTaskDialog extends JDialog {
     private JButton fromDatePickerButton;
     private JLabel dueTimeToLabel;
     private JButton toDatePickerButton;
+    private JLabel projectLabel;
+    private JTextField projectField;
+    private JLabel prioriryPickerLabel;
+    private JComboBox priorityPicker;
+    private JLabel typeLabel;
+    private JTextField typePickerLabel;
+
 
     private JButton searchButton;
 
@@ -136,8 +145,33 @@ public class SelectTaskDialog extends JDialog {
         conditionPanel.add(this.toDatePickerButton);
 
 
+        this.projectLabel = new JLabel("Project name: ");
+        projectLabel.setBounds(750, 10, 100, 20);
+        conditionPanel.add(this.projectLabel);
+
+        this.projectField = new JTextField();
+        projectField.setBounds(840, 5, 100, 30);
+        conditionPanel.add(this.projectField);
+
+        this.prioriryPickerLabel = new JLabel("Priority: ");
+        this.prioriryPickerLabel.setBounds(0, 60, 100, 20);
+        conditionPanel.add(this.prioriryPickerLabel);
+
+        this.priorityPicker = new JComboBox(this.priorityDataSource);
+        this.priorityPicker.setBounds(50, 55, 165, 30);
+        conditionPanel.add(this.priorityPicker);
+
+        this.typeLabel = new JLabel("Type:");
+        this.typeLabel.setBounds(300, 60, 100, 20);
+        conditionPanel.add(this.typeLabel);
+
+        this.typePickerLabel = new JTextField();
+        this.typePickerLabel.setBounds(350, 55, 100, 30);
+        conditionPanel.add(this.typePickerLabel);
+
+
         this.searchButton = new JButton("search");
-        searchButton.setBounds(750, 5, 70, 30);
+        searchButton.setBounds(750, 50, 70, 30);
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -388,8 +422,14 @@ public class SelectTaskDialog extends JDialog {
                     if(pick == 1){
                         sortDataSourceOrderByTaskName();
                     }
+                    else if(pick == 2){
+                        sortDataSourceOrderByProjectName();
+                    }
                     else if(pick == 3){
                         sortDataSourceOrderByPriority();
+                    }
+                    else if(pick == 4){
+                        sortDataSourceOrderByTaskType();
                     }
                     //进行deadline排序
                     else if(pick == 7){
@@ -400,6 +440,8 @@ public class SelectTaskDialog extends JDialog {
             }
         });
     }
+
+
 
     private void sortDataSourceOrderByPriority(){
 
@@ -415,6 +457,22 @@ public class SelectTaskDialog extends JDialog {
                     new boolean[]{true,true,true,true,true});
         }
         this.taskPriorityFlag++;
+        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        setTableStyle();
+    }
+
+    private void sortDataSourceOrderByTaskType() {
+        if(this.taskTypeFlag % 2 == 0){
+            SortUtils.sort(this.dataSource,
+                    new String[]{"taskType","dueTime","taskPriority","projectName","taskId"},
+                    new boolean[]{true, true, false, true, true});
+        }
+        else{
+            SortUtils.sort(this.dataSource,
+                    new String[]{"taskType","dueTime","taskPriority","projectName","taskId"},
+                    new boolean[]{false, true, false, true, true});
+        }
+        this.taskTypeFlag++;
         this.getTaskTable().setModel(new TaskTableModel(dataSource));
         setTableStyle();
     }
@@ -447,6 +505,21 @@ public class SelectTaskDialog extends JDialog {
                     new boolean[]{false,true,false,true,true});
         }
         this.taskNameFlag++;
+        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        setTableStyle();
+    }
+
+    private void sortDataSourceOrderByProjectName(){
+        if(this.taskProjectFlag % 2 == 0){
+            SortUtils.sort(this.dataSource,
+                    new String[]{"projectName","dueTime","taskPriority","taskType","taskId"},
+                    new boolean[]{true, true, false, true, true});
+        }else{
+            SortUtils.sort(this.dataSource,
+                    new String[]{"projectName","dueTime","taskPriority","taskType","taskId"},
+                    new boolean[]{false, true, false, true, true});
+        }
+        this.taskProjectFlag++;
         this.getTaskTable().setModel(new TaskTableModel(dataSource));
         setTableStyle();
     }
