@@ -1,8 +1,11 @@
 package com.fromLab;
 
+import org.apache.commons.codec.binary.Base64;
+
 public class OpenprojectURL {
     public static final String PROJECTS_URL ="/api/v3/projects";
     public static final String PROJECT_URL="/api/v3/projects/{0}";
+    public static final String WORKPAGES_URL="/api/v3/work_packages/{0}";
     private static final String PATH_PARAM_ARG_PREFIX = "\\{";
     private static final String PATH_PARAM_ARG_SUFFIX = "\\}";
     private static final String KEY_QUERY_PARAM = "?key=";
@@ -15,10 +18,16 @@ public class OpenprojectURL {
     private String token = null;
     private String[] filters = null;
     private OpenprojectURL(String openProjectURL, String apiKey, String url, String... pathParams){
-        this.openProjectURL="https://plugin.openproject.com";
+        this.openProjectURL="https://pluginide.openproject.com";
         this.apiKey = apiKey;
         this.url = url;
         this.pathParams = pathParams;
+    }
+    public String encoding(String apikey){
+        Base64 b = new Base64();
+        String key="apikey:"+apikey;
+        String encoding = b.encodeAsString(key.getBytes());
+        return encoding;
     }
     public static OpenprojectURL create(String openProjectURL, String apiKey, String url,
                                         String... pathParams) {
@@ -40,7 +49,7 @@ public class OpenprojectURL {
         return new StringBuilder()
                 .append(openProjectURL)
                 .append(createUrlWithPathParams())
-                .append(createAuthQueryString())
+              //  .append(createAuthQueryString())
                 .append(createFilterQuery())
                 .toString();
     }
@@ -76,4 +85,6 @@ public class OpenprojectURL {
         // boardUrl += authQueryString;
         return compiledUrl;
     }
+
+
 }
