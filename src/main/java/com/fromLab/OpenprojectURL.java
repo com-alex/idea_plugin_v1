@@ -5,7 +5,7 @@ import org.apache.commons.codec.binary.Base64;
 public class OpenprojectURL {
     public static final String PROJECTS_URL ="/api/v3/projects";
     public static final String PROJECT_URL="/api/v3/projects/{0}";
-    public static final String WORKPAGES_URL="/api/v3/work_packages/{0}";
+    public static final String WORKPAGES_URL="/api/v3/work_packages/";
     private static final String PATH_PARAM_ARG_PREFIX = "\\{";
     private static final String PATH_PARAM_ARG_SUFFIX = "\\}";
     private static final String KEY_QUERY_PARAM = "?key=";
