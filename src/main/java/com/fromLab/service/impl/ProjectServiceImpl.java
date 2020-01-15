@@ -5,6 +5,7 @@ import com.fromLab.entity.Project;
 import com.fromLab.service.ProjectService;
 import com.fromLab.utils.HttpBasicAuth;
 import com.google.gson.JsonObject;
+import net.sf.json.JSONObject;
 
 import java.util.List;
 
@@ -37,13 +38,13 @@ public class ProjectServiceImpl implements ProjectService {
                 .filter(filiters)
                 .build();
         HttpBasicAuth hb=new HttpBasicAuth();
-       JsonObject jsonObject= hb.getJson(url,apiKey);
-        System.out.println(jsonObject);
+        JSONObject json = hb.getJson(url, apiKey);
+        System.out.println(json);
         return null;
     }
 
     public static void main(String[] args) {
-        ProjectServiceImpl imp=new ProjectServiceImpl("d283df40b49674c4805a088f6b6f0b109276627df1fc24057e985ee3c0f6bbc2");
+        ProjectServiceImpl imp=new ProjectServiceImpl("e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123");
         imp.getProjects("");
     }
 }

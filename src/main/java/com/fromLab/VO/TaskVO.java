@@ -35,6 +35,8 @@ public class TaskVO {
 
     private Integer timeSpent;
 
+    private String taskDetail;
+
     public Integer getTaskId() {
         return taskId;
     }
@@ -131,6 +133,14 @@ public class TaskVO {
         this.timeSpent = timeSpent;
     }
 
+    public String getTaskDetail() {
+        return taskDetail;
+    }
+
+    public void setTaskDetail(String taskDetail) {
+        this.taskDetail = taskDetail;
+    }
+
     @Override
     public String toString() {
         return "TaskVO{" +
@@ -146,6 +156,7 @@ public class TaskVO {
                 ", status='" + status + '\'' +
                 ", progress='" + progress + '\'' +
                 ", timeSpent=" + timeSpent +
+                ", taskDetail='" + taskDetail + '\'' +
                 '}';
     }
 }
