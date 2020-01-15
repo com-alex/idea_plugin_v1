@@ -29,14 +29,12 @@ public class Filter {
         this.value = value;
     }
 
-    public String toJson(){
-        JsonArray jsonArray=new JsonArray();
+    public JsonObject toJsonObj(){
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("operator","=");
         jsonObject.addProperty("values",value);
         JsonObject jsonObject1=new JsonObject();
         jsonObject1.add(name,jsonObject);
-        jsonArray.add(jsonObject1);
-        return jsonArray.toString();
+        return jsonObject1;
     }
 }

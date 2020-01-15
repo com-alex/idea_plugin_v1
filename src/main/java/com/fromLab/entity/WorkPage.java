@@ -15,7 +15,7 @@ public class WorkPage {
     private String user;
     private int response_id; //user id
     private String response;
-
+    private int lock_version;
     private int type_id;
     private String type;
     private String startDate;
@@ -24,6 +24,14 @@ public class WorkPage {
     private String estimatedTime;
     private String spentTime;
     private int percentageDone;
+
+    public int getLock_version() {
+        return lock_version;
+    }
+
+    public void setLock_version(int lock_version) {
+        this.lock_version = lock_version;
+    }
 
     public int getId() {
         return id;
