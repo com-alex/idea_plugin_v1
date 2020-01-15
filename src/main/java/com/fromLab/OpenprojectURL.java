@@ -1,27 +1,29 @@
 package com.fromLab;
 
+import okhttp3.*;
 import org.apache.commons.codec.binary.Base64;
+
+import java.io.IOException;
 
 public class OpenprojectURL {
     public static final String PROJECTS_URL ="/api/v3/projects";
-    public static final String PROJECT_URL="/api/v3/projects/{0}";
+    public static final String PROJECT_URL="/api/v3/projects/";
     public static final String WORKPAGES_URL="/api/v3/work_packages/";
     private static final String PATH_PARAM_ARG_PREFIX = "\\{";
     private static final String PATH_PARAM_ARG_SUFFIX = "\\}";
     private static final String KEY_QUERY_PARAM = "?key=";
     private static final String TOKEN_QUERY_PARAM = "&token=";
     private static final String FILTER_QUERY_PARAM = "&filter=";
-    private final String openProjectURL;
-    private final String url;
-    private final String[] pathParams;
-    private final String apiKey;
+    private  String openProjectURL;
+    private  String url;
+    private  String[] pathParams;
+    private  String apiKey;
     private String token = null;
     private String[] filters = null;
-    private OpenprojectURL(String openProjectURL, String apiKey, String url, String... pathParams){
+     public OpenprojectURL(String openProjectURL, String apiKey, String url){
         this.openProjectURL="https://pluginide.openproject.com";
         this.apiKey = apiKey;
         this.url = url;
-        this.pathParams = pathParams;
     }
     public String encoding(String apikey){
         Base64 b = new Base64();
@@ -29,9 +31,31 @@ public class OpenprojectURL {
         String encoding = b.encodeAsString(key.getBytes());
         return encoding;
     }
-    public static OpenprojectURL create(String openProjectURL, String apiKey, String url,
-                                        String... pathParams) {
-        return new OpenprojectURL(openProjectURL,apiKey, url, pathParams);
+    public String getJson (String url){
+        Base64 b = new Base64();
+        String key="apikey:"+apiKey;
+        String encoding = b.encodeAsString(key.getBytes());
+        String tail="Basic "+encoding;
+        System.out.println(url);
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .method("GET", null)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .addHeader("Authorization", tail)
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "error";
+    }
+    public static OpenprojectURL create(String openProjectURL, String apiKey, String url
+                                        ) {
+        return new OpenprojectURL(openProjectURL,apiKey, url);
     }
     public OpenprojectURL filter(String... filters) {
         this.filters = isArrayEmpty(filters) ? null : filters;
@@ -52,6 +76,30 @@ public class OpenprojectURL {
               //  .append(createAuthQueryString())
                 .append(createFilterQuery())
                 .toString();
+    }
+    public String patch (String url,String json){
+        Base64 b = new Base64();
+        String key="apikey:"+apiKey;
+        String encoding = b.encodeAsString(key.getBytes());
+        String tail="Basic "+encoding;
+        System.out.println(url);
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .method("PATCH", body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", tail)
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "error";
     }
 
     private String createFilterQuery() {
@@ -86,5 +134,9 @@ public class OpenprojectURL {
         return compiledUrl;
     }
 
+    public static void main(String[] args) {
+        OpenprojectURL openprojectURL= new OpenprojectURL("https://pluginide.openproject.com",
+                "d283df40b49674c4805a088f6b6f0b109276627df1fc24057e985ee3c0f6bbc2",OpenprojectURL.WORKPAGES_URL);
+    }
 
 }
