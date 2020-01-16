@@ -25,6 +25,9 @@ public class TaskVO {
 
     private String startTime;
 
+    //版本号，更新时需要
+    private Integer lockVersion;
+
     private String endTime;
 
     private String dueTime;
@@ -141,6 +144,14 @@ public class TaskVO {
         this.taskDetail = taskDetail;
     }
 
+    public Integer getLockVersion() {
+        return lockVersion;
+    }
+
+    public void setLockVersion(Integer lockVersion) {
+        this.lockVersion = lockVersion;
+    }
+
     @Override
     public String toString() {
         return "TaskVO{" +
@@ -151,6 +162,7 @@ public class TaskVO {
                 ", taskPriority=" + taskPriority +
                 ", taskType='" + taskType + '\'' +
                 ", startTime='" + startTime + '\'' +
+                ", lockVersion=" + lockVersion +
                 ", endTime='" + endTime + '\'' +
                 ", dueTime='" + dueTime + '\'' +
                 ", status='" + status + '\'' +

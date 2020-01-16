@@ -11,13 +11,14 @@ public enum Status {
     ToBeScheduled(5,"To be scheduled"),
     Scheduled(6,"Scheduled"),
     InProgress(7,"In progress"),
-    Developed(8,"Developed"),
-    InTesting(9,"In Testing"),
-    Tested(10,"Tested"),
-    TestedFailed(11,"Test failed"),
-    Closed(12,"Closed"),
-    OnHold(13,"On hold"),
-    Rejected(14,"Reject");
+    InDevelopment(8,"In development"),
+    Developed(9,"Developed"),
+    InTesting(10,"In Testing"),
+    Tested(11,"Tested"),
+    TestedFailed(12,"Test failed"),
+    Closed(13,"Closed"),
+    OnHold(14,"On hold"),
+    Rejected(15,"Reject");
     private int id;
     private String name;
 

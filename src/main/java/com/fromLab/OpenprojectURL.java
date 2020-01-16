@@ -21,7 +21,7 @@ public class OpenprojectURL {
     private String token = null;
     private String[] filters = null;
      public OpenprojectURL(String openProjectURL, String apiKey, String url){
-        this.openProjectURL="https://pluginide.openproject.com";
+        this.openProjectURL="http://projects.plugininide.com/openproject";
         this.apiKey = apiKey;
         this.url = url;
     }
