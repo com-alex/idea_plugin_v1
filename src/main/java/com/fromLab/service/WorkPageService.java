@@ -17,5 +17,6 @@ public interface WorkPageService {
     void updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date);
     void updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date,String customField );
     void updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time,String customField );
+    void updateStatusAndProgress(String openprojectURL, String apiKey, int id, int lock_version,Status status,int percentage);
    // Task updateLocalProperties(String openprojectURL, String apiKey, HashMap<Object,Object> properties,int lock_version);
 }

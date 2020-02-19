@@ -94,6 +94,23 @@ public class WorkPageImpl implements WorkPageService {
         System.out.println(result);
     }
 
+    @Override
+    public void updateStatusAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage) {
+        JsonObject body=new JsonObject();
+        body.addProperty("lockVersion",lock_version);
+        body.addProperty("percentageDone",percentage);
+        JsonObject status1=new JsonObject();
+        status1.addProperty("href","/api/v3/statuses/"+status.getId());
+        JsonObject links=new JsonObject();
+        links.add("status",status1);
+        body.add("_links",links);
+        System.out.println(body.toString());
+        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
+        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,body.toString());
+        System.out.println(result);
+
+    }
+
     public static void main(String[] args) {
         WorkPageImpl wi=new WorkPageImpl();
         Filter filter=new Filter("project_id","1");
@@ -104,7 +121,9 @@ public class WorkPageImpl implements WorkPageService {
         SortBy sortBy=new SortBy("status","asc");
         String url="http://192.168.199.129/openproject";
         String apikey="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
-        wi.updateSpentTime(url,apikey,8,5,10,"customField4");
+        wi.updateStatusAndProgress(url,apikey,8,11,Status.InProgress,100);
+       // wi.updateStatus(url,apikey,8,Status.InProgress,6);
+      //  wi.updateSpentTime(url,apikey,8,5,10,"customField4");
      //   wi.UpdatePercentageDone("https://pluginide.openproject.com","d283df40b49674c4805a088f6b6f0b109276627df1fc24057e985ee3c0f6bbc2",4,2,100);
       //  wi.getTaskById("https://pluginide.openproject.com","d283df40b49674c4805a088f6b6f0b109276627df1fc24057e985ee3c0f6bbc2",1);
        // wi.getTasks("https://pluginide.openproject.com","d283df40b49674c4805a088f6b6f0b109276627df1fc24057e985ee3c0f6bbc2",
