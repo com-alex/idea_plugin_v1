@@ -82,7 +82,7 @@ public class OpenprojectURL {
         String key="apikey:"+apiKey;
         String encoding = b.encodeAsString(key.getBytes());
         String tail="Basic "+encoding;
-        System.out.println(url);
+//        System.out.println(url);
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         MediaType mediaType = MediaType.parse("application/json");

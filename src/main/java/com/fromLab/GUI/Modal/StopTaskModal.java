@@ -3,6 +3,7 @@ package com.fromLab.GUI.Modal;
 import com.fromLab.GUI.component.TaskProgressSlider;
 import com.fromLab.GUI.component.TaskTableModel;
 import com.fromLab.VO.TaskVO;
+import com.fromLab.entity.Status;
 import com.fromLab.entity.Task;
 import com.fromLab.service.TaskService;
 import com.fromLab.service.impl.TaskServiceImpl;
@@ -22,13 +23,18 @@ import java.util.List;
  */
 public class StopTaskModal extends JFrame {
 
+    private final static String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
+    private final static String API_KEY="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
+
     private TaskService taskService;
 
     private SelectTaskDialog dialog;
     private Integer taskProgress = 0;
-    private Integer taskId;
+    private Task selectedTask;
     private Integer timeSpent;
-    private String []statusDataSource = {"New", "To be scheduled", "Scheduled", "In progress", "Closed", "On hold", "Rejected"};
+    private Status selectedStatus;
+    private String []statusDataSourceView;
+    private Status[] statusDataSource = {Status.NEW, Status.InProgress, Status.Closed, Status.OnHold, Status.Rejected};
 
     //放滑块与状态选择控件
     private JPanel contentPanel;
@@ -42,13 +48,17 @@ public class StopTaskModal extends JFrame {
 
 
 
-    public StopTaskModal(Integer taskId, Integer taskProgress, Integer timeSpent, SelectTaskDialog dialog){
+    public StopTaskModal(Task selectedTask, Integer taskProgress,  SelectTaskDialog dialog){
+        this.statusDataSourceView = new String[this.statusDataSource.length];
+        for (int i = 0; i < statusDataSource.length; i++) {
+            statusDataSourceView[i] = statusDataSource[i].getName();
+        }
+
         this.setLayout(new BorderLayout());
 
         this.dialog = dialog;
         this.taskService = new TaskServiceImpl();
-        this.taskId = taskId;
-        this.timeSpent = timeSpent;
+        this.selectedTask = selectedTask;
         this.taskProgress = taskProgress;
         this.contentPanel = new JPanel();
         contentPanel.setLayout(null);
@@ -72,7 +82,7 @@ public class StopTaskModal extends JFrame {
         this.taskStatusLabel.setBounds(180, 170, 100, 20);
         contentPanel.add(taskStatusLabel);
 
-        this.comboBox = new JComboBox(statusDataSource);
+        this.comboBox = new JComboBox(statusDataSourceView);
         this.comboBox.setBounds(240, 165, 150, 30);
         contentPanel.add(comboBox);
         this.add(contentPanel, BorderLayout.CENTER);
@@ -84,6 +94,7 @@ public class StopTaskModal extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateTask();
+
             }
         });
         buttonPanel.add(confirmButton);
@@ -107,14 +118,10 @@ public class StopTaskModal extends JFrame {
     }
 
     private void updateTask(){
-        Task task = this.taskService.queryTaskByTaskId(this.taskId);
-        //保存设置的进度
-        task.setProgress(this.taskProgress + "%");
-        //保存设置的状态
-        task.setStatus((String) this.comboBox.getSelectedItem());
-        //保存工作的耗时
-        task.setTimeSpent(this.timeSpent + task.getTimeSpent());
-        taskService.saveOrUpdateTask(task);
+
+        this.selectedStatus = statusDataSource[this.comboBox.getSelectedIndex()];
+
+        this.taskService.updateStautsAndProgress(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(), this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
         JButton[] jButtons = new JButton[1];
         JButton button = new JButton("ok");
         jButtons[0] = button;
@@ -129,6 +136,16 @@ public class StopTaskModal extends JFrame {
         JOptionPane.showOptionDialog(null, "Save successfully", "Tips", JOptionPane.WARNING_MESSAGE, 0, null, jButtons, jButtons[0]);
         this.dialog.resetTableDataSource();
         this.dialog.setVisible(true);
+    }
+
+
+    private Status transferToStatus(String statusString){
+        for (Status status : statusDataSource) {
+            if(status.getName().equals(statusString)){
+                return status;
+            }
+        }
+        return Status.NEW;
     }
 
 }

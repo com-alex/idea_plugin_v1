@@ -119,8 +119,11 @@ public class TaskDaoImpl implements TaskDao {
         sqlBuilder.select("task_id, uid, task_name, project_name, task_priority, task_type, start_time, end_time, due_time, status, progress, time_spent")
                 .from("task_info")
                 .where()
-                .addEqualTo("uid", uid)
-                .addLike("status", '%' + status + '%')
+                .addEqualTo("uid", uid);
+//        if(priority != null){
+//            sqlBuilder.addEqualTo("task_priority", priority);
+//        }
+        sqlBuilder.addLike("status", '%' + status + '%')
                 .addGreaterOrEqualTo("due_time", fromDueTime)
                 .addLessOrEqualTo("due_time", toDueTime);
         try {

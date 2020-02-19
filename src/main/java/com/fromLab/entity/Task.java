@@ -1,6 +1,7 @@
 package com.fromLab.entity;
 
 import com.fromLab.annotation.Column;
+import com.fromLab.annotation.Ignored;
 import com.fromLab.annotation.PrimaryKey;
 import com.fromLab.annotation.Table;
 
@@ -14,54 +15,67 @@ import java.sql.Timestamp;
  * taskype我认为和后面的activity一个意思，比如有design，develop，consultant
  * 用sql.timestamp类型来表示时间，因为比较精确，就是不知道通过PMS api获得的时间类型是什么，是否容易转换？
  */
-@Table (tableName = "task_info")
+//@Table (tableName = "task_info")
 public class Task {
 
-    @PrimaryKey
-    @Column(column = "task_id")
+//    @PrimaryKey
+//    @Column(column = "task_id")
+//    private Integer taskId;
+//    @Column(column = "uid")
+//    private Integer uid;
+//    @Column(column = "task_name")
+//    private String taskName;
+//    @Column(column = "project_name")
+//    private String projectName;
+//    @Column(column = "task_priority")
+//    private Integer taskPriority;
+//    @Column(column = "task_type")
+//    private String taskType;
+//    @Column(column = "task_detail")
+//    private String taskDetail;
+//    @Column(column = "start_time")
+//    private String startTime;
+//    @Column(column = "end_time")
+//    private String endTime;
+//    @Column(column = "due_time")
+//    private String dueTime;
+//    @Column(column = "status")
+//    private String status;
+//    @Column(column = "progress")
+//    private String progress;
+//    @Column(column = "time_spent")
+//    private Integer timeSpent;
+
+
     private Integer taskId;
-    @Column(column = "uid")
-    private Integer uid;
-    @Column(column = "task_name")
+
     private String taskName;
-    @Column(column = "project_name")
+
     private String projectName;
-    @Column(column = "task_priority")
+
     private Integer taskPriority;
-    @Column(column = "task_type")
+
     private String taskType;
-    @Column(column = "task_detail")
-    private String taskDetail;
-    @Column(column = "start_time")
+
     private String startTime;
-    @Column(column = "end_time")
+
+    //版本号，更新时需要
+    private Integer lockVersion;
+
     private String endTime;
-    @Column(column = "due_time")
+
     private String dueTime;
-    @Column(column = "status")
+
     private String status;
-    @Column(column = "progress")
+
     private String progress;
-    @Column(column = "time_spent")
+
     private Integer timeSpent;
 
-    public Task() {
-    }
+    private String taskDetail;
 
-    public Task(Integer taskId, Integer uid, String taskName, String projectName, Integer taskPriority, String taskType, String taskDetail, String startTime, String endTime, String dueTime, String status, String progress, Integer timeSpent) {
-        this.taskId = taskId;
-        this.uid = uid;
-        this.taskName = taskName;
-        this.projectName = projectName;
-        this.taskPriority = taskPriority;
-        this.taskType = taskType;
-        this.taskDetail = taskDetail;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.dueTime = dueTime;
-        this.status = status;
-        this.progress = progress;
-        this.timeSpent = timeSpent;
+    public Task() {
+
     }
 
     public Integer getTaskId() {
@@ -70,14 +84,6 @@ public class Task {
 
     public void setTaskId(Integer taskId) {
         this.taskId = taskId;
-    }
-
-    public Integer getUid() {
-        return uid;
-    }
-
-    public void setUid(Integer uid) {
-        this.uid = uid;
     }
 
     public String getTaskName() {
@@ -112,20 +118,20 @@ public class Task {
         this.taskType = taskType;
     }
 
-    public String getTaskDetail() {
-        return taskDetail;
-    }
-
-    public void setTaskDetail(String taskDetail) {
-        this.taskDetail = taskDetail;
-    }
-
     public String getStartTime() {
         return startTime;
     }
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
+    }
+
+    public Integer getLockVersion() {
+        return lockVersion;
+    }
+
+    public void setLockVersion(Integer lockVersion) {
+        this.lockVersion = lockVersion;
     }
 
     public String getEndTime() {
@@ -168,22 +174,30 @@ public class Task {
         this.timeSpent = timeSpent;
     }
 
+    public String getTaskDetail() {
+        return taskDetail;
+    }
+
+    public void setTaskDetail(String taskDetail) {
+        this.taskDetail = taskDetail;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
                 "taskId=" + taskId +
-                ", uid=" + uid +
                 ", taskName='" + taskName + '\'' +
                 ", projectName='" + projectName + '\'' +
                 ", taskPriority=" + taskPriority +
                 ", taskType='" + taskType + '\'' +
-                ", taskDetail='" + taskDetail + '\'' +
                 ", startTime='" + startTime + '\'' +
+                ", lockVersion=" + lockVersion +
                 ", endTime='" + endTime + '\'' +
                 ", dueTime='" + dueTime + '\'' +
                 ", status='" + status + '\'' +
                 ", progress='" + progress + '\'' +
                 ", timeSpent=" + timeSpent +
+                ", taskDetail='" + taskDetail + '\'' +
                 '}';
     }
 }

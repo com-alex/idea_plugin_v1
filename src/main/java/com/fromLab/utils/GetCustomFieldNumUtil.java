@@ -4,8 +4,7 @@ import com.fromLab.OpenprojectURL;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import static com.fromLab.utils.JsonToObjectUtil.apiKey;
-import static com.fromLab.utils.JsonToObjectUtil.openprojectURL;
+
 
 /**
  * @Auther: JIN KE
@@ -14,6 +13,10 @@ import static com.fromLab.utils.JsonToObjectUtil.openprojectURL;
 
 
 public class GetCustomFieldNumUtil {
+
+    private final static String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
+    private final static String API_KEY="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
+
     /**
      *
      * @param customFieldName  例如Task type ，End date , Time spent
@@ -22,8 +25,8 @@ public class GetCustomFieldNumUtil {
      * @return customFieldX
      */
     public static String getCustomfiledNum(String customFieldName,String openProjectURL,String apikey){
-        OpenprojectURL o=new OpenprojectURL(openprojectURL,apikey,OpenprojectURL.WORKPAGES_URL);
-        String json= o.getJson(openprojectURL+"/api/v3/work_packages");
+        OpenprojectURL o=new OpenprojectURL(OPENPROJECT_URL,apikey,OpenprojectURL.WORKPAGES_URL);
+        String json= o.getJson(OPENPROJECT_URL+"/api/v3/work_packages");
         JSONObject jsonObject = JSONObject.fromObject(json);
         String embedded = jsonObject.getString("_embedded");
         JSONObject embeddedJsonObject = JSONObject.fromObject(embedded);
@@ -40,8 +43,10 @@ public class GetCustomFieldNumUtil {
                 String name=splitName[1].substring(1,(splitName[1].length()-1));
 //                System.out.println(name);
 //                System.out.println("customField" + i);
-                if (customFieldName.equals(name))
+                if (customFieldName.equals(name)){
                     return  "customField" + i;
+                }
+
             }
         }
 
@@ -50,6 +55,6 @@ public class GetCustomFieldNumUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(getCustomfiledNum("Task type", openprojectURL, apiKey));
+        System.out.println(getCustomfiledNum("Task type", OPENPROJECT_URL, API_KEY));
     }
 }

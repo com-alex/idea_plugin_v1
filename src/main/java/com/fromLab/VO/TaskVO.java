@@ -25,9 +25,6 @@ public class TaskVO {
 
     private String startTime;
 
-    //版本号，更新时需要
-    private Integer lockVersion;
-
     private String endTime;
 
     private String dueTime;
@@ -38,7 +35,9 @@ public class TaskVO {
 
     private Integer timeSpent;
 
-    private String taskDetail;
+    //版本号，更新时需要
+    @Ignored
+    private Integer lockVersion;
 
     public Integer getTaskId() {
         return taskId;
@@ -136,14 +135,6 @@ public class TaskVO {
         this.timeSpent = timeSpent;
     }
 
-    public String getTaskDetail() {
-        return taskDetail;
-    }
-
-    public void setTaskDetail(String taskDetail) {
-        this.taskDetail = taskDetail;
-    }
-
     public Integer getLockVersion() {
         return lockVersion;
     }
@@ -162,13 +153,12 @@ public class TaskVO {
                 ", taskPriority=" + taskPriority +
                 ", taskType='" + taskType + '\'' +
                 ", startTime='" + startTime + '\'' +
-                ", lockVersion=" + lockVersion +
                 ", endTime='" + endTime + '\'' +
                 ", dueTime='" + dueTime + '\'' +
                 ", status='" + status + '\'' +
                 ", progress='" + progress + '\'' +
                 ", timeSpent=" + timeSpent +
-                ", taskDetail='" + taskDetail + '\'' +
+                ", lockVersion=" + lockVersion +
                 '}';
     }
 }

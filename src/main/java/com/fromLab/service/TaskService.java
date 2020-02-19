@@ -133,11 +133,13 @@ public interface TaskService {
 
 
 
-    List<TaskVO> getTasks(String openprojectURL, String apikey, List<Filter> filters);
+    List<Task> getTasks(String openprojectURL, String apikey, List<Filter> filters);
 
-    TaskVO getTaskById(String openprojectURL, String apiKey, int id);
+    Task getTaskById(String openprojectURL, String apiKey, int id);
 
     void updateStatus(String openprojectURL, String apiKey, int id, Status status, int lock_version);
 
     void updateProgress(String openprojectURL, String apiKey, int id, int lock_version, int percentage);
+
+    void updateStautsAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage);
 }

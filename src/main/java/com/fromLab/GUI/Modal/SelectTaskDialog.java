@@ -1,7 +1,10 @@
 package com.fromLab.GUI.Modal;
 
+import com.fromLab.GUI.component.TableRenderer;
 import com.fromLab.GUI.component.TaskTableModel;
 import com.fromLab.VO.TaskVO;
+import com.fromLab.entity.Filter;
+import com.fromLab.entity.Task;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.DateUtils;
 import com.fromLab.utils.ReflectionUtils;
@@ -26,9 +29,13 @@ public class SelectTaskDialog extends JDialog {
     private static final String SET_END_TIME_MODAL_FLAG = "end";
     private static final String SET_FROM_DUE_TIME = "from";
     private static final String SET_TO_DUE_TIME = "to";
+    private final static String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
+    private final static String API_KEY="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
 
     private Long startTime;
     private Long endTime;
+    private Boolean chosed = false;
+    private Integer selectedTaskIndex;
     private List<TaskVO> dataSource;
     private Integer taskPriorityFlag = 0;
     private Integer taskDueTimeFlag = 0;
@@ -36,7 +43,7 @@ public class SelectTaskDialog extends JDialog {
     private Integer taskProjectFlag = 0;
     private Integer taskTypeFlag = 0;
     private String []statusDataSource = {"-- Please Choose --", "New", "To be scheduled", "Scheduled", "In progress", "Closed", "On hold", "Rejected"};
-    private String []priorityDataSource = {"1", "2", "3", "4", "5"};
+    private String []priorityDataSource = {"-- Please Choose --", "Immediate", "High", "Normal", "Low", "-"};
 
     private JPanel contentPane;
     private JPanel panel1;
@@ -83,6 +90,7 @@ public class SelectTaskDialog extends JDialog {
      */
     public void initInterface(){
         taskService = new TaskServiceImpl();
+        this.dataSource = new ArrayList<>();
 
         panel1.setLocation(0,0);
         panel1.setLayout(null);
@@ -108,7 +116,7 @@ public class SelectTaskDialog extends JDialog {
                     if(selectedItem.contains("Please")){
                         selectedItem = "";
                     }
-                    queryShowTaskByStatus(selectedItem);
+//                    queryShowTaskByStatus(selectedItem);
                 }
             }
         });
@@ -123,7 +131,7 @@ public class SelectTaskDialog extends JDialog {
         this.fromDatePickerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onDatePicker(SET_FROM_DUE_TIME);
+//                onDatePicker(SET_FROM_DUE_TIME);
             }
         });
         conditionPanel.add(this.fromDatePickerButton);
@@ -139,7 +147,7 @@ public class SelectTaskDialog extends JDialog {
         this.toDatePickerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onDatePicker(SET_TO_DUE_TIME);
+//                onDatePicker(SET_TO_DUE_TIME);
             }
         });
         conditionPanel.add(this.toDatePickerButton);
@@ -175,7 +183,7 @@ public class SelectTaskDialog extends JDialog {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                searchDataSource();
+//                searchDataSource();
             }
         });
         conditionPanel.add(this.searchButton);
@@ -204,7 +212,7 @@ public class SelectTaskDialog extends JDialog {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setTaskTime(SET_START_TIME_MODAL_FLAG);
+//                setTaskTime(SET_START_TIME_MODAL_FLAG);
             }
         });
         panel1.add(startButton);
@@ -214,7 +222,7 @@ public class SelectTaskDialog extends JDialog {
         endButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setTaskTime(SET_END_TIME_MODAL_FLAG);
+//                setTaskTime(SET_END_TIME_MODAL_FLAG);
             }
         });
         panel1.add(endButton);
@@ -225,7 +233,7 @@ public class SelectTaskDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //查看task的detail
-                viewTaskDetail();
+//                viewTaskDetail();
             }
         });
         panel1.add(viewButton);
@@ -275,8 +283,11 @@ public class SelectTaskDialog extends JDialog {
             }
             params.add(taskTable.getValueAt(row, i));
         }
+        System.out.println(params);
         TaskVO selectedTaskVO = (TaskVO) ReflectionUtils.createObject(TaskVO.class, params);
         selectedTaskVO.setUid(this.uid);
+
+        System.out.println(1);
 
 
         if (flag != null && flag.indexOf(SET_START_TIME_MODAL_FLAG) > -1) {
@@ -316,46 +327,65 @@ public class SelectTaskDialog extends JDialog {
 
 
     private void chooseTask(){
-        //按下选择工作按钮才能停止工作按钮
-        this.stopButton.setEnabled(true);
-        Long startTime = System.currentTimeMillis();
-        this.startTime = startTime;
-        System.out.println("Start Task  Time:" + this.startTime);
+        if(!this.chosed){
+            int row = taskTable.getSelectedRow();
+            if(row == -1){
+                this.setVisible(false);
+                showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            //按下选择工作按钮才能停止工作按钮
+            this.chosed = true;
+            this.selectedTaskIndex = row;
+            this.stopButton.setEnabled(true);
+            this.startTime = System.currentTimeMillis();
+            System.out.println("Start Task  Time:" + this.startTime);
+            this.setVisible(false);
+            showOptionDialog("You select a task successfully!", JOptionPane.PLAIN_MESSAGE);
+        }else{
+            this.setVisible(false);
+            showOptionDialog("You have selected a task!", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
     }
 
     private void stopTask(){
         int row = taskTable.getSelectedRow();
+        if(row != this.selectedTaskIndex){
+            this.setVisible(false);
+            showOptionDialog("You select a wrong task!", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         //获取所选行的task的id
         Integer taskId = (Integer) taskTable.getValueAt(row, 0);
-        Long endTime = System.currentTimeMillis();
-        this.endTime = endTime;
+        this.endTime = System.currentTimeMillis();
         System.out.println("Stop Task  Time:" + this.endTime);
         Integer timeSpent = (int)((this.endTime - this.startTime) / 1000);
         System.out.println("Stop Task! The Spent Time is: " + timeSpent + "s");
+        //TODO 更新Spent time
         this.startTime = 0L;
         this.endTime = 0L;
+        this.chosed = false;
+        this.stopButton.setEnabled(false);
         //获取所选行的task的progress
         String progressString = (String) taskTable.getValueAt(row, 9);
         Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
+        Task task = this.taskVOConvertToTask(this.dataSource.get(row));
         this.setVisible(false);
-        new StopTaskModal(taskId, progress, timeSpent, this);
+        new StopTaskModal(task, progress, this);
 
     }
 
     public void setTableDataSource(){
         //TODO uid为静态，需要进行动态变化
-        List<TaskVO> dataSource = taskService.queryAllShowTask(1);
-        this.uid = 1;
-
+        this.dataSource = this.getDataSource();
         TaskTableModel taskTableModel = new TaskTableModel(dataSource);
         taskTable = new JTable(taskTableModel);
 
         setTableStyle();
         taskTable.setBounds(0, 0, 1020, 340);
 
-        this.dataSource = dataSource;
-
-        setTableSort();
+//        setTableSort();
 
         JScrollPane scrollPane = new JScrollPane(taskTable);
 
@@ -366,16 +396,15 @@ public class SelectTaskDialog extends JDialog {
 
 
     public void resetTableDataSource(){
-        //TODO uid为静态，需要进行动态变化
         //刷新表格数据源
-        List<TaskVO> dataSource = taskService.queryAllShowTask(1);
+        this.dataSource = this.getDataSource();
         this.getTaskTable().setModel(new TaskTableModel(dataSource));
         setTableStyle();
-        this.dataSource = dataSource;
-        setTableSort();
+//        setTableSort();
     }
 
     public void setTableStyle(){
+        this.getTaskTable().setDefaultRenderer(Object.class, new TableRenderer());
         this.getTaskTable().getColumnModel().getColumn(0).setPreferredWidth(100);
         this.getTaskTable().getColumnModel().getColumn(1).setPreferredWidth(150);
         this.getTaskTable().getColumnModel().getColumn(2).setPreferredWidth(100);
@@ -402,7 +431,6 @@ public class SelectTaskDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 Window win = SwingUtilities.getWindowAncestor(button);
                 win.dispose();
-
             }
         });
         JOptionPane.showOptionDialog(null, info, "Tips", type, 0, null, jButtons, jButtons[0]);
@@ -565,6 +593,14 @@ public class SelectTaskDialog extends JDialog {
         if(queryStatus.contains("Please")){
             queryStatus = "";
         }
+        String queryPriority = (String) this.priorityPicker.getSelectedItem();
+        Integer queryPriorityNum = null;
+        if(queryPriority.contains("Please")){
+            queryPriorityNum = null;
+        }else {
+            queryPriorityNum = this.priorityFilter(queryPriority);
+        }
+        System.out.println(queryPriorityNum);
         String fromDueTime = this.fromDatePickerButton.getText();
         String toDueTime = this.toDatePickerButton.getText();
         LocalDateTime fromLocalDateTime = DateUtils.string2LocalDateTime(fromDueTime);
@@ -582,5 +618,42 @@ public class SelectTaskDialog extends JDialog {
             this.getTaskTable().setModel(new TaskTableModel(dataSource));
             setTableStyle();
         }
+    }
+
+    private Integer priorityFilter(String input){
+
+        if("-".equals(input)){
+            return 1;
+        }else if("Low".equals(input)){
+            return 2;
+        }else if("Normal".equals(input)){
+            return 3;
+        }else if("High".equals(input)){
+            return 4;
+        }else if("Immediate".equals(input)){
+            return 5;
+        }
+        return null;
+    }
+
+    private List<TaskVO> getDataSource(){
+        List<TaskVO> taskVOList = new ArrayList<>();
+        Filter filter=new Filter("type_id","1");
+        ArrayList<Filter> filters=new ArrayList<>();
+        filters.add(filter);
+        List<Task> taskList = taskService.getTasks(OPENPROJECT_URL, API_KEY, filters);
+        taskList.forEach(task -> {
+            TaskVO taskVO = new TaskVO();
+            taskVO = (TaskVO) ReflectionUtils.copyProperties(task, taskVO);
+            taskVOList.add(taskVO);
+        });
+        return taskVOList;
+    }
+
+
+    private Task taskVOConvertToTask(TaskVO taskVO){
+        Task task = new Task();
+        task = (Task) ReflectionUtils.copyProperties(taskVO, task);
+        return task;
     }
 }

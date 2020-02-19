@@ -119,14 +119,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskVO getTaskById(String openprojectURL, String apiKey, int id) {
+    public Task getTaskById(String openprojectURL, String apiKey, int id) {
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
+//        System.out.println(openprojectURL+OpenprojectURL.WORKPAGES_URL+id);
         String json= o.getJson(openprojectURL+OpenprojectURL.WORKPAGES_URL+id);
-        //System.out.println(json);
         JSONObject jsonObject = JSONObject.fromObject(json);
-        TaskVO taskVO=JsonToTask(jsonObject);
-        System.out.println(taskVO.toString());
-        return taskVO;
+        Task task =JsonToTask(jsonObject);
+        return task;
     }
 
     @Override
@@ -144,7 +143,6 @@ public class TaskServiceImpl implements TaskService {
         System.out.println(json);
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,json);
-        System.out.println(result);
     }
 
     @Override
@@ -154,40 +152,52 @@ public class TaskServiceImpl implements TaskService {
         jsonObject.addProperty("percentageDone",percentage);
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
-        System.out.println(result);
     }
 
     @Override
-    public List<TaskVO> getTasks(String openprojectURL, String apikey, List<Filter> filters) {
+    public void updateStautsAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("lockVersion", lock_version);
+        JsonObject links=new JsonObject();
+        links.add("status",status.statusJsonObject());
+        jsonObject.add("_links",links);
+        jsonObject.addProperty("percentageDone",percentage);
+        /**
+         * {
+         *     "lockVersion":10,
+         *     "_links":{
+         *         "status":{
+         *             "href":"/api/v3/statuses/1"
+         *         }
+         *     },
+         *     "percentageDone":15
+         * }
+         */
+        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
+        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
+
+    }
+
+    @Override
+    public List<Task> getTasks(String openprojectURL, String apikey, List<Filter> filters) {
         JsonArray jsonArray=new JsonArray();
         for(int i=0;i<filters.size();i++){
             jsonArray.add(filters.get(i).toJsonObj());
         }
         String filterJson=jsonArray.toString();
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apikey,OpenprojectURL.WORKPAGES_URL);
+        System.out.println(openprojectURL+OpenprojectURL.WORKPAGES_URL+
+                "?filters="+filterJson);
         String json= o.getJson(openprojectURL+OpenprojectURL.WORKPAGES_URL+
                 "?filters="+filterJson
                 );
-        //System.out.println(json);
+//        System.out.println(json);
         JSONObject jsonObject = JSONObject.fromObject(json);
-        List<TaskVO> taskVOList=JsonToTaskList(jsonObject);
-        for (Iterator<TaskVO> iterator = taskVOList.iterator(); iterator.hasNext(); ) {
-            TaskVO next =  iterator.next();
-            System.out.println(next.toString());
+        List<Task> taskList = JsonToTaskList(jsonObject);
 
-        }
-        return taskVOList;
+        return taskList;
     }
 
-    public static void main(String[] args) {
-        TaskServiceImpl taskService=new TaskServiceImpl();
-        Filter filter=new Filter("type_id","1");
-        ArrayList<Filter> filters=new ArrayList<>();
-        filters.add(filter);
-        //taskService.getTasks(openprojectURL,apiKey,filters);
-        taskService.getTaskById(openprojectURL,apiKey,14);
-        //taskService.updateStatus(openprojectURL,apiKey,14,Status.Closed,1);
-        //taskService.updateProgress(openprojectURL,apiKey,14,2,15);
 
-    }
+
 }

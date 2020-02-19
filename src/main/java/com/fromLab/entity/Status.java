@@ -4,18 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public enum Status {
-    NEW(1,"new"),
-    InSpecification(2,"In specification"),
-    Specified(3,"Specified"),
-    Confirmed(4,"Confirmed"),
-    ToBeScheduled(5,"To be scheduled"),
-    Scheduled(6,"Scheduled"),
+    NEW(1,"New"),
     InProgress(7,"In progress"),
-    InDevelopment(8,"In development"),
-    Developed(9,"Developed"),
-    InTesting(10,"In Testing"),
-    Tested(11,"Tested"),
-    TestedFailed(12,"Test failed"),
     Closed(13,"Closed"),
     OnHold(14,"On hold"),
     Rejected(15,"Reject");
@@ -53,5 +43,11 @@ public enum Status {
         links.add("status",status1);
         body.add("_links",links);
         return body.toString();
+    }
+
+    public JsonObject statusJsonObject(){
+        JsonObject status1=new JsonObject();
+        status1.addProperty("href","/api/v3/statuses/"+id);
+        return status1;
     }
 }
