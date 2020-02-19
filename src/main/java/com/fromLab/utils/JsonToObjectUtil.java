@@ -44,7 +44,7 @@ public class JsonToObjectUtil {
         task.setStartTime(startTime);
         //dueTime
         String dueTime = String.valueOf(json.getOrDefault("dueDate","null"));
-        task.setStartTime(dueTime);
+        task.setDueTime(dueTime);
         //endTime
         String endTime = String.valueOf(json.getOrDefault("customField2","null"));
         task.setEndTime(endTime);

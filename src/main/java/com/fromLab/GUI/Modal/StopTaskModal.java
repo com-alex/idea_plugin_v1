@@ -139,13 +139,5 @@ public class StopTaskModal extends JFrame {
     }
 
 
-    private Status transferToStatus(String statusString){
-        for (Status status : statusDataSource) {
-            if(status.getName().equals(statusString)){
-                return status;
-            }
-        }
-        return Status.NEW;
-    }
 
 }

@@ -12,9 +12,6 @@ public class TaskVO {
 
     private Integer taskId;
 
-    @Ignored
-    private Integer uid;
-
     private String taskName;
 
     private String projectName;
@@ -39,20 +36,15 @@ public class TaskVO {
     @Ignored
     private Integer lockVersion;
 
+    @Ignored
+    private String taskDetail;
+
     public Integer getTaskId() {
         return taskId;
     }
 
     public void setTaskId(Integer taskId) {
         this.taskId = taskId;
-    }
-
-    public Integer getUid() {
-        return uid;
-    }
-
-    public void setUid(Integer uid) {
-        this.uid = uid;
     }
 
     public String getTaskName() {
@@ -143,11 +135,18 @@ public class TaskVO {
         this.lockVersion = lockVersion;
     }
 
+    public String getTaskDetail() {
+        return taskDetail;
+    }
+
+    public void setTaskDetail(String taskDetail) {
+        this.taskDetail = taskDetail;
+    }
+
     @Override
     public String toString() {
         return "TaskVO{" +
                 "taskId=" + taskId +
-                ", uid=" + uid +
                 ", taskName='" + taskName + '\'' +
                 ", projectName='" + projectName + '\'' +
                 ", taskPriority=" + taskPriority +
@@ -159,6 +158,7 @@ public class TaskVO {
                 ", progress='" + progress + '\'' +
                 ", timeSpent=" + timeSpent +
                 ", lockVersion=" + lockVersion +
+                ", taskDetail='" + taskDetail + '\'' +
                 '}';
     }
 }

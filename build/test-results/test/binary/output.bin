@@ -1,0 +1,2 @@
+€Task{taskId=8, taskName='111', projectName='Demo project', taskPriority=7, taskType='Specification', startTime='2020-02-19', lockVersion=16, endTime='2020-02-28', dueTime='2020-02-29', status='In progress', progress='90%', timeSpent=10, taskDetail='test'}
+bTaskDetailVO{taskName='111', projectName='Demo project', dueTime='2020-02-29', taskDetail='test'}

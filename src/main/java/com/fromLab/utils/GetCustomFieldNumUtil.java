@@ -28,15 +28,24 @@ public class GetCustomFieldNumUtil {
         OpenprojectURL o=new OpenprojectURL(OPENPROJECT_URL,apikey,OpenprojectURL.WORKPAGES_URL);
         String json= o.getJson(OPENPROJECT_URL+"/api/v3/work_packages");
         JSONObject jsonObject = JSONObject.fromObject(json);
+
+
+
         String embedded = jsonObject.getString("_embedded");
         JSONObject embeddedJsonObject = JSONObject.fromObject(embedded);
+
+
         String schemas = embeddedJsonObject.getString("schemas");
         JSONObject schemaJsonObject = JSONObject.fromObject(schemas);
+
+
         String embedded1 = schemaJsonObject.getString("_embedded");
         JSONObject embeddedJsonObject1 = JSONObject.fromObject(embedded1);
+
+
         JSONArray elementsArray = embeddedJsonObject1.getJSONArray("elements");
         for (int i = 1; i < 20; i++) {
-            String CustomFieldString = String.valueOf(elementsArray.getJSONObject(elementsArray.size() - 1).getOrDefault("customField" + i, "null"));
+            String CustomFieldString = String.valueOf(elementsArray.getJSONObject(0).getOrDefault("customField" + i, "null"));
             if (!"null".equals(CustomFieldString)) {
                 String[] split = CustomFieldString.split(",");
                 String[] splitName = split[1].split(":");

@@ -2,11 +2,14 @@ package com.fromLab.GUI.Modal;
 
 import com.fromLab.GUI.component.TableRenderer;
 import com.fromLab.GUI.component.TaskTableModel;
+import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Filter;
+import com.fromLab.entity.Status;
 import com.fromLab.entity.Task;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.DateUtils;
+import com.fromLab.utils.GetCustomFieldNumUtil;
 import com.fromLab.utils.ReflectionUtils;
 import com.fromLab.utils.SortUtils;
 
@@ -25,8 +28,6 @@ import java.util.List;
 
 public class SelectTaskDialog extends JDialog {
     //常量，防止出现魔法值
-    private static final String SET_START_TIME_MODAL_FLAG = "start";
-    private static final String SET_END_TIME_MODAL_FLAG = "end";
     private static final String SET_FROM_DUE_TIME = "from";
     private static final String SET_TO_DUE_TIME = "to";
     private final static String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
@@ -42,8 +43,13 @@ public class SelectTaskDialog extends JDialog {
     private Integer taskNameFlag = 0;
     private Integer taskProjectFlag = 0;
     private Integer taskTypeFlag = 0;
-    private String []statusDataSource = {"-- Please Choose --", "New", "To be scheduled", "Scheduled", "In progress", "Closed", "On hold", "Rejected"};
-    private String []priorityDataSource = {"-- Please Choose --", "Immediate", "High", "Normal", "Low", "-"};
+    private String taskTypeCustomFieldName;
+    private String spentTimeCustomFieldName;
+    private String endDateCustomFieldName;
+    private Task selectedTask;
+    private Status[] statusDataSource = {null, Status.NEW, Status.InProgress, Status.Closed, Status.OnHold, Status.Rejected};
+    private String[] statusShowDate = {"-- Please Choose --", "New", "In progress", "Closed", "On hold", "Rejected"};
+    private String[] priorityShowData = {"-- Please Choose --", "Immediate", "High", "Normal", "Low"};
 
     private JPanel contentPane;
     private JPanel panel1;
@@ -69,7 +75,7 @@ public class SelectTaskDialog extends JDialog {
 
     //数据显示控件
     private JPanel tablePanel;
-    private JButton startButton;
+//    private JButton startButton;
     private JButton endButton;
     private JButton chooseButton;
     private JButton viewButton;
@@ -89,6 +95,14 @@ public class SelectTaskDialog extends JDialog {
      * 主界面初始化
      */
     public void initInterface(){
+
+        //获取自定义字段的名称
+        this.taskTypeCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("Task type", OPENPROJECT_URL, API_KEY);
+        this.endDateCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("End date", OPENPROJECT_URL, API_KEY);
+        this.spentTimeCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("Time spent", OPENPROJECT_URL, API_KEY);
+
+        this.selectedTask = new Task();
+
         taskService = new TaskServiceImpl();
         this.dataSource = new ArrayList<>();
 
@@ -106,7 +120,7 @@ public class SelectTaskDialog extends JDialog {
         this.statusPickerLabel.setBounds(0, 10, 100, 20);
         conditionPanel.add(this.statusPickerLabel);
 
-        statusPicker = new JComboBox(this.statusDataSource);
+        statusPicker = new JComboBox(this.statusShowDate);
         this.statusPicker.setBounds(50, 5, 165, 30);
         this.statusPicker.addItemListener(new ItemListener() {
             @Override
@@ -131,7 +145,7 @@ public class SelectTaskDialog extends JDialog {
         this.fromDatePickerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                onDatePicker(SET_FROM_DUE_TIME);
+                onDatePicker(SET_FROM_DUE_TIME);
             }
         });
         conditionPanel.add(this.fromDatePickerButton);
@@ -147,7 +161,7 @@ public class SelectTaskDialog extends JDialog {
         this.toDatePickerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                onDatePicker(SET_TO_DUE_TIME);
+                onDatePicker(SET_TO_DUE_TIME);
             }
         });
         conditionPanel.add(this.toDatePickerButton);
@@ -165,7 +179,7 @@ public class SelectTaskDialog extends JDialog {
         this.prioriryPickerLabel.setBounds(0, 60, 100, 20);
         conditionPanel.add(this.prioriryPickerLabel);
 
-        this.priorityPicker = new JComboBox(this.priorityDataSource);
+        this.priorityPicker = new JComboBox(this.priorityShowData);
         this.priorityPicker.setBounds(50, 55, 165, 30);
         conditionPanel.add(this.priorityPicker);
 
@@ -206,40 +220,29 @@ public class SelectTaskDialog extends JDialog {
         this.setTableDataSource();
 
 
-
-        startButton = new JButton("start");
-        startButton.setBounds(0, 500, 70, 30);
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-//                setTaskTime(SET_START_TIME_MODAL_FLAG);
-            }
-        });
-        panel1.add(startButton);
-
-        endButton = new JButton("end");
-        endButton.setBounds(100, 500, 70, 30);
+        endButton = new JButton("set end date");
+        endButton.setBounds(0, 500, 150, 30);
         endButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                setTaskTime(SET_END_TIME_MODAL_FLAG);
+                setTaskEndTime();
             }
         });
         panel1.add(endButton);
 
-        viewButton = new JButton("view");
-        viewButton.setBounds(200, 500, 70, 30);
+        viewButton = new JButton("view task's detail");
+        viewButton.setBounds(180, 500, 150, 30);
         viewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //查看task的detail
-//                viewTaskDetail();
+                viewTaskDetail();
             }
         });
         panel1.add(viewButton);
 
-        chooseButton = new JButton("choose");
-        chooseButton.setBounds(300, 500, 70, 30);
+        chooseButton = new JButton("choose the task");
+        chooseButton.setBounds(360, 500, 150, 30);
         chooseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -249,8 +252,8 @@ public class SelectTaskDialog extends JDialog {
         });
         panel1.add(chooseButton);
 
-        stopButton = new JButton("stop");
-        stopButton.setBounds(400, 500, 70, 30);
+        stopButton = new JButton("stop the task");
+        stopButton.setBounds(540, 500, 150, 30);
         //默认停止工作按钮为不能按
         stopButton.setEnabled(false);
         stopButton.addActionListener(new ActionListener() {
@@ -263,53 +266,16 @@ public class SelectTaskDialog extends JDialog {
 
     }
 
-
-
-    /**
-     * 设置开始时间与结束时间的模态框事件
-     * @param flag
-     */
-    private void setTaskTime(String flag) {
-        this.setVisible(false);
+    private void setTaskEndTime(){
         Integer row = taskTable.getSelectedRow();
         if (row == -1) {
+            this.setVisible(false);
             showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        List<Object> params = new ArrayList<>();
-        for (int i = 0; i < taskTable.getColumnCount(); i++) {
-            if (i == 1) {
-                params.add(this.uid);
-            }
-            params.add(taskTable.getValueAt(row, i));
-        }
-        System.out.println(params);
-        TaskVO selectedTaskVO = (TaskVO) ReflectionUtils.createObject(TaskVO.class, params);
-        selectedTaskVO.setUid(this.uid);
-
-        System.out.println(1);
-
-
-        if (flag != null && flag.indexOf(SET_START_TIME_MODAL_FLAG) > -1) {
-            if ((selectedTaskVO.getStartTime() == null) || (selectedTaskVO.getStartTime() != null && "".equals(selectedTaskVO.getStartTime()))) {
-
-                SetTimeModal setStartTimeModal = new SetTimeModal(SET_START_TIME_MODAL_FLAG, this, selectedTaskVO);
-            } else {
-                showOptionDialog("You have chosen start time!", JOptionPane.WARNING_MESSAGE);
-            }
-
-        } else {
-            if (selectedTaskVO.getStartTime() != null && !("".equals(selectedTaskVO.getStartTime()))) {
-                if (selectedTaskVO.getEndTime() != null && "".equals(selectedTaskVO.getEndTime())) {
-                    SetTimeModal setStartTimeModal = new SetTimeModal(SET_END_TIME_MODAL_FLAG, this, selectedTaskVO);
-                } else {
-                    showOptionDialog("You have chosen end time!", JOptionPane.WARNING_MESSAGE);
-                }
-            } else {
-                showOptionDialog("You need to set start time firstly!", JOptionPane.WARNING_MESSAGE);
-            }
-
-        }
+        this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
+        this.setVisible(false);
+        new SetTimeModal(this, this.selectedTask, this.endDateCustomFieldName);
 
     }
 
@@ -318,10 +284,14 @@ public class SelectTaskDialog extends JDialog {
     }
 
     private void viewTaskDetail(){
-        int row = taskTable.getSelectedRow();
-        Integer taskId = (Integer) taskTable.getValueAt(row, 0);
-        System.out.println(taskId);
-        new TaskDetailModal(this, taskId);
+        Integer row = taskTable.getSelectedRow();
+        if (row == -1) {
+            this.setVisible(false);
+            showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        TaskDetailVO taskDetailVO = this.taskVOConvertToTaskDetailVO(this.dataSource.get(row));
+        new TaskDetailModal(this, taskDetailVO);
         this.setVisible(false);
     }
 
@@ -334,6 +304,13 @@ public class SelectTaskDialog extends JDialog {
                 showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
+            if("null".equals(this.selectedTask.getStartTime())){
+                String startDate = DateUtils.date2String(new Date());
+                this.taskService.updateStartDate(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(),
+                        this.selectedTask.getLockVersion(), startDate);
+            }
+            this.getTaskTable().setValueAt("*", row, 0);
             //按下选择工作按钮才能停止工作按钮
             this.chosed = true;
             this.selectedTaskIndex = row;
@@ -356,23 +333,24 @@ public class SelectTaskDialog extends JDialog {
             showOptionDialog("You select a wrong task!", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        //获取所选行的task的id
-        Integer taskId = (Integer) taskTable.getValueAt(row, 0);
         this.endTime = System.currentTimeMillis();
-        System.out.println("Stop Task  Time:" + this.endTime);
         Integer timeSpent = (int)((this.endTime - this.startTime) / 1000);
         System.out.println("Stop Task! The Spent Time is: " + timeSpent + "s");
-        //TODO 更新Spent time
+        this.getTaskTable().setValueAt("", row, 0);
         this.startTime = 0L;
         this.endTime = 0L;
+        this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
+        //TODO 更新Spent time
+        this.taskService.updateSpentTime(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(),
+                this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
+                this.spentTimeCustomFieldName);
         this.chosed = false;
         this.stopButton.setEnabled(false);
         //获取所选行的task的progress
-        String progressString = (String) taskTable.getValueAt(row, 9);
+            String progressString = (String) taskTable.getValueAt(row, 10);
         Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
-        Task task = this.taskVOConvertToTask(this.dataSource.get(row));
         this.setVisible(false);
-        new StopTaskModal(task, progress, this);
+        new StopTaskModal(this.selectedTask, progress, this);
 
     }
 
@@ -405,17 +383,18 @@ public class SelectTaskDialog extends JDialog {
 
     public void setTableStyle(){
         this.getTaskTable().setDefaultRenderer(Object.class, new TableRenderer());
-        this.getTaskTable().getColumnModel().getColumn(0).setPreferredWidth(100);
-        this.getTaskTable().getColumnModel().getColumn(1).setPreferredWidth(150);
-        this.getTaskTable().getColumnModel().getColumn(2).setPreferredWidth(100);
+        this.getTaskTable().getColumnModel().getColumn(0).setPreferredWidth(50);
+        this.getTaskTable().getColumnModel().getColumn(1).setPreferredWidth(80);
+        this.getTaskTable().getColumnModel().getColumn(2).setPreferredWidth(150);
         this.getTaskTable().getColumnModel().getColumn(3).setPreferredWidth(100);
         this.getTaskTable().getColumnModel().getColumn(4).setPreferredWidth(100);
-        this.getTaskTable().getColumnModel().getColumn(5).setPreferredWidth(150);
+        this.getTaskTable().getColumnModel().getColumn(5).setPreferredWidth(100);
         this.getTaskTable().getColumnModel().getColumn(6).setPreferredWidth(150);
-        this.getTaskTable().getColumnModel().getColumn(7).setPreferredWidth(166);
-        this.getTaskTable().getColumnModel().getColumn(8).setPreferredWidth(100);
+        this.getTaskTable().getColumnModel().getColumn(7).setPreferredWidth(150);
+        this.getTaskTable().getColumnModel().getColumn(8).setPreferredWidth(166);
         this.getTaskTable().getColumnModel().getColumn(9).setPreferredWidth(100);
-        taskTable.getColumnModel().getColumn(10).setPreferredWidth(100);
+        this.getTaskTable().getColumnModel().getColumn(10).setPreferredWidth(100);
+        this.getTaskTable().getColumnModel().getColumn(11).setPreferredWidth(100);
         this.getTaskTable().setRowHeight(30);
         this.getTaskTable().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         this.getTaskTable().setShowHorizontalLines(false);
@@ -653,7 +632,13 @@ public class SelectTaskDialog extends JDialog {
 
     private Task taskVOConvertToTask(TaskVO taskVO){
         Task task = new Task();
+        return (Task) ReflectionUtils.copyProperties(taskVO, task);
+    }
+
+    private TaskDetailVO taskVOConvertToTaskDetailVO(TaskVO taskVO){
+        Task task = new Task();
         task = (Task) ReflectionUtils.copyProperties(taskVO, task);
-        return task;
+        TaskDetailVO taskDetailVO = new TaskDetailVO();
+        return (TaskDetailVO) ReflectionUtils.copyProperties(task, taskDetailVO);
     }
 }

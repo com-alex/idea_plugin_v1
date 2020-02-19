@@ -5,11 +5,15 @@ import com.fromLab.entity.Filter;
 import com.fromLab.entity.Status;
 import com.fromLab.entity.Task;
 import com.fromLab.service.impl.TaskServiceImpl;
+import com.fromLab.utils.DateUtils;
+import com.fromLab.utils.GetCustomFieldNumUtil;
 import com.fromLab.utils.ReflectionUtils;
+import gherkin.lexer.Da;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,7 +51,7 @@ public class TaskServiceTest {
         Task task = taskService.getTaskById(OPENPROJECT_URL,API_KEY, 8);
         System.out.println("before:" + task);
 
-        taskService.updateStatus(OPENPROJECT_URL, API_KEY, task.getTaskId(), Status.InProgress, task.getLockVersion());
+//        taskService.updateStatus(OPENPROJECT_URL, API_KEY, task.getTaskId(), Status.InProgress, task.getLockVersion());
 
         task = taskService.getTaskById(OPENPROJECT_URL,API_KEY, 8);
         System.out.println("before:" + task);
@@ -58,7 +62,7 @@ public class TaskServiceTest {
     public void updateProgress(){
         Task task = taskService.getTaskById(OPENPROJECT_URL,API_KEY, 8);
         System.out.println("before:" + task);
-        taskService.updateProgress(OPENPROJECT_URL,API_KEY,task.getTaskId(), task.getLockVersion(),15);
+//        taskService.updateProgress(OPENPROJECT_URL,API_KEY,task.getTaskId(), task.getLockVersion(),15);
         task = taskService.getTaskById(OPENPROJECT_URL, API_KEY, 8);
         System.out.println("update: " + task);
     }
@@ -90,5 +94,33 @@ public class TaskServiceTest {
         taskService.updateStautsAndProgress(OPENPROJECT_URL, API_KEY, task.getTaskId(), task.getLockVersion(), Status.OnHold, 50);
 
 
+    }
+
+
+
+
+
+    @Test
+    public void updateSpentTime(){
+        Task task = taskService.getTaskById(OPENPROJECT_URL, API_KEY, 8);
+        String custom = GetCustomFieldNumUtil.getCustomfiledNum("Time spent", OPENPROJECT_URL, API_KEY);
+        taskService.updateSpentTime(OPENPROJECT_URL, API_KEY, task.getTaskId(), task.getLockVersion(), 10, custom);
+    }
+
+    @Test
+    public void testUpdateStartDate(){
+        Task task = taskService.getTaskById(OPENPROJECT_URL, API_KEY, 8);
+        String startDate = DateUtils.date2String(new Date());
+        taskService.updateStartDate(OPENPROJECT_URL, API_KEY, task.getTaskId(), task.getLockVersion(), startDate);
+    }
+
+
+    @Test
+    public void testUpdateEndDate(){
+        Task task = taskService.getTaskById(OPENPROJECT_URL, API_KEY, 8);
+        String custom = GetCustomFieldNumUtil.getCustomfiledNum("End date", OPENPROJECT_URL, API_KEY);
+        String endDate = DateUtils.date2String(new Date());
+        System.out.println(endDate);
+        taskService.updateEndDate(OPENPROJECT_URL, API_KEY, task.getTaskId(), task.getLockVersion(), endDate, custom);
     }
 }

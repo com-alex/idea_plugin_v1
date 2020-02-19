@@ -4,10 +4,7 @@ import com.fromLab.DAO.impl.TaskDaoImpl;
 import com.fromLab.OpenprojectURL;
 import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
-import com.fromLab.entity.Filter;
-import com.fromLab.entity.SortBy;
-import com.fromLab.entity.Status;
-import com.fromLab.entity.Task;
+import com.fromLab.entity.*;
 import com.fromLab.service.TaskService;
 import com.fromLab.utils.SortUtils;
 import com.google.gson.JsonArray;
@@ -134,25 +131,81 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
+
+
     @Override
-    /**
-     * lock_version 类似于版本号，更新时需要上传当前的版本号，taskVO对象中存储了这个属性
-     */
-    public void updateStatus(String openprojectURL, String apiKey, int id, Status status, int lock_version) {
-        String json=status.toJson(lock_version);
-        System.out.println(json);
-        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
-        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,json);
+    public List<Task> getTasks(String openprojectURL, String apikey, List<Filter> filters) {
+        JsonArray jsonArray=new JsonArray();
+        for(int i=0;i<filters.size();i++){
+            jsonArray.add(filters.get(i).toJsonObj());
+        }
+        String filterJson=jsonArray.toString();
+        OpenprojectURL o=new OpenprojectURL(openprojectURL,apikey,OpenprojectURL.WORKPAGES_URL);
+        String json= o.getJson(openprojectURL+OpenprojectURL.WORKPAGES_URL+
+                "?filters="+filterJson
+                );
+//        System.out.println(json);
+        JSONObject jsonObject = JSONObject.fromObject(json);
+        List<Task> taskList = JsonToTaskList(jsonObject);
+
+        return taskList;
     }
 
     @Override
-    public void updateProgress(String openprojectURL, String apiKey, int id, int lock_version, int percentage) {
+    public void updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date) {
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("lockVersion",lock_version);
-        jsonObject.addProperty("percentageDone",percentage);
+        jsonObject.addProperty("startDate",start_date);
+//        System.out.println(jsonObject);
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
+//        System.out.println(result);
     }
+
+    @Override
+    public void updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date, String customField) {
+        JsonObject jsonObject=new JsonObject();
+        jsonObject.addProperty("lockVersion",lock_version);
+        jsonObject.addProperty(customField,end_date);
+//        System.out.println(jsonObject);
+        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
+        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
+//        System.out.println(result);
+    }
+
+    @Override
+    public void updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField) {
+        JsonObject jsonObject=new JsonObject();
+        jsonObject.addProperty("lockVersion",lock_version);
+        jsonObject.addProperty(customField,time);
+//        System.out.println(jsonObject);
+        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
+        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
+        System.out.println(result);
+    }
+
+
+
+
+//    @Override
+//    /**
+//     * lock_version 类似于版本号，更新时需要上传当前的版本号，taskVO对象中存储了这个属性
+//     */
+//    public void updateStatus(String openprojectURL, String apiKey, int id, Status status, int lock_version) {
+//        String json=status.toJson(lock_version);
+//        System.out.println(json);
+//        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
+//        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,json);
+//    }
+//
+//    @Override
+//    public void updateProgress(String openprojectURL, String apiKey, int id, int lock_version, int percentage) {
+//        JsonObject jsonObject=new JsonObject();
+//        jsonObject.addProperty("lockVersion",lock_version);
+//        jsonObject.addProperty("percentageDone",percentage);
+//        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
+//        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
+//    }
 
     @Override
     public void updateStautsAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage) {
@@ -178,25 +231,6 @@ public class TaskServiceImpl implements TaskService {
 
     }
 
-    @Override
-    public List<Task> getTasks(String openprojectURL, String apikey, List<Filter> filters) {
-        JsonArray jsonArray=new JsonArray();
-        for(int i=0;i<filters.size();i++){
-            jsonArray.add(filters.get(i).toJsonObj());
-        }
-        String filterJson=jsonArray.toString();
-        OpenprojectURL o=new OpenprojectURL(openprojectURL,apikey,OpenprojectURL.WORKPAGES_URL);
-        System.out.println(openprojectURL+OpenprojectURL.WORKPAGES_URL+
-                "?filters="+filterJson);
-        String json= o.getJson(openprojectURL+OpenprojectURL.WORKPAGES_URL+
-                "?filters="+filterJson
-                );
-//        System.out.println(json);
-        JSONObject jsonObject = JSONObject.fromObject(json);
-        List<Task> taskList = JsonToTaskList(jsonObject);
-
-        return taskList;
-    }
 
 
 

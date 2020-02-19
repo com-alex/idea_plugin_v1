@@ -1,6 +1,7 @@
 package com.fromLab.GUI.Modal;
 
 import com.fromLab.VO.TaskDetailVO;
+import com.fromLab.entity.Task;
 import com.fromLab.service.TaskService;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.GUIUtils;
@@ -18,9 +19,9 @@ import java.awt.event.ActionListener;
 public class TaskDetailModal extends JFrame {
 
     private SelectTaskDialog dialog;
-    private Integer taskId;
+
     private TaskDetailVO taskDetailVO;
-    private TaskService taskService;
+
 
     //5,2 GridLayout
     private JPanel contentPanel;
@@ -42,17 +43,17 @@ public class TaskDetailModal extends JFrame {
 
     }
 
-    public TaskDetailModal(SelectTaskDialog dialog, Integer taskId){
+    public TaskDetailModal(SelectTaskDialog dialog, TaskDetailVO taskDetailVO){
         this.dialog = dialog;
-        this.taskId = taskId;
-        this.taskService = new TaskServiceImpl();
+        this.taskDetailVO = taskDetailVO;
+        System.out.println(this.taskDetailVO);
         initModal();
     }
 
     private void initModal(){
 
         //获取数据源
-        taskDetailVO = taskService.queryTaskDetailByTaskId(taskId);
+//        taskDetailVO = taskService.queryTaskDetailByTaskId(taskId);
 
         this.setLayout(new BorderLayout());
         this.contentPanel = new JPanel();

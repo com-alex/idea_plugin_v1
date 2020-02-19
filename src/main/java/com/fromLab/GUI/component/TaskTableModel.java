@@ -19,7 +19,7 @@ public class TaskTableModel extends AbstractTableModel {
      * 这里和刚才一样，定义列名和每个数据的值
      */
     String[] columnNames =
-            {"taskId", "task_name", "project_name", "task_priority", "task_type", "start_time", "end_time", "due_time", "status", "progress", "time_spent"};
+            {"", "taskId", "task_name", "project_name", "task_priority", "task_type", "start_date", "end_date", "due_date", "status", "progress", "time_spent"};
     Object[][] data;
 
     /**
@@ -28,23 +28,24 @@ public class TaskTableModel extends AbstractTableModel {
     public TaskTableModel(List<TaskVO> list) {
         this.data = new Object[list.size()][this.columnNames.length];
         for (int i = 0; i < list.size(); i++) {
+            data[i][0] = "";
             TaskVO task = list.get(i);
             List<Object> params = ReflectionUtils.getObjectParams(task);
             for (int j = 0; j < params.size(); j++) {
 
                 if (params.get(j) != null) {
                     if(StringUtils.equals(params.get(j) + "", "null")){
-                        data[i][j] = "";
+                        data[i][j + 1] = "";
                     }
                     else{
                         if(j == 3){
-                            data[i][j] = this.taskPriorityFilter(params.get(j));
+                            data[i][j + 1] = this.taskPriorityFilter(params.get(j));
                         }else{
-                            data[i][j] = params.get(j);
+                            data[i][j + 1] = params.get(j);
                         }
                     }
                 } else {
-                    data[i][j] = "";
+                    data[i][j + 1] = "";
                 }
 
 
