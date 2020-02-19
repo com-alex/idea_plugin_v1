@@ -62,7 +62,7 @@ public class WorkPageImpl implements WorkPageService {
     }
 
     @Override
-    public WorkPage updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date) {
+    public void updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date) {
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("lockVersion",lock_version);
         jsonObject.addProperty("startDate",start_date);
@@ -70,11 +70,10 @@ public class WorkPageImpl implements WorkPageService {
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
         System.out.println(result);
-        return null;
     }
 
     @Override
-    public WorkPage updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date, String customField) {
+    public void updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date, String customField) {
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("lockVersion",lock_version);
         jsonObject.addProperty(customField,end_date);
@@ -82,11 +81,10 @@ public class WorkPageImpl implements WorkPageService {
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
         System.out.println(result);
-        return null;
     }
 
     @Override
-    public WorkPage updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField) {
+    public void updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField) {
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("lockVersion",lock_version);
         jsonObject.addProperty(customField,time);
@@ -94,7 +92,6 @@ public class WorkPageImpl implements WorkPageService {
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
         System.out.println(result);
-        return null;
     }
 
     public static void main(String[] args) {
