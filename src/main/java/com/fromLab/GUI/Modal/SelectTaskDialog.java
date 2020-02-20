@@ -12,6 +12,7 @@ import com.fromLab.utils.DateUtils;
 import com.fromLab.utils.GetCustomFieldNumUtil;
 import com.fromLab.utils.ReflectionUtils;
 import com.fromLab.utils.SortUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 
@@ -50,6 +51,7 @@ public class SelectTaskDialog extends JDialog {
     private Status[] statusDataSource = {null, Status.NEW, Status.InProgress, Status.Closed, Status.OnHold, Status.Rejected};
     private String[] statusShowDate = {"-- Please Choose --", "New", "In progress", "Closed", "On hold", "Rejected"};
     private String[] priorityShowData = {"-- Please Choose --", "Immediate", "High", "Normal", "Low"};
+    private String[] typeShowDate = {"-- Please Choose --", "Management", "Specification", "Development", "Testing", "Support", "Other"};
 
     private JPanel contentPane;
     private JPanel panel1;
@@ -61,12 +63,12 @@ public class SelectTaskDialog extends JDialog {
     private JButton fromDatePickerButton;
     private JLabel dueTimeToLabel;
     private JButton toDatePickerButton;
-    private JLabel projectLabel;
-    private JTextField projectField;
+    private JLabel subjectLabel;
+    private JTextField subjectField;
     private JLabel prioriryPickerLabel;
     private JComboBox priorityPicker;
     private JLabel typeLabel;
-    private JTextField typePickerLabel;
+    private JComboBox typePicker;
 
 
     private JButton searchButton;
@@ -167,13 +169,13 @@ public class SelectTaskDialog extends JDialog {
         conditionPanel.add(this.toDatePickerButton);
 
 
-        this.projectLabel = new JLabel("Project name: ");
-        projectLabel.setBounds(750, 10, 100, 20);
-        conditionPanel.add(this.projectLabel);
+        this.subjectLabel = new JLabel("Subject: ");
+        subjectLabel.setBounds(750, 10, 100, 20);
+        conditionPanel.add(this.subjectLabel);
 
-        this.projectField = new JTextField();
-        projectField.setBounds(840, 5, 100, 30);
-        conditionPanel.add(this.projectField);
+        this.subjectField = new JTextField();
+        subjectField.setBounds(840, 5, 100, 30);
+        conditionPanel.add(this.subjectField);
 
         this.prioriryPickerLabel = new JLabel("Priority: ");
         this.prioriryPickerLabel.setBounds(0, 60, 100, 20);
@@ -187,9 +189,9 @@ public class SelectTaskDialog extends JDialog {
         this.typeLabel.setBounds(300, 60, 100, 20);
         conditionPanel.add(this.typeLabel);
 
-        this.typePickerLabel = new JTextField();
-        this.typePickerLabel.setBounds(350, 55, 100, 30);
-        conditionPanel.add(this.typePickerLabel);
+        this.typePicker = new JComboBox(this.typeShowDate);
+        this.typePicker.setBounds(350, 55, 165, 30);
+        conditionPanel.add(this.typePicker);
 
 
         this.searchButton = new JButton("search");
@@ -197,7 +199,7 @@ public class SelectTaskDialog extends JDialog {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                searchDataSource();
+                searchDataSource();
             }
         });
         conditionPanel.add(this.searchButton);
@@ -356,7 +358,7 @@ public class SelectTaskDialog extends JDialog {
 
     public void setTableDataSource(){
         //TODO uid为静态，需要进行动态变化
-        this.dataSource = this.getDataSource();
+        this.dataSource = this.getDataSource(null, null, null, null, null, null);
         TaskTableModel taskTableModel = new TaskTableModel(dataSource);
         taskTable = new JTable(taskTableModel);
 
@@ -375,7 +377,7 @@ public class SelectTaskDialog extends JDialog {
 
     public void resetTableDataSource(){
         //刷新表格数据源
-        this.dataSource = this.getDataSource();
+        this.dataSource = this.getDataSource(null, null, null, null, null, null);
         this.getTaskTable().setModel(new TaskTableModel(dataSource));
         setTableStyle();
 //        setTableSort();
@@ -568,10 +570,11 @@ public class SelectTaskDialog extends JDialog {
 
     private void searchDataSource(){
         //获取条件
+        //status
         String queryStatus = (String) this.statusPicker.getSelectedItem();
-        if(queryStatus.contains("Please")){
-            queryStatus = "";
-        }
+        Integer queryStatusNum = this.statusFilter(queryStatus);
+
+        //priorityNum
         String queryPriority = (String) this.priorityPicker.getSelectedItem();
         Integer queryPriorityNum = null;
         if(queryPriority.contains("Please")){
@@ -579,7 +582,21 @@ public class SelectTaskDialog extends JDialog {
         }else {
             queryPriorityNum = this.priorityFilter(queryPriority);
         }
-        System.out.println(queryPriorityNum);
+
+        //taskType
+        Integer queryTaskTypeNum = this.typePicker.getSelectedIndex();
+        if(queryTaskTypeNum == 0){
+            queryTaskTypeNum = null;
+        }
+
+        //subject
+        String querySubject = this.subjectField.getText().trim();
+        if(StringUtils.equals(querySubject, "")){
+            querySubject = null;
+        }
+
+
+        //fromDueDate, toDueDate
         String fromDueTime = this.fromDatePickerButton.getText();
         String toDueTime = this.toDatePickerButton.getText();
         LocalDateTime fromLocalDateTime = DateUtils.string2LocalDateTime(fromDueTime);
@@ -588,39 +605,33 @@ public class SelectTaskDialog extends JDialog {
         Long min = duration.toMillis();
         if(min <= 0L){
             this.setVisible(false);
-            showOptionDialog("Illegal time", JOptionPane.WARNING_MESSAGE);
+            showOptionDialog("Illegal due date", JOptionPane.WARNING_MESSAGE);
         }
         else{
-            List<TaskVO> taskVOS = this.taskService.queryShowTaskByCondition(
-                    this.uid, queryStatus, fromDueTime, toDueTime);
-            this.dataSource = taskVOS;
+//            System.out.println(queryStatusNum + " ," + queryPriorityNum + " ," +
+//                    fromDueTime + " ," + toDueTime + " ," +
+//                    queryTaskTypeNum + " ," + querySubject);
+            this.dataSource = this.getDataSource(queryStatusNum, queryPriorityNum, fromDueTime,
+                                                    toDueTime, queryTaskTypeNum, querySubject);
+//            List<TaskVO> taskVOS = this.taskService.queryShowTaskByCondition(
+//                    this.uid, queryStatus, fromDueTime, toDueTime);
+//            this.dataSource = taskVOS;
             this.getTaskTable().setModel(new TaskTableModel(dataSource));
             setTableStyle();
         }
     }
 
-    private Integer priorityFilter(String input){
 
-        if("-".equals(input)){
-            return 1;
-        }else if("Low".equals(input)){
-            return 2;
-        }else if("Normal".equals(input)){
-            return 3;
-        }else if("High".equals(input)){
-            return 4;
-        }else if("Immediate".equals(input)){
-            return 5;
-        }
-        return null;
-    }
 
-    private List<TaskVO> getDataSource(){
+    private List<TaskVO> getDataSource(Integer statusNum,
+                                       Integer priorityNum,
+                                       String fromDueDate,
+                                       String toDueDate,
+                                       Integer taskTypeNum,
+                                       String subject){
         List<TaskVO> taskVOList = new ArrayList<>();
-        Filter filter=new Filter("type_id","1");
-        ArrayList<Filter> filters=new ArrayList<>();
-        filters.add(filter);
-        List<Task> taskList = taskService.getTasks(OPENPROJECT_URL, API_KEY, filters);
+        List<Task> taskList = taskService.getTasksByConditons(OPENPROJECT_URL, API_KEY, statusNum, priorityNum,
+                                                                fromDueDate, toDueDate, taskTypeNum, subject);
         taskList.forEach(task -> {
             TaskVO taskVO = new TaskVO();
             taskVO = (TaskVO) ReflectionUtils.copyProperties(task, taskVO);
@@ -641,4 +652,35 @@ public class SelectTaskDialog extends JDialog {
         TaskDetailVO taskDetailVO = new TaskDetailVO();
         return (TaskDetailVO) ReflectionUtils.copyProperties(task, taskDetailVO);
     }
+
+    private Integer priorityFilter(String input){
+
+        if("Low".equals(input)){
+            return 7;
+        }else if("Normal".equals(input)){
+            return 8;
+        }else if("High".equals(input)){
+            return 9;
+        }else if("Immediate".equals(input)){
+            return 10;
+        }
+        return null;
+    }
+
+
+    private Integer statusFilter(String input){
+        if("New".equals(input)){
+            return 1;
+        }else if("In progress".equals(input)){
+            return 7;
+        }else if("Closed".equals(input)){
+            return 13;
+        }else if("On hold".equals(input)){
+            return 14;
+        }else if("Rejected".equals(input)){
+            return 15;
+        }
+        return null;
+    }
+
 }

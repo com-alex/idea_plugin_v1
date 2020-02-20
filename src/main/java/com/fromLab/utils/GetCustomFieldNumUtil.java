@@ -49,8 +49,9 @@ public class GetCustomFieldNumUtil {
         int position = 0 ;
         for (int i = 0; i < count ; i++) {
             String s = String.valueOf(elementsArray.getJSONObject(i).getOrDefault("customField1", "null"));
-            if (!"null".equals(s))
+            if (!"null".equals(s)){
                 position=i;
+            }
         }
         for (int i = 1; i < 20; i++) {
 

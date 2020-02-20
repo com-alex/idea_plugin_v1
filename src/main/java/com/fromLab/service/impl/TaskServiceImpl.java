@@ -6,13 +6,12 @@ import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.*;
 import com.fromLab.service.TaskService;
+import com.fromLab.utils.GetCustomFieldNumUtil;
 import com.fromLab.utils.SortUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.sf.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static com.fromLab.utils.JsonToObjectUtil.JsonToTask;
@@ -24,8 +23,8 @@ import static com.fromLab.utils.JsonToObjectUtil.JsonToTaskList;
  */
 public class TaskServiceImpl implements TaskService {
 
-    static String openprojectURL="http://projects.plugininide.com/openproject";
-    static String apiKey="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
+    private static final String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
+    private static final String API_KEY ="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
     TaskDaoImpl taskDao = new TaskDaoImpl();
 
     @Override
@@ -141,6 +140,7 @@ public class TaskServiceImpl implements TaskService {
         }
         String filterJson=jsonArray.toString();
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apikey,OpenprojectURL.WORKPAGES_URL);
+
         String json= o.getJson(openprojectURL+OpenprojectURL.WORKPAGES_URL+
                 "?filters="+filterJson
                 );
@@ -232,6 +232,105 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
+    @Override
+    public List<Task> getTasksByConditons(String openprojectURL, String apikey,
+                                          Integer statusNum,
+                                          Integer priorityNum,
+                                          String fromDueDate,
+                                          String toDueDate,
+                                          Integer taskTypeNum,
+                                          String subject) {
+
+
+        JsonArray jsonArray = new JsonArray();
+        JsonObject typeObject = new JsonObject();
+        JsonObject typeConditionObject = new JsonObject();
+        typeConditionObject.addProperty("operator", "=");
+        typeConditionObject.addProperty("values", "1");
+        typeObject.add("type_id", typeConditionObject);
+        jsonArray.add(typeObject);
+
+        //status条件
+        if(statusNum != null){
+            JsonObject statusObject = new JsonObject();
+            JsonObject statusConditionObject = new JsonObject();
+            JsonArray statusValuesArray = new JsonArray();
+            statusValuesArray.add(statusNum + "");
+            statusConditionObject.addProperty("operator", "=");
+            statusConditionObject.add("values", statusValuesArray);
+            statusObject.add("status", statusConditionObject);
+            jsonArray.add(statusObject);
+        }
+
+
+        //priority条件
+        if(priorityNum != null){
+            JsonObject priorityObject = new JsonObject();
+            JsonObject priorityConditionObject = new JsonObject();
+            JsonArray priorityValuesArray = new JsonArray();
+            priorityValuesArray.add(priorityNum + "");
+            priorityConditionObject.addProperty("operator", "=");
+            priorityConditionObject.add("values", priorityValuesArray);
+            priorityObject.add("priority", priorityConditionObject);
+            jsonArray.add(priorityObject);
+        }
+
+
+        //dueDate条件
+        if(fromDueDate != null && toDueDate != null){
+            JsonObject dueDateObject = new JsonObject();
+            JsonObject dueDateConditionObject = new JsonObject();
+            JsonArray dueDateValuesArray = new JsonArray();
+            dueDateValuesArray.add(fromDueDate);
+            dueDateValuesArray.add(toDueDate);
+            dueDateConditionObject.addProperty("operator", "<>d");
+            dueDateConditionObject.add("values", dueDateValuesArray);
+            dueDateObject.add("dueDate", dueDateConditionObject);
+            jsonArray.add(dueDateObject);
+        }
+
+
+
+        //taskType条件
+        if(taskTypeNum != null){
+            JsonObject taskTypeObject = new JsonObject();
+            JsonObject taskTypeConditonObject = new JsonObject();
+            JsonArray taskTypeValuesArray = new JsonArray();
+            taskTypeValuesArray.add(taskTypeNum + "");
+            taskTypeConditonObject.addProperty("operator", "=");
+            taskTypeConditonObject.add("values", taskTypeValuesArray);
+            String customName = GetCustomFieldNumUtil.getCustomfiledNum("Task type", OPENPROJECT_URL, API_KEY);
+            taskTypeObject.add(customName, taskTypeConditonObject);
+            jsonArray.add(taskTypeObject);
+        }
+
+
+        //subject条件
+        if(subject != null){
+            JsonObject subjectObject = new JsonObject();
+            JsonObject subjectConditionObject = new JsonObject();
+            JsonArray subjectValuesArray = new JsonArray();
+            subjectValuesArray.add(subject);
+            subjectConditionObject.addProperty("operator", "~");
+            subjectConditionObject.add("values", subjectValuesArray);
+            subjectObject.add("subject", subjectConditionObject);
+            jsonArray.add(subjectObject);
+        }
+
+
+        String filterJson = jsonArray.toString();
+
+        OpenprojectURL o=new OpenprojectURL(openprojectURL,apikey,OpenprojectURL.WORKPAGES_URL);
+
+        String json= o.getJson(openprojectURL+OpenprojectURL.WORKPAGES_URL+
+                "?filters="+filterJson
+        );
+
+        JSONObject jsonObject = JSONObject.fromObject(json);
+        List<Task> taskList = JsonToTaskList(jsonObject);
+
+        return taskList;
+    }
 
 
 }

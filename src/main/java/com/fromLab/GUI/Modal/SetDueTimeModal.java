@@ -1,6 +1,7 @@
 package com.fromLab.GUI.Modal;
 
 import com.fromLab.GUI.component.DateChooserJButton;
+import com.fromLab.utils.DateUtils;
 import com.fromLab.utils.GUIUtils;
 
 import javax.swing.*;
@@ -67,10 +68,12 @@ public class SetDueTimeModal extends JFrame {
 
 
     private void onOk(){
+        String dateStirng = this.dateChooserJButton.getText();
+        String date = DateUtils.date2String(DateUtils.string2Date(dateStirng));
         if(SET_FROM_DUE_TIME.equals(this.type)){
-            this.jDialog.getFromDatePickerButton().setText(this.dateChooserJButton.getText());
+            this.jDialog.getFromDatePickerButton().setText(date);
         }else{
-            this.jDialog.getToDatePickerButton().setText(this.dateChooserJButton.getText());
+            this.jDialog.getToDatePickerButton().setText(date);
         }
         this.setVisible(false);
         this.jDialog.setVisible(true);

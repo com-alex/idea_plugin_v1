@@ -19,7 +19,7 @@ public class TaskTableModel extends AbstractTableModel {
      * 这里和刚才一样，定义列名和每个数据的值
      */
     String[] columnNames =
-            {"", "taskId", "task_name", "project_name", "task_priority", "task_type", "start_date", "end_date", "due_date", "status", "progress", "time_spent"};
+            {"", "taskId", "subject", "project_name", "task_priority", "task_type", "start_date", "end_date", "due_date", "status", "progress", "time_spent"};
     Object[][] data;
 
     /**

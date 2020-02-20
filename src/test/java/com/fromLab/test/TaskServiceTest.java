@@ -9,6 +9,7 @@ import com.fromLab.utils.DateUtils;
 import com.fromLab.utils.GetCustomFieldNumUtil;
 import com.fromLab.utils.ReflectionUtils;
 import gherkin.lexer.Da;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -122,5 +123,17 @@ public class TaskServiceTest {
         String endDate = DateUtils.date2String(new Date());
         System.out.println(endDate);
         taskService.updateEndDate(OPENPROJECT_URL, API_KEY, task.getTaskId(), task.getLockVersion(), endDate, custom);
+    }
+    
+    @Test
+    public void testGetTasksByConditon(){
+        List<Task> tasksByConditon = taskService.getTasksByConditons(OPENPROJECT_URL, API_KEY,
+                7, 7, "2020-02-12", "2020-02-29", 2, "1");
+        if (CollectionUtils.isNotEmpty(tasksByConditon)){
+            tasksByConditon.forEach(task -> {
+                System.out.println(task);
+            });
+        }
+
     }
 }

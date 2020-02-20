@@ -149,5 +149,11 @@ public interface TaskService {
 
     void updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField);
 
-
+    List<Task> getTasksByConditons(String openprojectURL, String apikey,
+                                   Integer statusNum,
+                                   Integer priorityNum,
+                                   String fromDueDate,
+                                   String toDueDate,
+                                   Integer taskTypeNum,
+                                   String subject);
 }
