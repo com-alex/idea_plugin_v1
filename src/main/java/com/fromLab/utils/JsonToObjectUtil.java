@@ -13,12 +13,18 @@ import org.jetbrains.uast.values.UBooleanConstant;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.fromLab.utils.GetCustomFieldNumUtil.getCustomfiledNum;
+
 /**
  * @Auther: JIN KE
  * @Date: 2020/1/12 18:50
  */
 public class JsonToObjectUtil {
-
+    private final static String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
+    private final static String API_KEY="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
+    static  String task_type=getCustomfiledNum("Task type", OPENPROJECT_URL, API_KEY);
+    static  String end_date=getCustomfiledNum("End date", OPENPROJECT_URL, API_KEY);
+    static  String time_spent=getCustomfiledNum("Time spent", OPENPROJECT_URL, API_KEY);
 
     /**
      * 将返回的json转化为一个task对象
@@ -46,11 +52,11 @@ public class JsonToObjectUtil {
         String dueTime = String.valueOf(json.getOrDefault("dueDate","null"));
         task.setDueTime(dueTime);
         //endTime
-        String endTime = String.valueOf(json.getOrDefault("customField2","null"));
+        String endTime = String.valueOf(json.getOrDefault(end_date,"null"));
         task.setEndTime(endTime);
 
         //spentTime
-        Object timeSpent = json.getOrDefault("customField3","null");
+        Object timeSpent = json.getOrDefault(time_spent,"null");
         if ("null".equals(timeSpent.toString())){
             task.setTimeSpent(0);
         }
@@ -71,7 +77,7 @@ public class JsonToObjectUtil {
         //taskType
         String links = json.getString("_links");
         JSONObject linksJsonObject = JSONObject.fromObject(links);
-        Object taskTypeEntity = linksJsonObject.getOrDefault("customField1","null");
+        Object taskTypeEntity = linksJsonObject.getOrDefault(task_type,"null");
         if(!"null".equals(taskTypeEntity.toString())) {
             JSONObject taskTypeJsonObject = JSONObject.fromObject(taskTypeEntity.toString());
             String taskType = taskTypeJsonObject.getString("title");
@@ -136,11 +142,11 @@ public class JsonToObjectUtil {
             task.setStartTime(startTime);
             String dueTime = elementsArray.getJSONObject(i).getString("dueDate");
             task.setDueTime(dueTime);
-            String endTime = String.valueOf(elementsArray.getJSONObject(i).getOrDefault("customField2","null"));
+            String endTime = String.valueOf(elementsArray.getJSONObject(i).getOrDefault(end_date,"null"));
             task.setEndTime(endTime);
 
             //timeSpent
-            Object timeSpent = elementsArray.getJSONObject(i).getOrDefault("customField3","null");
+            Object timeSpent = elementsArray.getJSONObject(i).getOrDefault(time_spent,"null");
             if ("null".equals(timeSpent.toString())){
                 task.setTimeSpent(0);
             }
@@ -159,7 +165,7 @@ public class JsonToObjectUtil {
             JSONObject linksJsonObject = JSONObject.fromObject(links);
 
 
-            Object taskTypeEntity = linksJsonObject.getOrDefault("customField1",null);
+            Object taskTypeEntity = linksJsonObject.getOrDefault(task_type,null);
             if(!"null".equals(taskTypeEntity.toString())) {
                 JSONObject taskTypeJsonObject = JSONObject.fromObject(taskTypeEntity.toString());
                 String taskType = taskTypeJsonObject.getString("title");

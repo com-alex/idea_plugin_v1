@@ -40,12 +40,21 @@ public class GetCustomFieldNumUtil {
 
 
         String embedded1 = schemaJsonObject.getString("_embedded");
+        Integer count = schemaJsonObject.getInt("count");
         JSONObject embeddedJsonObject1 = JSONObject.fromObject(embedded1);
 
 
         JSONArray elementsArray = embeddedJsonObject1.getJSONArray("elements");
+
+        int position = 0 ;
+        for (int i = 0; i < count ; i++) {
+            String s = String.valueOf(elementsArray.getJSONObject(i).getOrDefault("customField1", "null"));
+            if (!"null".equals(s))
+                position=i;
+        }
         for (int i = 1; i < 20; i++) {
-            String CustomFieldString = String.valueOf(elementsArray.getJSONObject(0).getOrDefault("customField" + i, "null"));
+
+            String CustomFieldString = String.valueOf(elementsArray.getJSONObject(position).getOrDefault("customField" + i, "null"));
             if (!"null".equals(CustomFieldString)) {
                 String[] split = CustomFieldString.split(",");
                 String[] splitName = split[1].split(":");
