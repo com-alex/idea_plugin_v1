@@ -8,9 +8,7 @@ import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.DateUtils;
 import com.fromLab.utils.GetCustomFieldNumUtil;
 import com.fromLab.utils.ReflectionUtils;
-import gherkin.lexer.Da;
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -92,7 +90,7 @@ public class TaskServiceTest {
     public void update(){
 
         Task task = taskService.getTaskById(OPENPROJECT_URL,API_KEY, 8);
-        taskService.updateStautsAndProgress(OPENPROJECT_URL, API_KEY, task.getTaskId(), task.getLockVersion(), Status.OnHold, 50);
+        taskService.updateStatusAndProgress(OPENPROJECT_URL, API_KEY, task.getTaskId(), task.getLockVersion(), Status.OnHold, 50);
 
 
     }

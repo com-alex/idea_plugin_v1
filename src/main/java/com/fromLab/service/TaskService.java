@@ -1,7 +1,6 @@
 package com.fromLab.service;
 
-import com.fromLab.VO.TaskDetailVO;
-import com.fromLab.VO.TaskVO;
+
 import com.fromLab.entity.Filter;
 import com.fromLab.entity.Status;
 import com.fromLab.entity.Task;
@@ -16,78 +15,86 @@ import java.util.List;
 public interface TaskService {
 
     /**
-     * 通过用户id查找到所有的的任务
-     * @param uid
+     * 通过检索条件获取所有的task，此方法可以被弃用，可以直接使用getTasksByConditons
+     * @param openprojectURL
+     * @param apikey
+     * @param filters
      * @return
      */
-    List<Task> displayAllTask(Integer uid);
+    List<Task> getTasks(String openprojectURL, String apikey, List<Filter> filters);
 
     /**
-     * 通过taskId查询某个任务
-     * @param taskId
+     * 通过taskId 获取task
+     * @param openprojectURL
+     * @param apiKey
+     * @param id
      * @return
      */
-    Task queryTaskByTaskId(Integer taskId);
+    Task getTaskById(String openprojectURL, String apiKey, int id);
 
     /**
-     * 通过用户id查找所有显示的任务
-     * @param uid
-     * @return
-     */
-    List<TaskVO> queryAllShowTask(Integer uid);
-
-    /**
-     * 通过用户id与task的名字模糊查询任务
-     * @param uid
-     * @param taskName
-     * @return
-     */
-    List<TaskVO> queryAllShowTaskByTaskName(Integer uid, String taskName);
-
-    /**
-     * 通过用户id与task的状态模糊查询任务
-     * @param uid
+     * 根据task的id更新task的status和progress
+     * @param openprojectURL
+     * @param apiKey
+     * @param id
+     * @param lock_version
      * @param status
-     * @return
+     * @param percentage
      */
-    List<TaskVO> queryAllShowTaskByStatus(Integer uid, String status);
+    void updateStatusAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage);
 
     /**
-     * 通过查询条件查询任务
-     * @param uid
-     * @param status
-     * @param fromDueTime
-     * @param toDueTime
-     * @return
+     * 根据task的id更新task的startDate
+     * @param openprojectURL
+     * @param apiKey
+     * @param id
+     * @param lock_version
+     * @param start_date
      */
-    List<TaskVO> queryShowTaskByCondition(Integer uid,
-                                          String status,
-                                          String fromDueTime,
-                                          String toDueTime);
+    void updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date);
 
     /**
-     * 通过用户id与主题查找任务
-     * @param uid
-     * @param porojectName
-     * @return
+     * 根据task的id更新自定义字段endDate
+     * @param openprojectURL
+     * @param apiKey
+     * @param id
+     * @param lock_version
+     * @param end_date
+     * @param customField
      */
-    List<Task> queryTaskByProjectName(Integer uid, String porojectName);
+    void updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date, String customField);
 
     /**
-     * 通过用户id与任务的种类查找任务
-     * @param uid
-     * @param TaskType
-     * @return
+     * 根据task的id更新自定义字段time spent
+     * @param openprojectURL
+     * @param apiKey
+     * @param id
+     * @param lock_version
+     * @param time
+     * @param customField
      */
-    List<Task> queryTaskByTaskType(Integer uid, String TaskType);
+    void updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField);
 
     /**
-     * 通过用户id与任务的优先级查找任务
-     * @param uid
-     * @param TaskPriority
+     * 根据各种条件查询task
+     * @param openprojectURL
+     * @param apikey
+     * @param statusNum
+     * @param priorityNum
+     * @param fromDueDate
+     * @param toDueDate
+     * @param taskTypeNum
+     * @param subject
      * @return
      */
-    List<Task> queryTaskByTaskPriority(Integer uid, Integer TaskPriority);
+    List<Task> getTasksByConditons(String openprojectURL, String apikey,
+                                   Integer statusNum,
+                                   Integer priorityNum,
+                                   String fromDueDate,
+                                   String toDueDate,
+                                   Integer taskTypeNum,
+                                   String subject);
+
 
     /**
      * 根据项目名称排序查询任务
@@ -117,43 +124,6 @@ public interface TaskService {
      */
     List<Task> sortTaskWithDueTime(List<Task> taskList);
 
-    /**
-     * 保存或者更新Task
-     * @param object
-     * @return
-     */
-    Boolean saveOrUpdateTask(Object object);
-
-    /**
-     * 根据taskId获取task的detail
-     * @param taskId
-     * @return
-     */
-    TaskDetailVO queryTaskDetailByTaskId(Integer taskId);
 
 
-
-    List<Task> getTasks(String openprojectURL, String apikey, List<Filter> filters);
-
-    Task getTaskById(String openprojectURL, String apiKey, int id);
-
-//    void updateStatus(String openprojectURL, String apiKey, int id, Status status, int lock_version);
-//
-//    void updateProgress(String openprojectURL, String apiKey, int id, int lock_version, int percentage);
-
-    void updateStautsAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage);
-
-    void updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date);
-
-    void updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date, String customField);
-
-    void updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField);
-
-    List<Task> getTasksByConditons(String openprojectURL, String apikey,
-                                   Integer statusNum,
-                                   Integer priorityNum,
-                                   String fromDueDate,
-                                   String toDueDate,
-                                   Integer taskTypeNum,
-                                   String subject);
 }

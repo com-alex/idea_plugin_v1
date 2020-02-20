@@ -25,94 +25,6 @@ public class TaskServiceImpl implements TaskService {
 
     private static final String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
     private static final String API_KEY ="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
-    TaskDaoImpl taskDao = new TaskDaoImpl();
-
-    @Override
-    public List<Task> displayAllTask(Integer uid) {
-        return taskDao.queryAllTask(uid);
-    }
-
-    @Override
-    public Task queryTaskByTaskId(Integer taskId) {
-        return taskDao.queryTaskByTaskId(taskId);
-    }
-
-
-    @Override
-    public List<TaskVO> queryAllShowTask(Integer uid) {
-        return taskDao.queryAllShowTask(uid);
-    }
-
-    @Override
-    public List<TaskVO> queryAllShowTaskByTaskName(Integer uid, String taskName) {
-        return taskDao.queryAllShowTaskByTaskName(uid, taskName);
-    }
-
-    @Override
-    public List<TaskVO> queryAllShowTaskByStatus(Integer uid, String status) {
-        return taskDao.queryAllShowTaskByStatus(uid, status);
-    }
-
-    @Override
-    public List<TaskVO> queryShowTaskByCondition(Integer uid,
-                                                 String status,
-                                                 String fromDueTime,
-                                                 String toDueTime) {
-        return taskDao.queryShowTaskByCondition(uid, status, fromDueTime, toDueTime);
-    }
-
-    @Override
-    public List<Task> queryTaskByProjectName(Integer uid, String project) {
-        return taskDao.queryTaskByProjectName(uid,project);
-    }
-
-    @Override
-    public List<Task> queryTaskByTaskType(Integer uid, String TaskType) {
-        return taskDao.queryTaskByTaskType(uid, TaskType);
-    }
-
-    @Override
-    public List<Task> queryTaskByTaskPriority(Integer uid, Integer TaskPriority) {
-        return taskDao.queryTaskByTaskPriority(uid, TaskPriority);
-    }
-
-    @Override
-    public List<Task> sortTaskWithProjectName(List<Task> taskList) {
-        String [] sortNameArr = {"projectName","taskType","taskPriority","dueTime","taskId"};
-        boolean [] isAscArr = {true,true,false,true,true};
-        SortUtils.sort(taskList,sortNameArr,isAscArr);
-        return  taskList;
-
-    }
-
-    @Override
-    public List<Task> sortTaskWithTaskType(List<Task> taskList) {
-        String [] sortNameArr = {"TaskType","Project","TaskPriority","DueTime","TaskId"};
-        boolean [] isAscArr = {true,true,false,true,true};
-        SortUtils.sort(taskList,sortNameArr,isAscArr);
-        return  taskList;
-    }
-
-    @Override
-    public List<Task> sortTaskWithTaskPriority(List<Task> taskList) {
-        String [] sortNameArr = {"TaskPriority","TaskType","Project","DueTime","TaskId"};
-        boolean [] isAscArr = {false,true,true,true,true};
-        SortUtils.sort(taskList,sortNameArr,isAscArr);
-        return  taskList;
-    }
-
-    @Override
-    public List<Task> sortTaskWithDueTime(List<Task> taskList) {
-        String [] sortNameArr = {"dueTime","taskPriority","taskType","projectName","taskId"};
-        boolean [] isAscArr = {true,true,true,false,true};
-        SortUtils.sort(taskList,sortNameArr,isAscArr);
-        return  taskList;
-    }
-
-    @Override
-    public Boolean saveOrUpdateTask(Object object) {
-        return taskDao.saveOrUpdateTask(object);
-    }
 
     @Override
     public Task getTaskById(String openprojectURL, String apiKey, int id) {
@@ -123,13 +35,6 @@ public class TaskServiceImpl implements TaskService {
         Task task =JsonToTask(jsonObject);
         return task;
     }
-
-    @Override
-    public TaskDetailVO queryTaskDetailByTaskId(Integer taskId) {
-        return taskDao.queryTaskDetailByTaskId(taskId);
-    }
-
-
 
 
     @Override
@@ -143,7 +48,7 @@ public class TaskServiceImpl implements TaskService {
 
         String json= o.getJson(openprojectURL+OpenprojectURL.WORKPAGES_URL+
                 "?filters="+filterJson
-                );
+        );
 //        System.out.println(json);
         JSONObject jsonObject = JSONObject.fromObject(json);
         List<Task> taskList = JsonToTaskList(jsonObject);
@@ -167,10 +72,9 @@ public class TaskServiceImpl implements TaskService {
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("lockVersion",lock_version);
         jsonObject.addProperty(customField,end_date);
-//        System.out.println(jsonObject);
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
-//        System.out.println(result);
+
     }
 
     @Override
@@ -178,37 +82,13 @@ public class TaskServiceImpl implements TaskService {
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("lockVersion",lock_version);
         jsonObject.addProperty(customField,time);
-//        System.out.println(jsonObject);
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
         System.out.println(result);
     }
 
-
-
-
-//    @Override
-//    /**
-//     * lock_version 类似于版本号，更新时需要上传当前的版本号，taskVO对象中存储了这个属性
-//     */
-//    public void updateStatus(String openprojectURL, String apiKey, int id, Status status, int lock_version) {
-//        String json=status.toJson(lock_version);
-//        System.out.println(json);
-//        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
-//        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,json);
-//    }
-//
-//    @Override
-//    public void updateProgress(String openprojectURL, String apiKey, int id, int lock_version, int percentage) {
-//        JsonObject jsonObject=new JsonObject();
-//        jsonObject.addProperty("lockVersion",lock_version);
-//        jsonObject.addProperty("percentageDone",percentage);
-//        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
-//        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
-//    }
-
     @Override
-    public void updateStautsAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage) {
+    public void updateStatusAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("lockVersion", lock_version);
         JsonObject links=new JsonObject();
@@ -331,6 +211,45 @@ public class TaskServiceImpl implements TaskService {
 
         return taskList;
     }
+
+
+
+    @Override
+    public List<Task> sortTaskWithProjectName(List<Task> taskList) {
+        String [] sortNameArr = {"projectName","taskType","taskPriority","dueTime","taskId"};
+        boolean [] isAscArr = {true,true,false,true,true};
+        SortUtils.sort(taskList,sortNameArr,isAscArr);
+        return  taskList;
+
+    }
+
+    @Override
+    public List<Task> sortTaskWithTaskType(List<Task> taskList) {
+        String [] sortNameArr = {"taskType","projectName","taskPriority","dueTime","taskId"};
+        boolean [] isAscArr = {true,true,false,true,true};
+        SortUtils.sort(taskList,sortNameArr,isAscArr);
+        return  taskList;
+    }
+
+    @Override
+    public List<Task> sortTaskWithTaskPriority(List<Task> taskList) {
+        String [] sortNameArr = {"taskPriority","taskType","projectName","dueTime","taskId"};
+        boolean [] isAscArr = {false,true,true,true,true};
+        SortUtils.sort(taskList,sortNameArr,isAscArr);
+        return  taskList;
+    }
+
+    @Override
+    public List<Task> sortTaskWithDueTime(List<Task> taskList) {
+        String [] sortNameArr = {"dueTime","taskPriority","taskType","projectName","taskId"};
+        boolean [] isAscArr = {true,true,true,false,true};
+        SortUtils.sort(taskList,sortNameArr,isAscArr);
+        return  taskList;
+    }
+
+
+
+
 
 
 }

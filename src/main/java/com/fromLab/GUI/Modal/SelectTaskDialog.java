@@ -4,8 +4,6 @@ import com.fromLab.GUI.component.TableRenderer;
 import com.fromLab.GUI.component.TaskTableModel;
 import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
-import com.fromLab.entity.Filter;
-import com.fromLab.entity.Status;
 import com.fromLab.entity.Task;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.DateUtils;
@@ -48,7 +46,6 @@ public class SelectTaskDialog extends JDialog {
     private String spentTimeCustomFieldName;
     private String endDateCustomFieldName;
     private Task selectedTask;
-    private Status[] statusDataSource = {null, Status.NEW, Status.InProgress, Status.Closed, Status.OnHold, Status.Rejected};
     private String[] statusShowDate = {"-- Please Choose --", "New", "In progress", "Closed", "On hold", "Rejected"};
     private String[] priorityShowData = {"-- Please Choose --", "Immediate", "High", "Normal", "Low"};
     private String[] typeShowDate = {"-- Please Choose --", "Management", "Specification", "Development", "Testing", "Support", "Other"};
@@ -195,7 +192,7 @@ public class SelectTaskDialog extends JDialog {
 
 
         this.searchButton = new JButton("search");
-        searchButton.setBounds(750, 50, 70, 30);
+        searchButton.setBounds(750, 55, 70, 30);
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -326,11 +323,19 @@ public class SelectTaskDialog extends JDialog {
             showOptionDialog("You have selected a task!", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        System.out.println(this.selectedTask);
     }
 
     private void stopTask(){
         int row = taskTable.getSelectedRow();
-        if(row != this.selectedTaskIndex){
+        if(row == -1){
+            this.setVisible(false);
+            showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        TaskVO selectedTaskVO = this.dataSource.get(row);
+
+        if(!selectedTaskVO.getTaskId().equals(this.selectedTask.getTaskId())){
             this.setVisible(false);
             showOptionDialog("You select a wrong task!", JOptionPane.WARNING_MESSAGE);
             return;
@@ -347,13 +352,14 @@ public class SelectTaskDialog extends JDialog {
                 this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
                 this.spentTimeCustomFieldName);
         this.chosed = false;
+
         this.stopButton.setEnabled(false);
         //获取所选行的task的progress
             String progressString = (String) taskTable.getValueAt(row, 10);
         Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
         this.setVisible(false);
         new StopTaskModal(this.selectedTask, progress, this);
-
+        this.selectedTask = null;
     }
 
     public void setTableDataSource(){
@@ -381,6 +387,7 @@ public class SelectTaskDialog extends JDialog {
         this.getTaskTable().setModel(new TaskTableModel(dataSource));
         setTableStyle();
         setTableSort();
+        setChosenFlag();
     }
 
     public void setTableStyle(){
@@ -532,16 +539,6 @@ public class SelectTaskDialog extends JDialog {
         setTableStyle();
     }
 
-    /**
-     * 界面状态下拉菜单触发查询事件
-     */
-    private void queryShowTaskByStatus(String status){
-        List<TaskVO> taskVOS = new ArrayList<>();
-        taskVOS = taskService.queryAllShowTaskByStatus(this.uid, status);
-        this.dataSource = taskVOS;
-        this.getTaskTable().setModel(new TaskTableModel(this.dataSource));
-        setTableStyle();
-    }
 
     public JButton getFromDatePickerButton() {
         return fromDatePickerButton;
@@ -617,6 +614,8 @@ public class SelectTaskDialog extends JDialog {
 //            this.dataSource = taskVOS;
             this.getTaskTable().setModel(new TaskTableModel(dataSource));
             setTableStyle();
+            setChosenFlag();
+            setTableSort();
         }
     }
 
@@ -637,6 +636,18 @@ public class SelectTaskDialog extends JDialog {
             taskVOList.add(taskVO);
         });
         return taskVOList;
+    }
+
+    private void setChosenFlag(){
+        System.out.println(this.selectedTask);
+        if(this.selectedTask != null){
+            for (int i = 0; i < this.dataSource.size(); i++) {
+                System.out.println(this.dataSource.get(i));
+                if(this.selectedTask.getTaskId().equals(this.dataSource.get(i).getTaskId())){
+                    this.getTaskTable().setValueAt("*", i, 0);
+                }
+            }
+        }
     }
 
 

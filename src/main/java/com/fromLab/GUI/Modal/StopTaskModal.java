@@ -1,8 +1,6 @@
 package com.fromLab.GUI.Modal;
 
 import com.fromLab.GUI.component.TaskProgressSlider;
-import com.fromLab.GUI.component.TaskTableModel;
-import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Status;
 import com.fromLab.entity.Task;
 import com.fromLab.service.TaskService;
@@ -15,7 +13,6 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 /**
  * @author wsh
@@ -121,7 +118,7 @@ public class StopTaskModal extends JFrame {
 
         this.selectedStatus = statusDataSource[this.comboBox.getSelectedIndex()];
 
-        this.taskService.updateStautsAndProgress(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(), this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
+        this.taskService.updateStatusAndProgress(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(), this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
         JButton[] jButtons = new JButton[1];
         JButton button = new JButton("ok");
         jButtons[0] = button;

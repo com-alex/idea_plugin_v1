@@ -18,34 +18,6 @@ import java.sql.Timestamp;
 //@Table (tableName = "task_info")
 public class Task {
 
-//    @PrimaryKey
-//    @Column(column = "task_id")
-//    private Integer taskId;
-//    @Column(column = "uid")
-//    private Integer uid;
-//    @Column(column = "task_name")
-//    private String taskName;
-//    @Column(column = "project_name")
-//    private String projectName;
-//    @Column(column = "task_priority")
-//    private Integer taskPriority;
-//    @Column(column = "task_type")
-//    private String taskType;
-//    @Column(column = "task_detail")
-//    private String taskDetail;
-//    @Column(column = "start_time")
-//    private String startTime;
-//    @Column(column = "end_time")
-//    private String endTime;
-//    @Column(column = "due_time")
-//    private String dueTime;
-//    @Column(column = "status")
-//    private String status;
-//    @Column(column = "progress")
-//    private String progress;
-//    @Column(column = "time_spent")
-//    private Integer timeSpent;
-
 
     private Integer taskId;
 
