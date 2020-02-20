@@ -365,7 +365,7 @@ public class SelectTaskDialog extends JDialog {
         setTableStyle();
         taskTable.setBounds(0, 0, 1020, 340);
 
-//        setTableSort();
+        setTableSort();
 
         JScrollPane scrollPane = new JScrollPane(taskTable);
 
@@ -380,7 +380,7 @@ public class SelectTaskDialog extends JDialog {
         this.dataSource = this.getDataSource(null, null, null, null, null, null);
         this.getTaskTable().setModel(new TaskTableModel(dataSource));
         setTableStyle();
-//        setTableSort();
+        setTableSort();
     }
 
     public void setTableStyle(){
@@ -426,22 +426,21 @@ public class SelectTaskDialog extends JDialog {
             public void mouseReleased(MouseEvent e) {
                 if(e.getClickCount() == 1){
                     int pick = tableHeader.columnAtPoint(e.getPoint());
-
                     //进行优先级排序
-                    if(pick == 1){
+                    if(pick == 2){
                         sortDataSourceOrderByTaskName();
                     }
-                    else if(pick == 2){
+                    else if(pick == 3){
                         sortDataSourceOrderByProjectName();
                     }
-                    else if(pick == 3){
+                    else if(pick == 4){
                         sortDataSourceOrderByPriority();
                     }
-                    else if(pick == 4){
+                    else if(pick == 5){
                         sortDataSourceOrderByTaskType();
                     }
                     //进行deadline排序
-                    else if(pick == 7){
+                    else if(pick == 8){
                         sortDataSourceOrderByDueTime();
                     }
 
