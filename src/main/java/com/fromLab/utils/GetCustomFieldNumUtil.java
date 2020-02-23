@@ -1,6 +1,5 @@
 package com.fromLab.utils;
 
-import com.fromLab.OpenprojectURL;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 

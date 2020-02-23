@@ -94,7 +94,8 @@ public class SetTimeModal extends JFrame {
             }
         });
         this.dispose();
-        JOptionPane.showOptionDialog(null, "Save successfully", "Tips", JOptionPane.WARNING_MESSAGE, 0, null, jButtons, jButtons[0]);
+        JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
+                JOptionPane.WARNING_MESSAGE, 0, null, jButtons, jButtons[0]);
         this.jDialog.resetTableDataSource();
         this.jDialog.setVisible(true);
 

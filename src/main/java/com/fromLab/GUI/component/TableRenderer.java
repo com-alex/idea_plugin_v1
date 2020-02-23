@@ -17,19 +17,17 @@ public class TableRenderer implements TableCellRenderer {
         Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         Integer rowCount = table.getRowCount();
         for (int i = 0; i < rowCount; i++){
-            if(i == row){
+//            if(i == row){
                 String content = (String) table.getValueAt(row, column);
                 renderer.setForeground(this.SetColor(content));
-            }
+//            }
         }
 
         return renderer;
     }
 
     private Color SetColor(String content){
-        if("-".equals(content)){
-            return Color.BLACK;
-        }else if ("Low".equals(content)){
+        if ("Low".equals(content)){
             return new Color(34, 139, 34);
         }else if ("Normal".equals(content)){
             return new Color(205, 205, 0);

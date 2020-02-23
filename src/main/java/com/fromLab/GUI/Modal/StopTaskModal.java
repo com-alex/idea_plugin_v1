@@ -59,7 +59,6 @@ public class StopTaskModal extends JFrame {
         this.taskProgress = taskProgress;
         this.contentPanel = new JPanel();
         contentPanel.setLayout(null);
-        this.add(contentPanel);
 
         taskProgressSlider = new TaskProgressSlider(taskProgress);
         taskProgressSlider.addChangeListener(new ChangeListener() {
@@ -98,6 +97,12 @@ public class StopTaskModal extends JFrame {
 
         this.backButton = new JButton("back");
         backButton.setSize(50, 20);
+        this.backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onCancel();
+            }
+        });
         buttonPanel.add(backButton);
 
         this.add(buttonPanel, BorderLayout.SOUTH);
@@ -118,7 +123,8 @@ public class StopTaskModal extends JFrame {
 
         this.selectedStatus = statusDataSource[this.comboBox.getSelectedIndex()];
 
-        this.taskService.updateStatusAndProgress(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(), this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
+        this.taskService.updateStatusAndProgress(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(),
+                this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
         JButton[] jButtons = new JButton[1];
         JButton button = new JButton("ok");
         jButtons[0] = button;
@@ -130,11 +136,16 @@ public class StopTaskModal extends JFrame {
             }
         });
         this.dispose();
-        JOptionPane.showOptionDialog(null, "Save successfully", "Tips", JOptionPane.WARNING_MESSAGE, 0, null, jButtons, jButtons[0]);
+        JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
+                JOptionPane.WARNING_MESSAGE, 0, null, jButtons, jButtons[0]);
         this.dialog.resetTableDataSource();
         this.dialog.setVisible(true);
     }
 
 
+    private void onCancel(){
+        this.setVisible(false);
+        this.dialog.setVisible(true);
+    }
 
 }

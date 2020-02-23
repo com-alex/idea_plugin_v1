@@ -1,4 +1,4 @@
-package com.fromLab;
+package com.fromLab.utils;
 
 import okhttp3.*;
 import org.apache.commons.codec.binary.Base64;

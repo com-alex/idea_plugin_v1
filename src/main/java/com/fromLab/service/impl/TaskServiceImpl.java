@@ -1,9 +1,7 @@
 package com.fromLab.service.impl;
 
-import com.fromLab.DAO.impl.TaskDaoImpl;
-import com.fromLab.OpenprojectURL;
-import com.fromLab.VO.TaskDetailVO;
-import com.fromLab.VO.TaskVO;
+
+import com.fromLab.utils.OpenprojectURL;
 import com.fromLab.entity.*;
 import com.fromLab.service.TaskService;
 import com.fromLab.utils.GetCustomFieldNumUtil;
@@ -84,7 +82,6 @@ public class TaskServiceImpl implements TaskService {
         jsonObject.addProperty(customField,time);
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
-        System.out.println(result);
     }
 
     @Override

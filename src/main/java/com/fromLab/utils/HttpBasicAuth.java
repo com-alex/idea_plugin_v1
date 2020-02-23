@@ -9,14 +9,12 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-import com.fromLab.OpenprojectURL;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
 
 import static com.fromLab.utils.JsonToObjectUtil.JsonToTask;
-import static com.fromLab.utils.JsonToObjectUtil.JsonToTaskList;
 
 
 public class HttpBasicAuth {

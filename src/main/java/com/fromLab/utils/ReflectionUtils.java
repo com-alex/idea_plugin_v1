@@ -1,9 +1,8 @@
 package com.fromLab.utils;
 
 
-import com.fromLab.annotation.Column;
+
 import com.fromLab.annotation.Ignored;
-import com.fromLab.annotation.PrimaryKey;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -19,6 +18,7 @@ import java.util.Map;
  * 反射工具类
  * 用于创建实例对象和实例对象链表
  */
+
 public class ReflectionUtils {
 
     public static List<Object> createObjects(Class clazz, List<List<Object>> fieldsGroud){
@@ -100,18 +100,7 @@ public class ReflectionUtils {
     }
 
 
-    public static List<String> getAttributeAnnotations(Object object){
-        List<String> attributeAnnotations = new ArrayList<>();
-        Class clazz = object.getClass();
-        Field[] fields = clazz.getDeclaredFields();
-        for(int i = 0; i < fields.length; i++){
-            Column column = fields[i].getAnnotation(Column.class);
-            if(column != null){
-                attributeAnnotations.add(column.column());
-            }
-        }
-        return attributeAnnotations;
-    }
+
 
     /**
      *
@@ -173,16 +162,6 @@ public class ReflectionUtils {
         return o2;
     }
 
-    public static String getPrimaryKeyAttributeName(Class clazz){
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields){
-            PrimaryKey annotation = field.getAnnotation(PrimaryKey.class);
-            if(annotation != null){
-                Column column = field.getAnnotation(Column.class);
-                return column.column();
-            }
-        }
-        return null;
-    }
+
 
 }

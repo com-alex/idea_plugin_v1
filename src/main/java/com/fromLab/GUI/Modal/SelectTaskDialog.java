@@ -34,7 +34,7 @@ public class SelectTaskDialog extends JDialog {
 
     private Long startTime;
     private Long endTime;
-    private Boolean chosed = false;
+    private Boolean chosen = false;
     private Integer selectedTaskIndex;
     private List<TaskVO> dataSource;
     private Integer taskPriorityFlag = 0;
@@ -214,8 +214,6 @@ public class SelectTaskDialog extends JDialog {
 
         panel1.add(tablePanel);
 
-        tablePanel.setLayout(null);
-
         this.setTableDataSource();
 
 
@@ -296,7 +294,7 @@ public class SelectTaskDialog extends JDialog {
 
 
     private void chooseTask(){
-        if(!this.chosed){
+        if(!this.chosen){
             int row = taskTable.getSelectedRow();
             if(row == -1){
                 this.setVisible(false);
@@ -310,8 +308,7 @@ public class SelectTaskDialog extends JDialog {
                         this.selectedTask.getLockVersion(), startDate);
             }
             this.getTaskTable().setValueAt("*", row, 0);
-            //按下选择工作按钮才能停止工作按钮
-            this.chosed = true;
+            this.chosen = true;
             this.selectedTaskIndex = row;
             this.stopButton.setEnabled(true);
             this.startTime = System.currentTimeMillis();
@@ -323,7 +320,6 @@ public class SelectTaskDialog extends JDialog {
             showOptionDialog("You have selected a task!", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        System.out.println(this.selectedTask);
     }
 
     private void stopTask(){
@@ -351,7 +347,7 @@ public class SelectTaskDialog extends JDialog {
         this.taskService.updateSpentTime(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(),
                 this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
                 this.spentTimeCustomFieldName);
-        this.chosed = false;
+        this.chosen = false;
 
         this.stopButton.setEnabled(false);
         //获取所选行的task的progress
@@ -364,7 +360,13 @@ public class SelectTaskDialog extends JDialog {
 
     public void setTableDataSource(){
         //TODO uid为静态，需要进行动态变化
-        this.dataSource = this.getDataSource(null, null, null, null, null, null);
+
+
+        this.dataSource = this.getDataSource(null, null, null,
+                null, null, null);
+
+
+
         TaskTableModel taskTableModel = new TaskTableModel(dataSource);
         taskTable = new JTable(taskTableModel);
 
@@ -563,13 +565,11 @@ public class SelectTaskDialog extends JDialog {
         }
     }
 
-
     private void searchDataSource(){
-        //获取条件
+        //Get the condition
         //status
         String queryStatus = (String) this.statusPicker.getSelectedItem();
         Integer queryStatusNum = this.statusFilter(queryStatus);
-
         //priorityNum
         String queryPriority = (String) this.priorityPicker.getSelectedItem();
         Integer queryPriorityNum = null;
@@ -578,20 +578,16 @@ public class SelectTaskDialog extends JDialog {
         }else {
             queryPriorityNum = this.priorityFilter(queryPriority);
         }
-
         //taskType
         Integer queryTaskTypeNum = this.typePicker.getSelectedIndex();
         if(queryTaskTypeNum == 0){
             queryTaskTypeNum = null;
         }
-
         //subject
         String querySubject = this.subjectField.getText().trim();
         if(StringUtils.equals(querySubject, "")){
             querySubject = null;
         }
-
-
         //fromDueDate, toDueDate
         String fromDueTime = this.fromDatePickerButton.getText();
         String toDueTime = this.toDatePickerButton.getText();
@@ -604,14 +600,8 @@ public class SelectTaskDialog extends JDialog {
             showOptionDialog("Illegal due date", JOptionPane.WARNING_MESSAGE);
         }
         else{
-//            System.out.println(queryStatusNum + " ," + queryPriorityNum + " ," +
-//                    fromDueTime + " ," + toDueTime + " ," +
-//                    queryTaskTypeNum + " ," + querySubject);
             this.dataSource = this.getDataSource(queryStatusNum, queryPriorityNum, fromDueTime,
                                                     toDueTime, queryTaskTypeNum, querySubject);
-//            List<TaskVO> taskVOS = this.taskService.queryShowTaskByCondition(
-//                    this.uid, queryStatus, fromDueTime, toDueTime);
-//            this.dataSource = taskVOS;
             this.getTaskTable().setModel(new TaskTableModel(dataSource));
             setTableStyle();
             setChosenFlag();
@@ -639,10 +629,8 @@ public class SelectTaskDialog extends JDialog {
     }
 
     private void setChosenFlag(){
-        System.out.println(this.selectedTask);
         if(this.selectedTask != null){
             for (int i = 0; i < this.dataSource.size(); i++) {
-                System.out.println(this.dataSource.get(i));
                 if(this.selectedTask.getTaskId().equals(this.dataSource.get(i).getTaskId())){
                     this.getTaskTable().setValueAt("*", i, 0);
                 }
