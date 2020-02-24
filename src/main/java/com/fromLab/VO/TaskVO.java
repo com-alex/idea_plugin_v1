@@ -1,6 +1,5 @@
 package com.fromLab.VO;
 
-import com.fromLab.annotation.Column;
 import com.fromLab.annotation.Ignored;
 
 /**
