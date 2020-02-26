@@ -23,7 +23,6 @@ public class TaskServiceImpl implements TaskService {
 
     private static final String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
     private static final String API_KEY ="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
-
     @Override
     public Task getTaskById(String openprojectURL, String apiKey, int id) {
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
@@ -55,37 +54,46 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date) {
+    public String updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date) {
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("lockVersion",lock_version);
         jsonObject.addProperty("startDate",start_date);
-//        System.out.println(jsonObject);
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
-//        System.out.println(result);
+        //System.out.println(result);
+        TaskServiceImpl taskService=new TaskServiceImpl();
+        System.out.println(taskService.ReturnUpdateStatus(result));
+        return taskService.ReturnUpdateStatus(result);
     }
 
     @Override
-    public void updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date, String customField) {
+    public String updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date, String customField) {
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("lockVersion",lock_version);
         jsonObject.addProperty(customField,end_date);
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
-
+        //System.out.println(result);
+        TaskServiceImpl taskService=new TaskServiceImpl();
+        System.out.println(taskService.ReturnUpdateStatus(result));
+        return taskService.ReturnUpdateStatus(result);
     }
 
     @Override
-    public void updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField) {
+    public String updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField) {
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("lockVersion",lock_version);
         jsonObject.addProperty(customField,time);
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
+        //System.out.println(result);
+        TaskServiceImpl taskService=new TaskServiceImpl();
+        System.out.println(taskService.ReturnUpdateStatus(result));
+        return taskService.ReturnUpdateStatus(result);
     }
 
     @Override
-    public void updateStatusAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage) {
+    public String updateStatusAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("lockVersion", lock_version);
         JsonObject links=new JsonObject();
@@ -105,6 +113,10 @@ public class TaskServiceImpl implements TaskService {
          */
         OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
         String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
+        //System.out.println(result);
+        TaskServiceImpl taskService=new TaskServiceImpl();
+        System.out.println(taskService.ReturnUpdateStatus(result));
+        return taskService.ReturnUpdateStatus(result);
 
     }
 
@@ -245,7 +257,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-
+    public String ReturnUpdateStatus(String returnJson){
+        JSONObject jsonObject = JSONObject.fromObject(returnJson);
+        String type = jsonObject.getString("_type");
+        if (type.equals("Error"))
+         return "error";
+        else
+            return "success";
+    }
 
 
 
