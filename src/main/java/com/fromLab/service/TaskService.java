@@ -41,7 +41,7 @@ public interface TaskService {
      * @param status
      * @param percentage
      */
-    void updateStatusAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage);
+    String updateStatusAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage);
 
     /**
      * 根据task的id更新task的startDate
@@ -51,7 +51,7 @@ public interface TaskService {
      * @param lock_version
      * @param start_date
      */
-    void updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date);
+    String updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date);
 
     /**
      * 根据task的id更新自定义字段endDate
@@ -62,7 +62,7 @@ public interface TaskService {
      * @param end_date
      * @param customField
      */
-    void updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date, String customField);
+    String updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date, String customField);
 
     /**
      * 根据task的id更新自定义字段time spent
@@ -73,7 +73,7 @@ public interface TaskService {
      * @param time
      * @param customField
      */
-    void updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField);
+    String updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField);
 
     /**
      * 根据各种条件查询task
