@@ -29,9 +29,9 @@ public class SelectTaskDialog extends JDialog {
     //常量，防止出现魔法值
     private static final String SET_FROM_DUE_TIME = "from";
     private static final String SET_TO_DUE_TIME = "to";
-    private final static String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
-    private final static String API_KEY="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
 
+    private String openProjectUrl;
+    private String apiKey;
     private Long startTime;
     private Long endTime;
     private Boolean chosen = false;
@@ -83,12 +83,15 @@ public class SelectTaskDialog extends JDialog {
     private TaskServiceImpl taskService;
     private Integer uid = 1;
 
-    public SelectTaskDialog() {
-
+    public SelectTaskDialog(String openProjectUrl, String apiKey) {
+        this.openProjectUrl = openProjectUrl;
+        this.apiKey = apiKey;
         initInterface();
         setContentPane(contentPane);
         setModal(true);
     }
+
+
 
     /**
      * 主界面初始化
@@ -96,9 +99,9 @@ public class SelectTaskDialog extends JDialog {
     public void initInterface(){
 
         //获取自定义字段的名称
-        this.taskTypeCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("Task type", OPENPROJECT_URL, API_KEY);
-        this.endDateCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("End date", OPENPROJECT_URL, API_KEY);
-        this.spentTimeCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("Time spent", OPENPROJECT_URL, API_KEY);
+        this.taskTypeCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("Task type", openProjectUrl, apiKey);
+        this.endDateCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("End date", openProjectUrl, apiKey);
+        this.spentTimeCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("Time spent", openProjectUrl, apiKey);
 
         this.selectedTask = new Task();
 
@@ -304,7 +307,7 @@ public class SelectTaskDialog extends JDialog {
             this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
             if("null".equals(this.selectedTask.getStartTime())){
                 String startDate = DateUtils.date2String(new Date());
-                this.taskService.updateStartDate(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(),
+                this.taskService.updateStartDate(openProjectUrl, apiKey, this.selectedTask.getTaskId(),
                         this.selectedTask.getLockVersion(), startDate);
             }
             this.getTaskTable().setValueAt("*", row, 0);
@@ -344,7 +347,7 @@ public class SelectTaskDialog extends JDialog {
         this.endTime = 0L;
         this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
         //TODO 更新Spent time
-        this.taskService.updateSpentTime(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(),
+        this.taskService.updateSpentTime(openProjectUrl, apiKey, this.selectedTask.getTaskId(),
                 this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
                 this.spentTimeCustomFieldName);
         this.chosen = false;
@@ -618,7 +621,7 @@ public class SelectTaskDialog extends JDialog {
                                        Integer taskTypeNum,
                                        String subject){
         List<TaskVO> taskVOList = new ArrayList<>();
-        List<Task> taskList = taskService.getTasksByConditons(OPENPROJECT_URL, API_KEY, statusNum, priorityNum,
+        List<Task> taskList = taskService.getTasksByConditons(openProjectUrl, apiKey, statusNum, priorityNum,
                                                                 fromDueDate, toDueDate, taskTypeNum, subject);
         taskList.forEach(task -> {
             TaskVO taskVO = new TaskVO();

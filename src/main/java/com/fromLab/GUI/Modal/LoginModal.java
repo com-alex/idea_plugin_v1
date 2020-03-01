@@ -1,5 +1,8 @@
 package com.fromLab.GUI.Modal;
 
+import com.fromLab.service.UserService;
+import com.fromLab.service.impl.UserServiceImpl;
+import com.fromLab.utils.GUIUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
@@ -14,8 +17,7 @@ import java.awt.event.ActionListener;
  */
 
 public class LoginModal extends JFrame {
-    private final static String OPENPROJECT_URL="";
-    private final static String API_KEY="";
+    private UserService userService;
     private JPanel contentPanel;
     private JLabel openProjectUrlLabel;
     private JTextField openProjectUrlTextField;
@@ -24,6 +26,7 @@ public class LoginModal extends JFrame {
     private JButton loginButton;
 
     public LoginModal(){
+        userService = new UserServiceImpl();
         contentPanel = new JPanel();
         contentPanel.setLayout(null);
 
@@ -32,19 +35,19 @@ public class LoginModal extends JFrame {
         contentPanel.add(openProjectUrlLabel);
 
         openProjectUrlTextField = new JTextField();
-        openProjectUrlTextField.setBounds(170, 30, 350, 20);
+        openProjectUrlTextField.setBounds(170, 25, 350, 30);
         contentPanel.add(openProjectUrlTextField);
 
         apiLabel = new JLabel("API Key: ");
-        apiLabel.setBounds(50, 70, 200, 20);
+        apiLabel.setBounds(50, 80, 200, 20);
         contentPanel.add(apiLabel);
 
         apiTextField = new JTextField();
-        apiTextField.setBounds(170, 70, 350, 20);
+        apiTextField.setBounds(170, 75, 350, 30);
         contentPanel.add(apiTextField);
 
         loginButton = new JButton("confirm");
-        loginButton.setBounds(250, 120,100, 20);
+        loginButton.setBounds(250, 130,100, 30);
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -79,11 +82,18 @@ public class LoginModal extends JFrame {
             }
         }else{
             //验证是否认证成功
-            boolean flag = false;
+            boolean flag = userService.authorize(openProjectURL, apiKey);
             if(flag){
                 //成功
                 //打开SelectTaskDialog
+                int width = 1040;
+                int height = 600;
+                SelectTaskDialog selectTaskDialog = new SelectTaskDialog(openProjectURL, apiKey);
+                selectTaskDialog.pack();
+                selectTaskDialog.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
+                selectTaskDialog.setVisible(true);
                 //把自己关闭
+                this.setVisible(false);
             }
             else{
                 //不成功

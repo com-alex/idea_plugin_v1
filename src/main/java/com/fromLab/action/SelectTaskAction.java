@@ -21,9 +21,5 @@ public class SelectTaskAction extends AnAction {
         loginModal.pack();
         loginModal.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
         loginModal.setVisible(true);
-//        SelectTaskDialog selectTaskDialog = new SelectTaskDialog();SelectTaskDialog;
-//        selectTaskDialog.pack();
-//        selectTaskDialog.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
-//        selectTaskDialog.setVisible(true);
     }
 }
