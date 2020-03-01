@@ -40,13 +40,14 @@ public class OpenprojectURL {
         System.out.println(url);
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
+        try {
         Request request = new Request.Builder()
                 .url(url)
                 .method("GET", null)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                 .addHeader("Authorization", tail)
                 .build();
-        try {
+
             Response response = client.newCall(request).execute();
             return response.body().string();
         } catch (Exception e) {
