@@ -15,8 +15,8 @@ import java.util.Map;
 /**
  * @author wsh
  * @date 2019-12-09
- * åå°„å·¥å…·ç±»
- * ç”¨äºåˆ›å»ºå®ä¾‹å¯¹è±¡å’Œå®ä¾‹å¯¹è±¡é“¾è¡¨
+ * ·´Éä¹¤¾ßÀà
+ * ÓÃÓÚ´´½¨ÊµÀı¶ÔÏóºÍÊµÀı¶ÔÏóÁ´±í
  */
 
 public class ReflectionUtils {
@@ -104,15 +104,15 @@ public class ReflectionUtils {
 
     /**
      *
-     * @param o1 : è¢«å¤åˆ¶å¯¹è±¡
-     * @param o2 : ç»“æœ
+     * @param o1 : ±»¸´ÖÆ¶ÔÏó
+     * @param o2 : ½á¹û
      * @return
      */
     public static Object copyProperties(Object o1, Object o2){
         Class claz1 = o1.getClass();
         Class claz2 = o2.getClass();
 
-        //è·å–o1çš„å±æ€§åä¸å±æ€§å€¼
+        //»ñÈ¡o1µÄÊôĞÔÃûÓëÊôĞÔÖµ
         Map<String, Object> attributeMap = new HashMap<>();
         Field[] o1Fields = claz1.getDeclaredFields();
         for(Field field : o1Fields) {

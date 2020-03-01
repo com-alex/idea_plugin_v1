@@ -15,7 +15,7 @@ import java.util.List;
 public interface TaskService {
 
     /**
-     * 閫氳繃妫�绱㈡潯浠惰幏鍙栨墍鏈夌殑task锛屾鏂规硶鍙互琚純鐢紝鍙互鐩存帴浣跨敤getTasksByConditons
+     * 通过检索条件获取所有的task，此方法可以被弃用，可以直接使用getTasksByConditons
      * @param openprojectURL
      * @param apikey
      * @param filters
@@ -24,7 +24,7 @@ public interface TaskService {
     List<Task> getTasks(String openprojectURL, String apikey, List<Filter> filters);
 
     /**
-     * 閫氳繃taskId 鑾峰彇task
+     * 通过taskId 获取task
      * @param openprojectURL
      * @param apiKey
      * @param id
@@ -33,7 +33,7 @@ public interface TaskService {
     Task getTaskById(String openprojectURL, String apiKey, int id);
 
     /**
-     * 鏍规嵁task鐨刬d鏇存柊task鐨剆tatus鍜宲rogress
+     * 根据task的id更新task的status和progress
      * @param openprojectURL
      * @param apiKey
      * @param id
@@ -44,7 +44,7 @@ public interface TaskService {
     String updateStatusAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage);
 
     /**
-     * 鏍规嵁task鐨刬d鏇存柊task鐨剆tartDate
+     * 根据task的id更新task的startDate
      * @param openprojectURL
      * @param apiKey
      * @param id
@@ -54,7 +54,7 @@ public interface TaskService {
     String updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date);
 
     /**
-     * 鏍规嵁task鐨刬d鏇存柊鑷畾涔夊瓧娈礶ndDate
+     * 根据task的id更新自定义字段endDate
      * @param openprojectURL
      * @param apiKey
      * @param id
@@ -65,7 +65,7 @@ public interface TaskService {
     String updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date, String customField);
 
     /**
-     * 鏍规嵁task鐨刬d鏇存柊鑷畾涔夊瓧娈祎ime spent
+     * 根据task的id更新自定义字段time spent
      * @param openprojectURL
      * @param apiKey
      * @param id
@@ -76,7 +76,7 @@ public interface TaskService {
     String updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField);
 
     /**
-     * 鏍规嵁鍚勭鏉′欢鏌ヨtask
+     * 根据各种条件查询task
      * @param openprojectURL
      * @param apikey
      * @param statusNum
@@ -97,28 +97,28 @@ public interface TaskService {
 
 
     /**
-     * 鏍规嵁椤圭洰鍚嶇О鎺掑簭鏌ヨ浠诲姟
+     * 根据项目名称排序查询任务
      * @param taskList
      * @return
      */
     List<Task> sortTaskWithProjectName(List<Task> taskList);
 
     /**
-     * 閫氳繃椤圭洰绉嶇被鎺掑簭鏌ヨ浠诲姟
+     * 通过项目种类排序查询任务
      * @param taskList
      * @return
      */
     List<Task> sortTaskWithTaskType(List<Task> taskList);
 
     /**
-     * 閫氳繃椤圭洰鐨勪紭鍏堢骇鎺掑簭鏌ヨ浠诲姟
+     * 通过项目的优先级排序查询任务
      * @param taskList
      * @return
      */
     List<Task> sortTaskWithTaskPriority(List<Task> taskList);
 
     /**
-     * 閫氳繃鎴鏃ユ湡鎺掑簭鏌ヨ浠诲姟
+     * 通过截止日期排序查询任务
      * @param taskList
      * @return
      */

@@ -1,5 +1,6 @@
 package com.fromLab.action;
 
+import com.fromLab.GUI.Modal.LoginModal;
 import com.fromLab.GUI.Modal.SelectTaskDialog;
 import com.fromLab.utils.GUIUtils;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -14,11 +15,15 @@ public class SelectTaskAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         // TODO: insert action logic here
-        Integer width = 1040;
-        Integer height = 600;
-        SelectTaskDialog selectTaskDialog = new SelectTaskDialog();
-        selectTaskDialog.pack();
-        selectTaskDialog.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
-        selectTaskDialog.setVisible(true);
+        Integer width = 600;
+        Integer height = 200;
+        LoginModal loginModal = new LoginModal();
+        loginModal.pack();
+        loginModal.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
+        loginModal.setVisible(true);
+//        SelectTaskDialog selectTaskDialog = new SelectTaskDialog();SelectTaskDialog;
+//        selectTaskDialog.pack();
+//        selectTaskDialog.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
+//        selectTaskDialog.setVisible(true);
     }
 }

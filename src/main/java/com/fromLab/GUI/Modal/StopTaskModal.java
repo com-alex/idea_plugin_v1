@@ -33,7 +33,7 @@ public class StopTaskModal extends JFrame {
     private String []statusDataSourceView;
     private Status[] statusDataSource = {Status.NEW, Status.InProgress, Status.Closed, Status.OnHold, Status.Rejected};
 
-    //æ”¾æ»‘å—ä¸çŠ¶æ€é€‰æ‹©æ§ä»¶
+    //·Å»¬¿éÓë×´Ì¬Ñ¡Ôñ¿Ø¼ş
     private JPanel contentPanel;
     private TaskProgressSlider taskProgressSlider;
     private JLabel taskProgressLabel;

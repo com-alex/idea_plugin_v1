@@ -18,12 +18,12 @@ public class SortUtils {
 
 
         /**
-         * å¯¹listçš„å…ƒç´ æŒ‰ç…§å¤šä¸ªå±æ€§åç§°æ’åº,
-         * listå…ƒç´ çš„å±æ€§å¯ä»¥æ˜¯æ•°å­—(byteï½¤shortï½¤intï½¤longï½¤floatï½¤doubleç­‰,æ”¯æŒæ­£æ•°ï½¤è´Ÿæ•°ï½¤0)ï½¤charï½¤Stringï½¤java.util.Date
+         * ¶ÔlistµÄÔªËØ°´ÕÕ¶à¸öÊôĞÔÃû³ÆÅÅĞò,
+         * listÔªËØµÄÊôĞÔ¿ÉÒÔÊÇÊı×Ö(byte?short?int?long?float?doubleµÈ,Ö§³ÖÕıÊı?¸ºÊı?0)?char?String?java.util.Date
          *
          * @param list
-         * @param sortnameArr listå…ƒç´ çš„å±æ€§åç§°
-         * @param isAsc    trueå‡åº,falseé™åº
+         * @param sortnameArr listÔªËØµÄÊôĞÔÃû³Æ
+         * @param isAsc    trueÉıĞò,false½µĞò
          */
         public static <E> void sort(List<E> list, final boolean isAsc, final String... sortnameArr) {
             Collections.sort(list, new Comparator<E>() {
@@ -47,16 +47,16 @@ public class SortUtils {
         }
 
         /**
-         * ç»™listçš„æ¯ä¸ªå±æ€§éƒ½æŒ‡å®šæ˜¯å‡åºè¿˜æ˜¯é™åº
+         * ¸ølistµÄÃ¿¸öÊôĞÔ¶¼Ö¸¶¨ÊÇÉıĞò»¹ÊÇ½µĞò
          *
          * @param list
-         * @param sortnameArr å‚æ•°æ•°ç»„
-         * @param typeArr     æ¯ä¸ªå±æ€§å¯¹åº”çš„å‡é™åºæ•°ç»„, trueå‡åº,falseé™åº
+         * @param sortnameArr ²ÎÊıÊı×é
+         * @param typeArr     Ã¿¸öÊôĞÔ¶ÔÓ¦µÄÉı½µĞòÊı×é, trueÉıĞò,false½µĞò
          */
 
         public static <E> void sort(List<E> list, final String[] sortnameArr, final boolean[] typeArr) {
             if (sortnameArr.length != typeArr.length) {
-                throw new RuntimeException("å±æ€§æ•°ç»„å…ƒç´ ä¸ªæ•°å’Œå‡é™åºæ•°ç»„å…ƒç´ ä¸ªæ•°ä¸ç›¸ç­‰");
+                throw new RuntimeException("ÊôĞÔÊı×éÔªËØ¸öÊıºÍÉı½µĞòÊı×éÔªËØ¸öÊı²»ÏàµÈ");
             }
             Collections.sort(list, new Comparator<E>() {
                 @Override
@@ -78,10 +78,10 @@ public class SortUtils {
         }
 
         /**
-         * å¯¹2ä¸ªå¯¹è±¡æŒ‰ç…§æŒ‡å®šå±æ€§åç§°è¿›è¡Œæ’åº
+         * ¶Ô2¸ö¶ÔÏó°´ÕÕÖ¸¶¨ÊôĞÔÃû³Æ½øĞĞÅÅĞò
          *
-         * @param sortname å±æ€§åç§°
-         * @param isAsc    trueå‡åº,falseé™åº
+         * @param sortname ÊôĞÔÃû³Æ
+         * @param isAsc    trueÉıĞò,false½µĞò
          * @param a
          * @param b
          * @return
@@ -91,7 +91,7 @@ public class SortUtils {
             int ret;
             Object value1 = SortUtils.forceGetFieldValue(a, sortname);
             Object value2 = SortUtils.forceGetFieldValue(b, sortname);
-            //æœ‰ç©ºå€¼é˜²æ­¢æŠ¥é”™
+            //ÓĞ¿ÕÖµ·ÀÖ¹±¨´í
             if (value1!=null&&value2!=null){
                 String str1 = value1.toString();
                 String str2 = value2.toString();
@@ -117,30 +117,30 @@ public class SortUtils {
         }
 
     /**
-     * ç»™æ•°å­—å¯¹è±¡æŒ‰ç…§æŒ‡å®šé•¿åº¦åœ¨å·¦ä¾§è¡¥0.
+     * ¸øÊı×Ö¶ÔÏó°´ÕÕÖ¸¶¨³¤¶ÈÔÚ×ó²à²¹0.
      * <p>
-     * ä½¿ç”¨æ¡ˆä¾‹: addZero2Str(11,4) è¿”å› "0011", addZero2Str(-18,6)è¿”å› "-000018"
+     * Ê¹ÓÃ°¸Àı: addZero2Str(11,4) ·µ»Ø "0011", addZero2Str(-18,6)·µ»Ø "-000018"
      *
-     * @param numObj æ•°å­—å¯¹è±¡
-     * @param length æŒ‡å®šçš„é•¿åº¦
+     * @param numObj Êı×Ö¶ÔÏó
+     * @param length Ö¸¶¨µÄ³¤¶È
      * @return
      */
     public static String addZero2Str(Number numObj, int length) {
         NumberFormat nf = NumberFormat.getInstance();
-        // è®¾ç½®æ˜¯å¦ä½¿ç”¨åˆ†ç»„
+        // ÉèÖÃÊÇ·ñÊ¹ÓÃ·Ö×é
         nf.setGroupingUsed(false);
-        // è®¾ç½®æœ€å¤§æ•´æ•°ä½æ•°
+        // ÉèÖÃ×î´óÕûÊıÎ»Êı
         nf.setMaximumIntegerDigits(length);
-        // è®¾ç½®æœ€å°æ•´æ•°ä½æ•°
+        // ÉèÖÃ×îĞ¡ÕûÊıÎ»Êı
         nf.setMinimumIntegerDigits(length);
         return nf.format(numObj);
     }
 
     /**
-     * è·å–æŒ‡å®šå¯¹è±¡çš„æŒ‡å®šå±æ€§å€¼(å»é™¤private,protectedçš„é™åˆ¶)
+     * »ñÈ¡Ö¸¶¨¶ÔÏóµÄÖ¸¶¨ÊôĞÔÖµ(È¥³ıprivate,protectedµÄÏŞÖÆ)
      *
-     * @param obj       å±æ€§åç§°æ‰€åœ¨çš„å¯¹è±¡
-     * @param fieldName å±æ€§åç§°
+     * @param obj       ÊôĞÔÃû³ÆËùÔÚµÄ¶ÔÏó
+     * @param fieldName ÊôĞÔÃû³Æ
      * @return
      * @throws Exception
      */
@@ -149,10 +149,10 @@ public class SortUtils {
         Object object = null;
         boolean accessible = field.isAccessible();
         if (!accessible) {
-            // å¦‚æœæ˜¯private,protectedä¿®é¥°çš„å±æ€§,éœ€è¦ä¿®æ”¹ä¸ºå¯ä»¥è®¿é—®çš„
+            // Èç¹ûÊÇprivate,protectedĞŞÊÎµÄÊôĞÔ,ĞèÒªĞŞ¸ÄÎª¿ÉÒÔ·ÃÎÊµÄ
             field.setAccessible(true);
             object = field.get(obj);
-            // è¿˜åŸprivate,protectedå±æ€§çš„è®¿é—®æ€§è´¨
+            // »¹Ô­private,protectedÊôĞÔµÄ·ÃÎÊĞÔÖÊ
             field.setAccessible(accessible);
             return object;
         }

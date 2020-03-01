@@ -5,7 +5,7 @@ import com.fromLab.annotation.Ignored;
 /**
  * @author wsh
  * @date 2019-12-17
- * è¿”å›æ•°æ®çš„å®ä½“ç±»
+ * ·µ»ØÊı¾İµÄÊµÌåÀà
  */
 public class TaskVO {
 
@@ -31,7 +31,7 @@ public class TaskVO {
 
     private Integer timeSpent;
 
-    //ç‰ˆæœ¬å·ï¼Œæ›´æ–°æ—¶éœ€è¦
+    //°æ±¾ºÅ£¬¸üĞÂÊ±ĞèÒª
     @Ignored
     private Integer lockVersion;
 

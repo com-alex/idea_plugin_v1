@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 public class SelectTaskDialog extends JDialog {
-    //å¸¸é‡ï¼Œé˜²æ­¢å‡ºç°é­”æ³•å€¼
+    //³£Á¿£¬·ÀÖ¹³öÏÖÄ§·¨Öµ
     private static final String SET_FROM_DUE_TIME = "from";
     private static final String SET_TO_DUE_TIME = "to";
     private final static String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
@@ -53,7 +53,7 @@ public class SelectTaskDialog extends JDialog {
     private JPanel contentPane;
     private JPanel panel1;
     private JPanel conditionPanel;
-    //æŸ¥è¯¢æ¡ä»¶æ§ä»¶
+    //²éÑ¯Ìõ¼ş¿Ø¼ş
     private JLabel statusPickerLabel;
     private JComboBox statusPicker;
     private JLabel dueTimeFromLabel;
@@ -72,7 +72,7 @@ public class SelectTaskDialog extends JDialog {
 
 
 
-    //æ•°æ®æ˜¾ç¤ºæ§ä»¶
+    //Êı¾İÏÔÊ¾¿Ø¼ş
     private JPanel tablePanel;
 //    private JButton startButton;
     private JButton endButton;
@@ -91,11 +91,11 @@ public class SelectTaskDialog extends JDialog {
     }
 
     /**
-     * ä¸»ç•Œé¢åˆå§‹åŒ–
+     * Ö÷½çÃæ³õÊ¼»¯
      */
     public void initInterface(){
 
-        //è·å–è‡ªå®šä¹‰å­—æ®µçš„åç§°
+        //»ñÈ¡×Ô¶¨Òå×Ö¶ÎµÄÃû³Æ
         this.taskTypeCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("Task type", OPENPROJECT_URL, API_KEY);
         this.endDateCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("End date", OPENPROJECT_URL, API_KEY);
         this.spentTimeCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("Time spent", OPENPROJECT_URL, API_KEY);
@@ -109,7 +109,7 @@ public class SelectTaskDialog extends JDialog {
         panel1.setLayout(null);
 
         /**
-         * æŸ¥è¯¢æ¡ä»¶éƒ¨åˆ†
+         * ²éÑ¯Ìõ¼ş²¿·Ö
          */
         conditionPanel = new JPanel();
         conditionPanel.setLayout(null);
@@ -205,7 +205,7 @@ public class SelectTaskDialog extends JDialog {
 
 
         /**
-         * æ•°æ®æ˜¾ç¤ºéƒ¨åˆ†
+         * Êı¾İÏÔÊ¾²¿·Ö
          */
         tablePanel = new JPanel();
         tablePanel.setLayout(null);
@@ -232,7 +232,7 @@ public class SelectTaskDialog extends JDialog {
         viewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //æŸ¥çœ‹taskçš„detail
+                //²é¿´taskµÄdetail
                 viewTaskDetail();
             }
         });
@@ -251,7 +251,7 @@ public class SelectTaskDialog extends JDialog {
 
         stopButton = new JButton("stop the task");
         stopButton.setBounds(540, 500, 150, 30);
-        //é»˜è®¤åœæ­¢å·¥ä½œæŒ‰é’®ä¸ºä¸èƒ½æŒ‰
+        //Ä¬ÈÏÍ£Ö¹¹¤×÷°´Å¥Îª²»ÄÜ°´
         stopButton.setEnabled(false);
         stopButton.addActionListener(new ActionListener() {
             @Override
@@ -343,14 +343,14 @@ public class SelectTaskDialog extends JDialog {
         this.startTime = 0L;
         this.endTime = 0L;
         this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
-        //TODO æ›´æ–°Spent time
+        //TODO ¸üĞÂSpent time
         this.taskService.updateSpentTime(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(),
                 this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
                 this.spentTimeCustomFieldName);
         this.chosen = false;
 
         this.stopButton.setEnabled(false);
-        //è·å–æ‰€é€‰è¡Œçš„taskçš„progress
+        //»ñÈ¡ËùÑ¡ĞĞµÄtaskµÄprogress
             String progressString = (String) taskTable.getValueAt(row, 10);
         Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
         this.setVisible(false);
@@ -359,7 +359,7 @@ public class SelectTaskDialog extends JDialog {
     }
 
     public void setTableDataSource(){
-        //TODO uidä¸ºé™æ€ï¼Œéœ€è¦è¿›è¡ŒåŠ¨æ€å˜åŒ–
+        //TODO uidÎª¾²Ì¬£¬ĞèÒª½øĞĞ¶¯Ì¬±ä»¯
 
 
         this.dataSource = this.getDataSource(null, null, null,
@@ -384,7 +384,7 @@ public class SelectTaskDialog extends JDialog {
 
 
     public void resetTableDataSource(){
-        //åˆ·æ–°è¡¨æ ¼æ•°æ®æº
+        //Ë¢ĞÂ±í¸ñÊı¾İÔ´
         this.dataSource = this.getDataSource(null, null, null, null, null, null);
         this.getTaskTable().setModel(new TaskTableModel(dataSource));
         setTableStyle();
@@ -423,7 +423,7 @@ public class SelectTaskDialog extends JDialog {
                 win.dispose();
             }
         });
-        JOptionPane.showOptionDialog(null, info, "Tips", type, 0, null, jButtons, jButtons[0]);
+        JOptionPane.showOptionDialog(null, info, "Tips", type, type, null, jButtons, jButtons[0]);
         this.setVisible(true);
     }
 
@@ -435,7 +435,7 @@ public class SelectTaskDialog extends JDialog {
             public void mouseReleased(MouseEvent e) {
                 if(e.getClickCount() == 1){
                     int pick = tableHeader.columnAtPoint(e.getPoint());
-                    //è¿›è¡Œä¼˜å…ˆçº§æ’åº
+                    //½øĞĞÓÅÏÈ¼¶ÅÅĞò
                     if(pick == 2){
                         sortDataSourceOrderByTaskName();
                     }
@@ -448,7 +448,7 @@ public class SelectTaskDialog extends JDialog {
                     else if(pick == 5){
                         sortDataSourceOrderByTaskType();
                     }
-                    //è¿›è¡Œdeadlineæ’åº
+                    //½øĞĞdeadlineÅÅĞò
                     else if(pick == 8){
                         sortDataSourceOrderByDueTime();
                     }
@@ -462,7 +462,7 @@ public class SelectTaskDialog extends JDialog {
 
     private void sortDataSourceOrderByPriority(){
 
-        //TODO éœ€è¿›è¡Œä¿®æ”¹ï¼ŒtaskPriorityæ˜¯Stringç±»å‹
+        //TODO Ğè½øĞĞĞŞ¸Ä£¬taskPriorityÊÇStringÀàĞÍ
 
         if(this.taskPriorityFlag % 2 == 0){
             SortUtils.sort(this.dataSource,
@@ -496,7 +496,7 @@ public class SelectTaskDialog extends JDialog {
 
     private void sortDataSourceOrderByDueTime(){
 
-        //TODO éœ€è¿›è¡Œä¿®æ”¹ï¼Œå°†æ¥æ—¶é—´çš„æ’åºè¿˜å¾—é‡å†™
+        //TODO Ğè½øĞĞĞŞ¸Ä£¬½«À´Ê±¼äµÄÅÅĞò»¹µÃÖØĞ´
         if(this.taskDueTimeFlag % 2 == 0){
             SortUtils.sort(this.dataSource,
                     new String[]{"dueTime","taskPriority","projectName","taskType","taskId"},

@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 /**
  * @author wsh
  * @date 2019-12-26
- * æŸ¥è¯¢ä»»åŠ¡çš„detailçš„æ¨¡æ€æ¡†
+ * ²éÑ¯ÈÎÎñµÄdetailµÄÄ£Ì¬¿ò
  */
 public class TaskDetailModal extends JFrame {
 
@@ -52,7 +52,7 @@ public class TaskDetailModal extends JFrame {
 
     private void initModal(){
 
-        //è·å–æ•°æ®æº
+        //»ñÈ¡Êı¾İÔ´
 //        taskDetailVO = taskService.queryTaskDetailByTaskId(taskId);
 
         this.setLayout(new BorderLayout());

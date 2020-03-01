@@ -27,7 +27,7 @@ public class JsonToObjectUtil {
     static  String time_spent=getCustomfiledNum("Time spent", OPENPROJECT_URL, API_KEY);
 
     /**
-     * 灏嗚繑鍥炵殑json杞寲涓轰竴涓猼ask瀵硅薄
+     * 将返回的json转化为一个task对象
      * @param json
      * @return
      */
@@ -111,7 +111,7 @@ public class JsonToObjectUtil {
     }
 
     /**
-     * 灏嗚繑鍥炵殑json杞寲涓轰竴涓猼ask鍒楄〃
+     * 将返回的json转化为一个task列表
      * @param json
      * @return
      */

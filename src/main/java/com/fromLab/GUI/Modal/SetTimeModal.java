@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author wsh
  * @date 2019-12-17
- * 璁剧疆寮�濮嬫椂闂翠笌缁撴潫鏃堕棿鐨勬ā鎬佹
+ * 设置开始时间与结束时间的模态框
  */
 public class SetTimeModal extends JFrame {
 
@@ -79,7 +79,7 @@ public class SetTimeModal extends JFrame {
     }
 
     private void onOk(){
-        //鏇存柊鏁版嵁
+        //更新数据
         String time = this.dateChooserJButton.getText();
         String date = DateUtils.date2String(DateUtils.string2Date(time));
         this.taskService.updateEndDate(OPENPROJECT_URL, API_KEY, this.task.getTaskId(), this.task.getLockVersion(), date, this.endDateCustomFieldName);
