@@ -12,18 +12,18 @@ import java.util.List;
 /**
  * @author wsh
  * @date 2019-12-17
- * ÈÎÎñÖ÷½çÃæµÄÈÎÎñ±í¸ñÁĞ±í
+ * ä»»åŠ¡ä¸»ç•Œé¢çš„ä»»åŠ¡è¡¨æ ¼åˆ—è¡¨
  */
 public class TaskTableModel extends AbstractTableModel {
     /*
-     * ÕâÀïºÍ¸Õ²ÅÒ»Ñù£¬¶¨ÒåÁĞÃûºÍÃ¿¸öÊı¾İµÄÖµ
+     * è¿™é‡Œå’Œåˆšæ‰ä¸€æ ·ï¼Œå®šä¹‰åˆ—åå’Œæ¯ä¸ªæ•°æ®çš„å€¼
      */
     String[] columnNames =
             {"", "taskId", "subject", "project_name", "task_priority", "task_type", "start_date", "end_date", "due_date", "status", "progress", "time_spent"};
     Object[][] data;
 
     /**
-     * ¹¹Ôì·½·¨£¬³õÊ¼»¯¶şÎ¬Êı×édata¶ÔÓ¦µÄÊı¾İ
+     * æ„é€ æ–¹æ³•ï¼Œåˆå§‹åŒ–äºŒç»´æ•°ç»„dataå¯¹åº”çš„æ•°æ®
      */
     public TaskTableModel(List<TaskVO> list) {
         this.data = new Object[list.size()][this.columnNames.length];
@@ -68,10 +68,10 @@ public class TaskTableModel extends AbstractTableModel {
         return " ";
     }
 
-    // ÒÔÏÂÎª¼Ì³Ğ×ÔAbstractTableModleµÄ·½·¨£¬¿ÉÒÔ×Ô¶¨Òå
+    // ä»¥ä¸‹ä¸ºç»§æ‰¿è‡ªAbstractTableModleçš„æ–¹æ³•ï¼Œå¯ä»¥è‡ªå®šä¹‰
 
     /**
-     * µÃµ½ÁĞÃû
+     * å¾—åˆ°åˆ—å
      */
     @Override
     public String getColumnName(int column) {
@@ -79,7 +79,7 @@ public class TaskTableModel extends AbstractTableModel {
     }
 
     /**
-     * ÖØĞ´·½·¨£¬µÃµ½±í¸ñÁĞÊı
+     * é‡å†™æ–¹æ³•ï¼Œå¾—åˆ°è¡¨æ ¼åˆ—æ•°
      */
     @Override
     public int getColumnCount() {
@@ -87,7 +87,7 @@ public class TaskTableModel extends AbstractTableModel {
     }
 
     /**
-     * µÃµ½±í¸ñĞĞÊı
+     * å¾—åˆ°è¡¨æ ¼è¡Œæ•°
      */
     @Override
     public int getRowCount() {
@@ -95,7 +95,7 @@ public class TaskTableModel extends AbstractTableModel {
     }
 
     /**
-     * µÃµ½Êı¾İËù¶ÔÓ¦¶ÔÏó
+     * å¾—åˆ°æ•°æ®æ‰€å¯¹åº”å¯¹è±¡
      */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
@@ -103,7 +103,7 @@ public class TaskTableModel extends AbstractTableModel {
     }
 
     /**
-     * µÃµ½Ö¸¶¨ÁĞµÄÊı¾İÀàĞÍ
+     * å¾—åˆ°æŒ‡å®šåˆ—çš„æ•°æ®ç±»å‹
      */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
@@ -125,12 +125,12 @@ public class TaskTableModel extends AbstractTableModel {
     }
 
     /**
-     * Èç¹ûÊı¾İµ¥ÔªÎª¿É±à¼­£¬Ôò½«±à¼­ºóµÄÖµÌæ»»Ô­À´µÄÖµ
+     * å¦‚æœæ•°æ®å•å…ƒä¸ºå¯ç¼–è¾‘ï¼Œåˆ™å°†ç¼–è¾‘åçš„å€¼æ›¿æ¢åŸæ¥çš„å€¼
      */
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         data[rowIndex][columnIndex] = aValue;
-        /*Í¨Öª¼àÌıÆ÷Êı¾İµ¥ÔªÊı¾İÒÑ¾­¸Ä±ä*/
+        /*é€šçŸ¥ç›‘å¬å™¨æ•°æ®å•å…ƒæ•°æ®å·²ç»æ”¹å˜*/
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 

@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 /**
  * @author zyh
  * @date 2020-03-01
- * ÉèÖÃÓÃ»§µÇÂ¼µÄÄ£Ì¬¿ò
+ * è®¾ç½®ç”¨æˆ·ç™»å½•çš„æ¨¡æ€æ¡†
  */
 
 public class LoginModal extends JFrame {
@@ -58,35 +58,35 @@ public class LoginModal extends JFrame {
     }
 
     private void onConfirm(){
-        //»ñÈ¡openProjectURL
+        //è·å–openProjectURL
         String openProjectURL = this.openProjectUrlTextField.getText();
-        //»ñÈ¡API Key
+        //è·å–API Key
         String apiKey = this.apiTextField.getText();
-        //ÑéÖ¤openProjectURLºÍAPI KeyÊÇ·ñºÏ·¨
+        //éªŒè¯openProjectURLå’ŒAPI Keyæ˜¯å¦åˆæ³•
         if(StringUtils.isBlank(openProjectURL) || StringUtils.isBlank(apiKey)){
             if(StringUtils.isBlank(openProjectURL)){
-                //ÌáÊ¾¿ò£¨ĞèÒªÌîĞ´openProjectUrl£©
+                //æç¤ºæ¡†ï¼ˆéœ€è¦å¡«å†™openProjectUrlï¼‰
                 this.setVisible(false);
                 showOptionDialog("You need to input Open Project URL!", JOptionPane.ERROR_MESSAGE);
 //                JOptionPane.showMessageDialog(null,
 //                        "You need to input Open Project URL!", "Tips", JOptionPane.PLAIN_MESSAGE);
             }else{
-                //ÌáÊ¾¿ò£¨ĞèÒªÌîĞ´API Key£©
+                //æç¤ºæ¡†ï¼ˆéœ€è¦å¡«å†™API Keyï¼‰
                 this.setVisible(false);
                 showOptionDialog("You need to input API Key!", JOptionPane.ERROR_MESSAGE);
 //                JOptionPane.showMessageDialog(null,
 //                        "You need to input Open Project URL!", "Tips", JOptionPane.ERROR_MESSAGE);
             }
         }else{
-            //ÑéÖ¤ÊÇ·ñÈÏÖ¤³É¹¦
+            //éªŒè¯æ˜¯å¦è®¤è¯æˆåŠŸ
             boolean flag = false;
             if(flag){
-                //³É¹¦
-                //´ò¿ªSelectTaskDialog
-                //°Ñ×Ô¼º¹Ø±Õ
+                //æˆåŠŸ
+                //æ‰“å¼€SelectTaskDialog
+                //æŠŠè‡ªå·±å…³é—­
             }
             else{
-                //²»³É¹¦
+                //ä¸æˆåŠŸ
                 this.setVisible(false);
                 showOptionDialog("Unauthorized", JOptionPane.ERROR_MESSAGE);
             }

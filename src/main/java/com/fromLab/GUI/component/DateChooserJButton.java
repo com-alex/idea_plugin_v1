@@ -33,7 +33,7 @@ import javax.swing.event.ChangeListener;
 /**
  * @author wsh
  * @date 2019-12-18
- * Ê±¼äÑ¡ÔñÆ÷×é¼ş
+ * æ—¶é—´é€‰æ‹©å™¨ç»„ä»¶
  */
 public class DateChooserJButton extends JButton {
 
@@ -49,7 +49,7 @@ public class DateChooserJButton extends JButton {
     public DateChooserJButton(String dateString) {
         this();
         setText(getDefaultDateFormat(), dateString);
-        //±£´æÔ­Ê¼ÊÇÈÕÆÚÊ±¼ä
+        //ä¿å­˜åŸå§‹æ˜¯æ—¥æœŸæ—¶é—´
         initOriginalText(dateString);
     }
 
@@ -57,10 +57,10 @@ public class DateChooserJButton extends JButton {
         this();
         setText(df, dateString);
 
-        //¼ÇÒäµ±Ç°µÄÈÕÆÚ¸ñÊ½»¯Æ÷
+        //è®°å¿†å½“å‰çš„æ—¥æœŸæ ¼å¼åŒ–å™¨
         this.sdf = df;
 
-        //¼ÇÒäÔ­Ê¼ÈÕÆÚÊ±¼ä
+        //è®°å¿†åŸå§‹æ—¥æœŸæ—¶é—´
         Date originalDate = null;
         try {
             originalDate = df.parse(dateString);
@@ -72,7 +72,7 @@ public class DateChooserJButton extends JButton {
 
     public DateChooserJButton(Date date) {
         this("", date);
-        //¼ÇÒäÔ­Ê¼ÈÕÆÚÊ±¼ä
+        //è®°å¿†åŸå§‹æ—¥æœŸæ—¶é—´
         initOriginalText(date);
     }
 
@@ -81,7 +81,7 @@ public class DateChooserJButton extends JButton {
             this.preLabel = preLabel;
         }
         setDate(date);
-        //¼ÇÒäÔ­Ê¼ÊÇÈÕÆÚÊ±¼ä
+        //è®°å¿†åŸå§‹æ˜¯æ—¥æœŸæ—¶é—´
         initOriginalText(date);
 
         setBorder(null);
@@ -109,8 +109,8 @@ public class DateChooserJButton extends JButton {
     }
 
     /**
-     * µÃµ½µ±Ç°Ê¹ÓÃµÄÈÕÆÚ¸ñÊ½»¯Æ÷
-     * @return ÈÕÆÚ¸ñÊ½»¯Æ÷
+     * å¾—åˆ°å½“å‰ä½¿ç”¨çš„æ—¥æœŸæ ¼å¼åŒ–å™¨
+     * @return æ—¥æœŸæ ¼å¼åŒ–å™¨
      */
     public SimpleDateFormat getCurrentSimpleDateFormat(){
         if(this.sdf != null){
@@ -121,25 +121,25 @@ public class DateChooserJButton extends JButton {
     }
 
 
-    //±£´æÔ­Ê¼ÊÇÈÕÆÚÊ±¼ä
+    //ä¿å­˜åŸå§‹æ˜¯æ—¥æœŸæ—¶é—´
     private void initOriginalText(String dateString) {
         this.originalText = dateString;
     }
 
-    //±£´æÔ­Ê¼ÊÇÈÕÆÚÊ±¼ä
+    //ä¿å­˜åŸå§‹æ˜¯æ—¥æœŸæ—¶é—´
     private void initOriginalText(Date date) {
         this.originalText = preLabel + getDefaultDateFormat().format(date);
     }
 
     /**
-     * µÃµ½µ±Ç°¼ÇÒäµÄÔ­Ê¼ÈÕÆÚÊ±¼ä
-     * @return µ±Ç°¼ÇÒäµÄÔ­Ê¼ÈÕÆÚÊ±¼ä£¨Î´ĞŞ¸ÄÇ°µÄÈÕÆÚÊ±¼ä£©
+     * å¾—åˆ°å½“å‰è®°å¿†çš„åŸå§‹æ—¥æœŸæ—¶é—´
+     * @return å½“å‰è®°å¿†çš„åŸå§‹æ—¥æœŸæ—¶é—´ï¼ˆæœªä¿®æ”¹å‰çš„æ—¥æœŸæ—¶é—´ï¼‰
      */
     public String getOriginalText() {
         return originalText;
     }
 
-    // ¸²¸Ç¸¸ÀàµÄ·½·¨
+    // è¦†ç›–çˆ¶ç±»çš„æ–¹æ³•
     @Override
     public void setText(String s) {
         Date date;
@@ -176,38 +176,38 @@ public class DateChooserJButton extends JButton {
     }
 
     /**
-     * ¸²¸Ç¸¸ÀàµÄ·½·¨Ê¹Ö®ÎŞĞ§
-     * @param listener ÏìÓ¦¼àÌıÆ÷
+     * è¦†ç›–çˆ¶ç±»çš„æ–¹æ³•ä½¿ä¹‹æ— æ•ˆ
+     * @param listener å“åº”ç›‘å¬å™¨
      */
     @Override
     public void addActionListener(ActionListener listener) {
     }
 
     /**
-     * ÄÚ²¿Àà£¬Ö÷ÒªÊÇ¶¨ÒåÒ»¸öJPanel£¬È»ºó°ÑÈÕÀúÏà¹ØµÄËùÓĞÄÚÈİÌîÈë±¾JPanel£¬
-     * È»ºóÔÙ´´½¨Ò»¸öJDialog£¬°Ñ±¾ÄÚ²¿Àà¶¨ÒåµÄJPanel·ÅÈëJDialogµÄÄÚÈİÇø
+     * å†…éƒ¨ç±»ï¼Œä¸»è¦æ˜¯å®šä¹‰ä¸€ä¸ªJPanelï¼Œç„¶åæŠŠæ—¥å†ç›¸å…³çš„æ‰€æœ‰å†…å®¹å¡«å…¥æœ¬JPanelï¼Œ
+     * ç„¶åå†åˆ›å»ºä¸€ä¸ªJDialogï¼ŒæŠŠæœ¬å†…éƒ¨ç±»å®šä¹‰çš„JPanelæ”¾å…¥JDialogçš„å†…å®¹åŒº
      */
     private class DateChooser extends JPanel implements ActionListener, ChangeListener {
 
-        int startYear = 1980; // Ä¬ÈÏ¡¾×îĞ¡¡¿ÏÔÊ¾Äê·İ
-        int lastYear = 2050; // Ä¬ÈÏ¡¾×î´ó¡¿ÏÔÊ¾Äê·İ
-        int width = 620; // ½çÃæ¿í¶È
-        int height = 300; // ½çÃæ¸ß¶È
-        Color backGroundColor = Color.gray; // µ×É«
-        // ÔÂÀú±í¸ñÅäÉ«----------------//
-        Color palletTableColor = Color.white; // ÈÕÀú±íµ×É«
-        Color todayBackColor = Color.orange; // ½ñÌì±³¾°É«
-        Color weekFontColor = Color.blue; // ĞÇÆÚÎÄ×ÖÉ«
-        Color dateFontColor = Color.black; // ÈÕÆÚÎÄ×ÖÉ«
-        Color weekendFontColor = Color.red; // ÖÜÄ©ÎÄ×ÖÉ«
-        // ¿ØÖÆÌõÅäÉ«------------------//
-        Color controlLineColor = Color.pink; // ¿ØÖÆÌõµ×É«
-        Color controlTextColor = Color.white; // ¿ØÖÆÌõ±êÇ©ÎÄ×ÖÉ«
-        Color rbFontColor = Color.white; // RoundBoxÎÄ×ÖÉ«
-        Color rbBorderColor = Color.red; // RoundBox±ß¿òÉ«
-        Color rbButtonColor = Color.pink; // RoundBox°´Å¥É«
-        Color rbBtFontColor = Color.red; // RoundBox°´Å¥ÎÄ×ÖÉ«
-        /** µã»÷DateChooserButtonÊ±µ¯³öµÄ¶Ô»°¿ò£¬ÈÕÀúÄÚÈİÔÚÕâ¸ö¶Ô»°¿òÄÚ */
+        int startYear = 1980; // é»˜è®¤ã€æœ€å°ã€‘æ˜¾ç¤ºå¹´ä»½
+        int lastYear = 2050; // é»˜è®¤ã€æœ€å¤§ã€‘æ˜¾ç¤ºå¹´ä»½
+        int width = 620; // ç•Œé¢å®½åº¦
+        int height = 300; // ç•Œé¢é«˜åº¦
+        Color backGroundColor = Color.gray; // åº•è‰²
+        // æœˆå†è¡¨æ ¼é…è‰²----------------//
+        Color palletTableColor = Color.white; // æ—¥å†è¡¨åº•è‰²
+        Color todayBackColor = Color.orange; // ä»Šå¤©èƒŒæ™¯è‰²
+        Color weekFontColor = Color.blue; // æ˜ŸæœŸæ–‡å­—è‰²
+        Color dateFontColor = Color.black; // æ—¥æœŸæ–‡å­—è‰²
+        Color weekendFontColor = Color.red; // å‘¨æœ«æ–‡å­—è‰²
+        // æ§åˆ¶æ¡é…è‰²------------------//
+        Color controlLineColor = Color.pink; // æ§åˆ¶æ¡åº•è‰²
+        Color controlTextColor = Color.white; // æ§åˆ¶æ¡æ ‡ç­¾æ–‡å­—è‰²
+        Color rbFontColor = Color.white; // RoundBoxæ–‡å­—è‰²
+        Color rbBorderColor = Color.red; // RoundBoxè¾¹æ¡†è‰²
+        Color rbButtonColor = Color.pink; // RoundBoxæŒ‰é’®è‰²
+        Color rbBtFontColor = Color.red; // RoundBoxæŒ‰é’®æ–‡å­—è‰²
+        /** ç‚¹å‡»DateChooserButtonæ—¶å¼¹å‡ºçš„å¯¹è¯æ¡†ï¼Œæ—¥å†å†…å®¹åœ¨è¿™ä¸ªå¯¹è¯æ¡†å†… */
         JDialog dialog;
         JSpinner yearSpin;
         JSpinner monthSpin;
@@ -272,13 +272,13 @@ public class DateChooserJButton extends JButton {
 
 
 
-            //Èç¹ûÕâÀïÒªÄÜ¹»Ñ¡Ôñ,»áÒªÅĞ¶ÏºÜ¶à¶«Î÷,±ÈÈçÃ¿¸öÔÂ·Ö±ğÓÉ¶àÉÙÈÕ,ÒÔ¼°ÈòÄêÎÊÌâ.ËùÒÔ,¾Í¸É´à°ÑEnableÉèÎªfalse
+            //å¦‚æœè¿™é‡Œè¦èƒ½å¤Ÿé€‰æ‹©,ä¼šè¦åˆ¤æ–­å¾ˆå¤šä¸œè¥¿,æ¯”å¦‚æ¯ä¸ªæœˆåˆ†åˆ«ç”±å¤šå°‘æ—¥,ä»¥åŠé—°å¹´é—®é¢˜.æ‰€ä»¥,å°±å¹²è„†æŠŠEnableè®¾ä¸ºfalse
             daySpin = new JSpinner(new SpinnerNumberModel(currentMonth, 1, 31, 1));
             daySpin.setPreferredSize(new Dimension(50, 27));
             daySpin.setName("Day");
             daySpin.addChangeListener(this);
             daySpin.setEnabled(false);
-            daySpin.setToolTipText("ÇëÏÂÏÂÃæµÄÈÕÀúÃæ°åÖĞ½øĞĞÑ¡ÔñÄÄÒ»Ìì£¡");
+            daySpin.setToolTipText("è¯·ä¸‹ä¸‹é¢çš„æ—¥å†é¢æ¿ä¸­è¿›è¡Œé€‰æ‹©å“ªä¸€å¤©ï¼");
             result.add(daySpin);
 
 
@@ -320,8 +320,8 @@ public class DateChooserJButton extends JButton {
         private JPanel createWeekAndDayPanal() {
             String colname[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
             JPanel result = new JPanel();
-            // ÉèÖÃ¹Ì¶¨×ÖÌå£¬ÒÔÃâµ÷ÓÃ»·¾³¸Ä±äÓ°Ïì½çÃæÃÀ¹Û
-            result.setFont(new Font("ËÎÌå", Font.PLAIN, 12));
+            // è®¾ç½®å›ºå®šå­—ä½“ï¼Œä»¥å…è°ƒç”¨ç¯å¢ƒæ”¹å˜å½±å“ç•Œé¢ç¾è§‚
+            result.setFont(new Font("å®‹ä½“", Font.PLAIN, 12));
             result.setLayout(new GridLayout(7, 7));
             result.setBackground(Color.white);
             JLabel cell;
@@ -361,12 +361,12 @@ public class DateChooserJButton extends JButton {
             return result;
         }
 
-        /** µÃµ½DateChooserButtonµÄµ±Ç°text£¬±¾·½·¨ÊÇÎª°´Å¥ÊÂ¼şÄäÃûÀà×¼±¸µÄ¡£ */
+        /** å¾—åˆ°DateChooserButtonçš„å½“å‰textï¼Œæœ¬æ–¹æ³•æ˜¯ä¸ºæŒ‰é’®äº‹ä»¶åŒ¿åç±»å‡†å¤‡çš„ã€‚ */
         public String getTextOfDateChooserButton() {
             return getText();
         }
 
-        /** »Ö¸´DateChooserButtonµÄÔ­Ê¼ÈÕÆÚÊ±¼ätext£¬±¾·½·¨ÊÇÎª°´Å¥ÊÂ¼şÄäÃûÀà×¼±¸µÄ¡£ */
+        /** æ¢å¤DateChooserButtonçš„åŸå§‹æ—¥æœŸæ—¶é—´textï¼Œæœ¬æ–¹æ³•æ˜¯ä¸ºæŒ‰é’®äº‹ä»¶åŒ¿åç±»å‡†å¤‡çš„ã€‚ */
         public void restoreTheOriginalDate() {
             String originalText = getOriginalText();
             setText(originalText);
@@ -381,9 +381,9 @@ public class DateChooserJButton extends JButton {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //¼ÇÒäÔ­Ê¼ÈÕÆÚÊ±¼ä
+                    //è®°å¿†åŸå§‹æ—¥æœŸæ—¶é—´
                     initOriginalText(getTextOfDateChooserButton());
-                    //Òş²ØÈÕÀú¶Ô»°¿ò
+                    //éšè—æ—¥å†å¯¹è¯æ¡†
                     dialog.setVisible(false);
                 }
             });
@@ -394,9 +394,9 @@ public class DateChooserJButton extends JButton {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //»Ö¸´Ô­Ê¼µÄÈÕÆÚÊ±¼ä
+                    //æ¢å¤åŸå§‹çš„æ—¥æœŸæ—¶é—´
                     restoreTheOriginalDate();
-                    //Òş²ØÈÕÀú¶Ô»°¿ò
+                    //éšè—æ—¥å†å¯¹è¯æ¡†
                     dialog.setVisible(false);
                 }
             });
@@ -406,7 +406,7 @@ public class DateChooserJButton extends JButton {
         }
 
         private JDialog createDialog(Frame owner) {
-            JDialog result = new JDialog(owner, "ÈÕÆÚÊ±¼äÑ¡Ôñ", true);
+            JDialog result = new JDialog(owner, "æ—¥æœŸæ—¶é—´é€‰æ‹©", true);
             result.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
             result.getContentPane().add(this, BorderLayout.CENTER);
             result.pack();
@@ -500,7 +500,7 @@ public class DateChooserJButton extends JButton {
         }
 
         /**
-         * Ñ¡ÔñÈÕÆÚÊ±µÄÏìÓ¦ÊÂ¼ş
+         * é€‰æ‹©æ—¥æœŸæ—¶çš„å“åº”äº‹ä»¶
          */
         @Override
         public void stateChanged(ChangeEvent e) {
@@ -534,7 +534,7 @@ public class DateChooserJButton extends JButton {
         }
 
         /**
-         * Ñ¡ÔñÈÕÆÚÊ±µÄÏìÓ¦ÊÂ¼ş
+         * é€‰æ‹©æ—¥æœŸæ—¶çš„å“åº”äº‹ä»¶
          */
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -548,16 +548,16 @@ public class DateChooserJButton extends JButton {
             Calendar c = getCalendar();
             c.set(Calendar.DAY_OF_MONTH, newDay);
             setDate(c.getTime());
-            //°ÑdaySpinÖĞµÄÖµÒ²±äÁË
+            //æŠŠdaySpinä¸­çš„å€¼ä¹Ÿå˜äº†
             daySpin.setValue(Integer.valueOf(newDay));
         }
     }
 
     /**
-     * ²âÊÔ·½·¨
+     * æµ‹è¯•æ–¹æ³•
      */
     public static void main(String[] args) {
-        JFrame mainFrame = new JFrame("²âÊÔ");
+        JFrame mainFrame = new JFrame("æµ‹è¯•");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(300, 300);
         mainFrame.setLayout(new java.awt.BorderLayout());

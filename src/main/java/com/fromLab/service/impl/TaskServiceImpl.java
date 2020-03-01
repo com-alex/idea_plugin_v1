@@ -139,7 +139,7 @@ public class TaskServiceImpl implements TaskService {
         typeObject.add("type_id", typeConditionObject);
         jsonArray.add(typeObject);
 
-        //status条件
+        //status鏉′欢
         if(statusNum != null){
             JsonObject statusObject = new JsonObject();
             JsonObject statusConditionObject = new JsonObject();
@@ -152,7 +152,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
 
-        //priority条件
+        //priority鏉′欢
         if(priorityNum != null){
             JsonObject priorityObject = new JsonObject();
             JsonObject priorityConditionObject = new JsonObject();
@@ -165,7 +165,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
 
-        //dueDate条件
+        //dueDate鏉′欢
         if(fromDueDate != null && toDueDate != null){
             JsonObject dueDateObject = new JsonObject();
             JsonObject dueDateConditionObject = new JsonObject();
@@ -180,7 +180,7 @@ public class TaskServiceImpl implements TaskService {
 
 
 
-        //taskType条件
+        //taskType鏉′欢
         if(taskTypeNum != null){
             JsonObject taskTypeObject = new JsonObject();
             JsonObject taskTypeConditonObject = new JsonObject();
@@ -194,7 +194,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
 
-        //subject条件
+        //subject鏉′欢
         if(subject != null){
             JsonObject subjectObject = new JsonObject();
             JsonObject subjectConditionObject = new JsonObject();

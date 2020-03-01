@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * @author wsh
  * @date 2019-12-18
- * 显示VO不需要显示的内容
+ * 鏄剧ずVO涓嶉渶瑕佹樉绀虹殑鍐呭
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

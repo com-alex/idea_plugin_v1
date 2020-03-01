@@ -18,7 +18,7 @@ public class GetCustomFieldNumUtil {
 
     /**
      *
-     * @param customFieldName  ÀýÈçTask type £¬End date , Time spent
+     * @param customFieldName  ä¾‹å¦‚Task type ï¼ŒEnd date , Time spent
      * @param openProjectURL
      * @param apikey
      * @return customFieldX
