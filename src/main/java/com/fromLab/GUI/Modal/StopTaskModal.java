@@ -6,6 +6,7 @@ import com.fromLab.entity.Task;
 import com.fromLab.service.TaskService;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.GUIUtils;
+import com.fromLab.utils.OpenprojectURL;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -20,10 +21,11 @@ import java.awt.event.ActionListener;
  */
 public class StopTaskModal extends JFrame {
 
-    private final static String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
-    private final static String API_KEY="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
+    private static final String SUCCESS = "success";
+    private static final String ERROR = "error";
 
     private TaskService taskService;
+    private OpenprojectURL openprojectURL;
 
     private SelectTaskDialog dialog;
     private Integer taskProgress = 0;
@@ -45,7 +47,7 @@ public class StopTaskModal extends JFrame {
 
 
 
-    public StopTaskModal(Task selectedTask, Integer taskProgress,  SelectTaskDialog dialog){
+    public StopTaskModal(Task selectedTask, Integer taskProgress,  SelectTaskDialog dialog, OpenprojectURL openprojectURL){
         this.statusDataSourceView = new String[this.statusDataSource.length];
         for (int i = 0; i < statusDataSource.length; i++) {
             statusDataSourceView[i] = statusDataSource[i].getName();
@@ -57,6 +59,7 @@ public class StopTaskModal extends JFrame {
         this.taskService = new TaskServiceImpl();
         this.selectedTask = selectedTask;
         this.taskProgress = taskProgress;
+        this.openprojectURL = openprojectURL;
         this.contentPanel = new JPanel();
         contentPanel.setLayout(null);
 
@@ -122,9 +125,10 @@ public class StopTaskModal extends JFrame {
     private void updateTask(){
 
         this.selectedStatus = statusDataSource[this.comboBox.getSelectedIndex()];
-
-        this.taskService.updateStatusAndProgress(OPENPROJECT_URL, API_KEY, this.selectedTask.getTaskId(),
+        String originalUrl = openprojectURL.getOpenProjectURL();
+        String result = this.taskService.updateStatusAndProgress(openprojectURL, this.selectedTask.getTaskId(),
                 this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
+
         JButton[] jButtons = new JButton[1];
         JButton button = new JButton("ok");
         jButtons[0] = button;
@@ -135,11 +139,31 @@ public class StopTaskModal extends JFrame {
                 win.dispose();
             }
         });
-        this.dispose();
-        JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
-                JOptionPane.WARNING_MESSAGE, 0, null, jButtons, jButtons[0]);
-        this.dialog.resetTableDataSource();
-        this.dialog.setVisible(true);
+        if (result.equals(SUCCESS)) {
+            JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+            this.dispose();
+            this.dialog.resetTableDataSource();
+            this.dialog.setVisible(true);
+        }else{
+            Integer taskId = this.selectedTask.getTaskId();
+            openprojectURL.setOpenProjectURL(originalUrl);
+            this.selectedTask = this.taskService.getTaskById(openprojectURL, taskId);
+            openprojectURL.setOpenProjectURL(originalUrl);
+            String response = this.taskService.updateStatusAndProgress(openprojectURL, this.selectedTask.getTaskId(),
+                    this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
+            if(response.equals(SUCCESS)){
+                JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+                this.dispose();
+                this.dialog.resetTableDataSource();
+                this.dialog.setVisible(true);
+            }else{
+                JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+            }
+        }
+
     }
 
 

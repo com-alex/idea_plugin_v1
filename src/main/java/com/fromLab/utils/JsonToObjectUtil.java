@@ -1,37 +1,34 @@
 package com.fromLab.utils;
 
 
-import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Task;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.jetbrains.uast.values.UBooleanConstant;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.fromLab.utils.GetCustomFieldNumUtil.getCustomfiledNum;
+import static com.fromLab.utils.GetCustomFieldNumUtil.getCustomFieldNum;
 
 /**
  * @Auther: JIN KE
  * @Date: 2020/1/12 18:50
  */
 public class JsonToObjectUtil {
-    private final static String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
-    private final static String API_KEY="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
-    static  String task_type=getCustomfiledNum("Task type", OPENPROJECT_URL, API_KEY);
-    static  String end_date=getCustomfiledNum("End date", OPENPROJECT_URL, API_KEY);
-    static  String time_spent=getCustomfiledNum("Time spent", OPENPROJECT_URL, API_KEY);
+
+
 
     /**
      * 将返回的json转化为一个task对象
      * @param json
      * @return
      */
-    public static Task JsonToTask(JSONObject json){
+    public static Task JsonToTask(JSONObject json, OpenprojectURL openprojectURL){
+
+        String task_type= getCustomFieldNum("Task type", openprojectURL);
+        String end_date= getCustomFieldNum("End date", openprojectURL);
+        String time_spent= getCustomFieldNum("Time spent", openprojectURL);
         Task task = new Task();
         //id
         int taskId = json.getInt("id");
@@ -115,7 +112,10 @@ public class JsonToObjectUtil {
      * @param json
      * @return
      */
-    public static List<Task> JsonToTaskList (JSONObject json){
+    public static List<Task> JsonToTaskList (JSONObject json, OpenprojectURL openprojectURL){
+        String task_type= getCustomFieldNum("Task type", openprojectURL);
+        String end_date= getCustomFieldNum("End date", openprojectURL);
+        String time_spent= getCustomFieldNum("Time spent", openprojectURL);
         List<Task> taskList =new ArrayList<>();
         String embedded = json.getString("_embedded");
         JSONObject embeddedJsonObject = JSONObject.fromObject(embedded);

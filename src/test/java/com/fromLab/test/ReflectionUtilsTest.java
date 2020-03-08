@@ -18,12 +18,5 @@ public class ReflectionUtilsTest {
 
     private TaskService taskService = new TaskServiceImpl();
 
-    @Test
-    public void testCopyObject(){
-        Task task = taskService.getTaskById(OPENPROJECT_URL, API_KEY, 8);
-        System.out.println(task);
-        TaskDetailVO taskDetailVO = new TaskDetailVO();
-        taskDetailVO = (TaskDetailVO) ReflectionUtils.copyProperties(task, taskDetailVO);
-        System.out.println(taskDetailVO);
-    }
+
 }

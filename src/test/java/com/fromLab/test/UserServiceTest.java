@@ -14,10 +14,13 @@ public class UserServiceTest {
     @Test
     public void testAuthorize(){
         UserService userService = new UserServiceImpl();
-//        System.out.println(userService.authorize("http://projects.plugininide.com/openproject",
-//                "e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123"));
+        System.out.println(userService.authorize("http://projects.plugininide.com/openproject/",
+                "e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123"));
 
-        System.out.println(userService.authorize("12312312312",
-                "123123123"));
+//        System.out.println(userService.authorize("12312312312",
+//                "123123123"));
     }
+
+
+
 }

@@ -19,13 +19,11 @@ public class GetCustomFieldNumUtil {
     /**
      *
      * @param customFieldName  例如Task type ，End date , Time spent
-     * @param openProjectURL
-     * @param apikey
+     * @
      * @return customFieldX
      */
-    public static String getCustomfiledNum(String customFieldName,String openProjectURL,String apikey){
-        OpenprojectURL o=new OpenprojectURL(OPENPROJECT_URL,apikey,OpenprojectURL.WORKPAGES_URL);
-        String json= o.getJson(OPENPROJECT_URL+"/api/v3/work_packages");
+    public static String getCustomFieldNum(String customFieldName, OpenprojectURL openprojectURL){
+        String json= openprojectURL.getJson();
         JSONObject jsonObject = JSONObject.fromObject(json);
 
 
@@ -72,7 +70,5 @@ public class GetCustomFieldNumUtil {
 
     }
 
-    public static void main(String[] args) {
-        System.out.println(getCustomfiledNum("Task type", OPENPROJECT_URL, API_KEY));
-    }
+
 }

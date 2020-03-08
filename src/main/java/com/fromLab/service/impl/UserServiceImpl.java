@@ -16,8 +16,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean authorize(String openProjectURl, String apiKey) {
-        OpenprojectURL openprojectURL = new OpenprojectURL(openProjectURl, apiKey, OpenprojectURL.API_URL);
-        String response = openprojectURL.getJson(openProjectURl + OpenprojectURL.API_URL);
+        OpenprojectURL openprojectURL = new OpenprojectURL(openProjectURl + OpenprojectURL.API_URL, apiKey);
+        String response = openprojectURL.getJson();
         if(StringUtils.equals(response, ERROR_STRING)){
             //认证失败,url错误
             return false;

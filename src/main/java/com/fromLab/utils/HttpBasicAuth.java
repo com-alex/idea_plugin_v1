@@ -57,8 +57,8 @@ public class HttpBasicAuth {
     public static void main(String[] args) {
         HttpBasicAuth httpBasicAuth=new HttpBasicAuth();
         //httpBasicAuth.encoding(new String("apikey:e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123"));
-        JSONObject json=httpBasicAuth.getJson("http://projects.plugininide.com/openproject/api/v3/work_packages/14" ,apiKey);
-        JsonToTask(json);
+//        JSONObject json=httpBasicAuth.getJson("http://projects.plugininide.com/openproject/api/v3/work_packages/14" ,apiKey);
+//        JsonToTask(json);
         //JSONObject json1=httpBasicAuth.getJson("http://projects.plugininide.com/openproject/api/v3/work_packages/?filters=[{ \"type_id\": { \"operator\": \"=\", \"values\": \"1\"}}]" ,apiKey);
         //JsonToTaskList(json1);
 //        try {

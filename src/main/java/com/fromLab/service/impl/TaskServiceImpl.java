@@ -21,82 +21,56 @@ import static com.fromLab.utils.JsonToObjectUtil.JsonToTaskList;
  */
 public class TaskServiceImpl implements TaskService {
 
-    private static final String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
-    private static final String API_KEY ="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
+
+
     @Override
-    public Task getTaskById(String openprojectURL, String apiKey, int id) {
-        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
-//        System.out.println(openprojectURL+OpenprojectURL.WORKPAGES_URL+id);
-        String json= o.getJson(openprojectURL+OpenprojectURL.WORKPAGES_URL+id);
+    public Task getTaskById(OpenprojectURL openprojectURL, int id) {
+        String originalUrl = openprojectURL.getOpenProjectURL();
+        openprojectURL.setOpenProjectURL(originalUrl + id);
+        String json= openprojectURL.getJson();
         JSONObject jsonObject = JSONObject.fromObject(json);
-        Task task =JsonToTask(jsonObject);
-        return task;
-    }
-
-
-    @Override
-    public List<Task> getTasks(String openprojectURL, String apikey, List<Filter> filters) {
-        JsonArray jsonArray=new JsonArray();
-        for(int i=0;i<filters.size();i++){
-            jsonArray.add(filters.get(i).toJsonObj());
-        }
-        String filterJson=jsonArray.toString();
-        OpenprojectURL o=new OpenprojectURL(openprojectURL,apikey,OpenprojectURL.WORKPAGES_URL);
-
-        String json= o.getJson(openprojectURL+OpenprojectURL.WORKPAGES_URL+
-                "?filters="+filterJson
-        );
-//        System.out.println(json);
-        JSONObject jsonObject = JSONObject.fromObject(json);
-        List<Task> taskList = JsonToTaskList(jsonObject);
-
-        return taskList;
+        openprojectURL.setOpenProjectURL(originalUrl);
+        return JsonToTask(jsonObject, openprojectURL);
     }
 
     @Override
-    public String updateStartDate(String openprojectURL, String apiKey, int id, int lock_version, String start_date) {
+    public String updateStartDate(OpenprojectURL openprojectURL, int id, int lockVersion, String startDate) {
         JsonObject jsonObject=new JsonObject();
-        jsonObject.addProperty("lockVersion",lock_version);
-        jsonObject.addProperty("startDate",start_date);
-        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
-        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
-        //System.out.println(result);
-        TaskServiceImpl taskService=new TaskServiceImpl();
-        System.out.println(taskService.ReturnUpdateStatus(result));
-        return taskService.ReturnUpdateStatus(result);
+        jsonObject.addProperty("lockVersion",lockVersion);
+        jsonObject.addProperty("startDate",startDate);
+        openprojectURL.setOpenProjectURL(openprojectURL.getOpenProjectURL() + id);
+        String result=openprojectURL.patch(jsonObject.toString());
+        System.out.println(returnUpdateStatus(result));
+        return returnUpdateStatus(result);
     }
 
     @Override
-    public String updateEndDate(String openprojectURL, String apiKey, int id, int lock_version, String end_date, String customField) {
+    public String updateEndDate(OpenprojectURL openprojectURL, int id, int lockVersion, String endDate, String customField) {
         JsonObject jsonObject=new JsonObject();
-        jsonObject.addProperty("lockVersion",lock_version);
-        jsonObject.addProperty(customField,end_date);
-        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
-        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
-        //System.out.println(result);
-        TaskServiceImpl taskService=new TaskServiceImpl();
-        System.out.println(taskService.ReturnUpdateStatus(result));
-        return taskService.ReturnUpdateStatus(result);
+        jsonObject.addProperty("lockVersion",lockVersion);
+        jsonObject.addProperty(customField,endDate);
+        openprojectURL.setOpenProjectURL(openprojectURL.getOpenProjectURL() + id);
+        String result = openprojectURL.patch(jsonObject.toString());
+        System.out.println(returnUpdateStatus(result));
+        return returnUpdateStatus(result);
     }
 
     @Override
-    public String updateSpentTime(String openprojectURL, String apiKey, int id, int lock_version, int time, String customField) {
+    public String updateSpentTime(OpenprojectURL openprojectURL, int id, int lockVersion, int time, String customField) {
         JsonObject jsonObject=new JsonObject();
-        jsonObject.addProperty("lockVersion",lock_version);
+        jsonObject.addProperty("lockVersion",lockVersion);
         jsonObject.addProperty(customField,time);
-        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
-        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
-        //System.out.println(result);
-        TaskServiceImpl taskService=new TaskServiceImpl();
-        System.out.println(taskService.ReturnUpdateStatus(result));
-        return taskService.ReturnUpdateStatus(result);
+        openprojectURL.setOpenProjectURL(openprojectURL.getOpenProjectURL() + id);
+        String result = openprojectURL.patch(jsonObject.toString());
+        System.out.println(returnUpdateStatus(result));
+        return returnUpdateStatus(result);
     }
 
     @Override
-    public String updateStatusAndProgress(String openprojectURL, String apiKey, int id, int lock_version, Status status, int percentage) {
+    public String updateStatusAndProgress(OpenprojectURL openprojectURL, int id, int lockVersion, Status status, int percentage) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("lockVersion", lock_version);
-        JsonObject links=new JsonObject();
+        jsonObject.addProperty("lockVersion", lockVersion);
+        JsonObject links = new JsonObject();
         links.add("status",status.statusJsonObject());
         jsonObject.add("_links",links);
         jsonObject.addProperty("percentageDone",percentage);
@@ -111,24 +85,22 @@ public class TaskServiceImpl implements TaskService {
          *     "percentageDone":15
          * }
          */
-        OpenprojectURL o=new OpenprojectURL(openprojectURL,apiKey,OpenprojectURL.WORKPAGES_URL);
-        String result=o.patch(openprojectURL+OpenprojectURL.WORKPAGES_URL+id,jsonObject.toString());
-        //System.out.println(result);
-        TaskServiceImpl taskService=new TaskServiceImpl();
-        System.out.println(taskService.ReturnUpdateStatus(result));
-        return taskService.ReturnUpdateStatus(result);
+        openprojectURL.setOpenProjectURL(openprojectURL.getOpenProjectURL() + id);
+        String result = openprojectURL.patch(jsonObject.toString());
+        System.out.println(returnUpdateStatus(result));
+        return returnUpdateStatus(result);
 
     }
 
 
     @Override
-    public List<Task> getTasksByConditons(String openprojectURL, String apikey,
-                                          Integer statusNum,
-                                          Integer priorityNum,
-                                          String fromDueDate,
-                                          String toDueDate,
-                                          Integer taskTypeNum,
-                                          String subject) {
+    public List<Task> getTasksByConditions(OpenprojectURL openprojectURL,
+                                           Integer statusNum,
+                                           Integer priorityNum,
+                                           String fromDueDate,
+                                           String toDueDate,
+                                           Integer taskTypeNum,
+                                           String subject) {
 
 
         JsonArray jsonArray = new JsonArray();
@@ -138,7 +110,6 @@ public class TaskServiceImpl implements TaskService {
         typeConditionObject.addProperty("values", "1");
         typeObject.add("type_id", typeConditionObject);
         jsonArray.add(typeObject);
-
         //status条件
         if(statusNum != null){
             JsonObject statusObject = new JsonObject();
@@ -150,8 +121,6 @@ public class TaskServiceImpl implements TaskService {
             statusObject.add("status", statusConditionObject);
             jsonArray.add(statusObject);
         }
-
-
         //priority条件
         if(priorityNum != null){
             JsonObject priorityObject = new JsonObject();
@@ -163,8 +132,6 @@ public class TaskServiceImpl implements TaskService {
             priorityObject.add("priority", priorityConditionObject);
             jsonArray.add(priorityObject);
         }
-
-
         //dueDate条件
         if(fromDueDate != null && toDueDate != null){
             JsonObject dueDateObject = new JsonObject();
@@ -177,9 +144,6 @@ public class TaskServiceImpl implements TaskService {
             dueDateObject.add("dueDate", dueDateConditionObject);
             jsonArray.add(dueDateObject);
         }
-
-
-
         //taskType条件
         if(taskTypeNum != null){
             JsonObject taskTypeObject = new JsonObject();
@@ -188,12 +152,10 @@ public class TaskServiceImpl implements TaskService {
             taskTypeValuesArray.add(taskTypeNum + "");
             taskTypeConditonObject.addProperty("operator", "=");
             taskTypeConditonObject.add("values", taskTypeValuesArray);
-            String customName = GetCustomFieldNumUtil.getCustomfiledNum("Task type", OPENPROJECT_URL, API_KEY);
+            String customName = GetCustomFieldNumUtil.getCustomFieldNum("Task type", openprojectURL);
             taskTypeObject.add(customName, taskTypeConditonObject);
             jsonArray.add(taskTypeObject);
         }
-
-
         //subject条件
         if(subject != null){
             JsonObject subjectObject = new JsonObject();
@@ -205,20 +167,14 @@ public class TaskServiceImpl implements TaskService {
             subjectObject.add("subject", subjectConditionObject);
             jsonArray.add(subjectObject);
         }
-
-
         String filterJson = jsonArray.toString();
-
-        OpenprojectURL o=new OpenprojectURL(openprojectURL,apikey,OpenprojectURL.WORKPAGES_URL);
-
-        String json= o.getJson(openprojectURL+OpenprojectURL.WORKPAGES_URL+
-                "?filters="+filterJson
-        );
-
+        String originalUrl = openprojectURL.getOpenProjectURL();
+        openprojectURL.setOpenProjectURL(openprojectURL.getOpenProjectURL() + "?filters="+filterJson);
+        String json= openprojectURL.getJson();
         JSONObject jsonObject = JSONObject.fromObject(json);
-        List<Task> taskList = JsonToTaskList(jsonObject);
+        openprojectURL.setOpenProjectURL(originalUrl);
+        return JsonToTaskList(jsonObject, openprojectURL);
 
-        return taskList;
     }
 
 
@@ -257,13 +213,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-    public String ReturnUpdateStatus(String returnJson){
+    public String returnUpdateStatus(String returnJson){
         JSONObject jsonObject = JSONObject.fromObject(returnJson);
         String type = jsonObject.getString("_type");
-        if (type.equals("Error"))
-         return "error";
-        else
-            return "success";
+        if (type.equals("Error")){
+            return "error";
+        }
+        return "success";
     }
 
 

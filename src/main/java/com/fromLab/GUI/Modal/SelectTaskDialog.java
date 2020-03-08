@@ -6,10 +6,7 @@ import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Task;
 import com.fromLab.service.impl.TaskServiceImpl;
-import com.fromLab.utils.DateUtils;
-import com.fromLab.utils.GetCustomFieldNumUtil;
-import com.fromLab.utils.ReflectionUtils;
-import com.fromLab.utils.SortUtils;
+import com.fromLab.utils.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -30,19 +27,22 @@ public class SelectTaskDialog extends JDialog {
     private static final String SET_FROM_DUE_TIME = "from";
     private static final String SET_TO_DUE_TIME = "to";
 
-    private String openProjectUrl;
-    private String apiKey;
+    private static final String SUCCESS = "success";
+    private static final String ERROR = "error";
+
+    private OpenprojectURL openprojectURL;
+    private String originalUrl;
+
+
     private Long startTime;
     private Long endTime;
     private Boolean chosen = false;
-    private Integer selectedTaskIndex;
     private List<TaskVO> dataSource;
     private Integer taskPriorityFlag = 0;
     private Integer taskDueTimeFlag = 0;
     private Integer taskNameFlag = 0;
     private Integer taskProjectFlag = 0;
     private Integer taskTypeFlag = 0;
-    private String taskTypeCustomFieldName;
     private String spentTimeCustomFieldName;
     private String endDateCustomFieldName;
     private Task selectedTask;
@@ -74,18 +74,16 @@ public class SelectTaskDialog extends JDialog {
 
     //数据显示控件
     private JPanel tablePanel;
-//    private JButton startButton;
     private JButton endButton;
     private JButton chooseButton;
     private JButton viewButton;
     private JButton stopButton;
     private JTable taskTable;
     private TaskServiceImpl taskService;
-    private Integer uid = 1;
 
     public SelectTaskDialog(String openProjectUrl, String apiKey) {
-        this.openProjectUrl = openProjectUrl;
-        this.apiKey = apiKey;
+        openprojectURL = new OpenprojectURL(openProjectUrl + OpenprojectURL.WORK_PACKAGES_URL, apiKey);
+        originalUrl = this.openprojectURL.getOpenProjectURL();
         initInterface();
         setContentPane(contentPane);
         setModal(true);
@@ -99,18 +97,15 @@ public class SelectTaskDialog extends JDialog {
     public void initInterface(){
 
         //获取自定义字段的名称
-        this.taskTypeCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("Task type", openProjectUrl, apiKey);
-        this.endDateCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("End date", openProjectUrl, apiKey);
-        this.spentTimeCustomFieldName = GetCustomFieldNumUtil.getCustomfiledNum("Time spent", openProjectUrl, apiKey);
+        this.endDateCustomFieldName = GetCustomFieldNumUtil.getCustomFieldNum("End date", openprojectURL);
+        this.spentTimeCustomFieldName = GetCustomFieldNumUtil.getCustomFieldNum("Time spent", openprojectURL);
 
         this.selectedTask = new Task();
-
         taskService = new TaskServiceImpl();
         this.dataSource = new ArrayList<>();
 
         panel1.setLocation(0,0);
         panel1.setLayout(null);
-
         /**
          * 查询条件部分
          */
@@ -124,18 +119,6 @@ public class SelectTaskDialog extends JDialog {
 
         statusPicker = new JComboBox(this.statusShowDate);
         this.statusPicker.setBounds(50, 5, 165, 30);
-        this.statusPicker.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    String selectedItem = (String) e.getItem();
-                    if(selectedItem.contains("Please")){
-                        selectedItem = "";
-                    }
-//                    queryShowTaskByStatus(selectedItem);
-                }
-            }
-        });
         conditionPanel.add(this.statusPicker);
 
         this.dueTimeFromLabel = new JLabel("From");
@@ -247,7 +230,6 @@ public class SelectTaskDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 chooseTask();
-
             }
         });
         panel1.add(chooseButton);
@@ -275,8 +257,7 @@ public class SelectTaskDialog extends JDialog {
         }
         this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
         this.setVisible(false);
-        new SetTimeModal(this, this.selectedTask, this.endDateCustomFieldName);
-
+        new SetTimeModal(this, this.selectedTask, this.endDateCustomFieldName, openprojectURL);
     }
 
     public JTable getTaskTable(){
@@ -305,14 +286,14 @@ public class SelectTaskDialog extends JDialog {
                 return;
             }
             this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
+            this.openprojectURL.setOpenProjectURL(originalUrl);
             if("null".equals(this.selectedTask.getStartTime())){
                 String startDate = DateUtils.date2String(new Date());
-                this.taskService.updateStartDate(openProjectUrl, apiKey, this.selectedTask.getTaskId(),
+                this.taskService.updateStartDate(openprojectURL, this.selectedTask.getTaskId(),
                         this.selectedTask.getLockVersion(), startDate);
             }
             this.getTaskTable().setValueAt("*", row, 0);
             this.chosen = true;
-            this.selectedTaskIndex = row;
             this.stopButton.setEnabled(true);
             this.startTime = System.currentTimeMillis();
             System.out.println("Start Task  Time:" + this.startTime);
@@ -347,28 +328,50 @@ public class SelectTaskDialog extends JDialog {
         this.endTime = 0L;
         this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
         //TODO 更新Spent time
-        this.taskService.updateSpentTime(openProjectUrl, apiKey, this.selectedTask.getTaskId(),
+        this.openprojectURL.setOpenProjectURL(originalUrl);
+        String result = this.taskService.updateSpentTime(openprojectURL, this.selectedTask.getTaskId(),
                 this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
                 this.spentTimeCustomFieldName);
-        this.chosen = false;
-
-        this.stopButton.setEnabled(false);
-        //获取所选行的task的progress
+        //先发一次update请求，如果成功表示更新成功
+        if (SUCCESS.equals(result)){
+            this.chosen = false;
+            this.stopButton.setEnabled(false);
+            //获取所选行的task的progress
             String progressString = (String) taskTable.getValueAt(row, 10);
-        Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
-        this.setVisible(false);
-        new StopTaskModal(this.selectedTask, progress, this);
-        this.selectedTask = null;
+            Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
+            this.setVisible(false);
+            new StopTaskModal(this.selectedTask, progress, this, openprojectURL);
+            this.selectedTask = null;
+        }
+        //如果没成功，可能是服务器问题，也有可能是因为lock_version不正确，因此重新获取task，然后再发一次update请求
+        else{
+            this.openprojectURL.setOpenProjectURL(originalUrl);
+            this.selectedTask = this.taskService.getTaskById(openprojectURL, this.selectedTask.getTaskId());
+            this.openprojectURL.setOpenProjectURL(originalUrl);
+            String response = this.taskService.updateSpentTime(openprojectURL, this.selectedTask.getTaskId(),
+                    this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
+                    this.spentTimeCustomFieldName);
+            if(SUCCESS.equals(response)){
+                this.chosen = false;
+                this.stopButton.setEnabled(false);
+                //获取所选行的task的progress
+                String progressString = (String) taskTable.getValueAt(row, 10);
+                Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
+                this.setVisible(false);
+                new StopTaskModal(this.selectedTask, progress, this, openprojectURL);
+                this.selectedTask = null;
+            }else{
+                this.setVisible(false);
+                showOptionDialog("Fail to save", JOptionPane.WARNING_MESSAGE);
+                this.resetTableDataSource();
+            }
+        }
+
     }
 
     public void setTableDataSource(){
-        //TODO uid为静态，需要进行动态变化
-
-
         this.dataSource = this.getDataSource(null, null, null,
                 null, null, null);
-
-
 
         TaskTableModel taskTableModel = new TaskTableModel(dataSource);
         taskTable = new JTable(taskTableModel);
@@ -387,6 +390,7 @@ public class SelectTaskDialog extends JDialog {
 
 
     public void resetTableDataSource(){
+        openprojectURL.setOpenProjectURL(originalUrl);
         //刷新表格数据源
         this.dataSource = this.getDataSource(null, null, null, null, null, null);
         this.getTaskTable().setModel(new TaskTableModel(dataSource));
@@ -426,7 +430,7 @@ public class SelectTaskDialog extends JDialog {
                 win.dispose();
             }
         });
-        JOptionPane.showOptionDialog(null, info, "Tips", type, type, null, jButtons, jButtons[0]);
+        JOptionPane.showOptionDialog(null, info, "Tips", JOptionPane.DEFAULT_OPTION, type, null, jButtons, jButtons[0]);
         this.setVisible(true);
     }
 
@@ -621,7 +625,7 @@ public class SelectTaskDialog extends JDialog {
                                        Integer taskTypeNum,
                                        String subject){
         List<TaskVO> taskVOList = new ArrayList<>();
-        List<Task> taskList = taskService.getTasksByConditons(openProjectUrl, apiKey, statusNum, priorityNum,
+        List<Task> taskList = taskService.getTasksByConditions(openprojectURL, statusNum, priorityNum,
                                                                 fromDueDate, toDueDate, taskTypeNum, subject);
         taskList.forEach(task -> {
             TaskVO taskVO = new TaskVO();
@@ -632,10 +636,12 @@ public class SelectTaskDialog extends JDialog {
     }
 
     private void setChosenFlag(){
-        if(this.selectedTask != null){
-            for (int i = 0; i < this.dataSource.size(); i++) {
-                if(this.selectedTask.getTaskId().equals(this.dataSource.get(i).getTaskId())){
-                    this.getTaskTable().setValueAt("*", i, 0);
+        if(this.chosen){
+            if(this.selectedTask != null){
+                for (int i = 0; i < this.dataSource.size(); i++) {
+                    if(this.selectedTask.getTaskId().equals(this.dataSource.get(i).getTaskId())){
+                        this.getTaskTable().setValueAt("*", i, 0);
+                    }
                 }
             }
         }

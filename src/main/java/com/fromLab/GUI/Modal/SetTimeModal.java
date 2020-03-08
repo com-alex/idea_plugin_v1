@@ -7,6 +7,7 @@ import com.fromLab.entity.Task;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.DateUtils;
 import com.fromLab.utils.GUIUtils;
+import com.fromLab.utils.OpenprojectURL;
 import com.fromLab.utils.ReflectionUtils;
 
 import javax.swing.*;
@@ -23,10 +24,9 @@ import java.util.List;
  */
 public class SetTimeModal extends JFrame {
 
-    private final static String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
-    private final static String API_KEY="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
 
     private SelectTaskDialog jDialog;
+    private OpenprojectURL openprojectURL;
     private Task task;
     private String endDateCustomFieldName;
     private TaskServiceImpl taskService;
@@ -36,9 +36,10 @@ public class SetTimeModal extends JFrame {
     private JButton okButton;
     private JButton cancelButton;
 
-    public SetTimeModal(SelectTaskDialog dialog, Task task, String endDateCustomFieldName){
+    public SetTimeModal(SelectTaskDialog dialog, Task task, String endDateCustomFieldName, OpenprojectURL openprojectURL){
         this.task = task;
         this.jDialog = dialog;
+        this.openprojectURL = openprojectURL;
         this.endDateCustomFieldName = endDateCustomFieldName;
         taskService = new TaskServiceImpl();
         timePanel = new JPanel();
@@ -82,7 +83,7 @@ public class SetTimeModal extends JFrame {
         //更新数据
         String time = this.dateChooserJButton.getText();
         String date = DateUtils.date2String(DateUtils.string2Date(time));
-        this.taskService.updateEndDate(OPENPROJECT_URL, API_KEY, this.task.getTaskId(), this.task.getLockVersion(), date, this.endDateCustomFieldName);
+        String result = this.taskService.updateEndDate(openprojectURL, this.task.getTaskId(), this.task.getLockVersion(), date, this.endDateCustomFieldName);
         JButton[] jButtons = new JButton[1];
         JButton button = new JButton("ok");
         jButtons[0] = button;
@@ -94,8 +95,14 @@ public class SetTimeModal extends JFrame {
             }
         });
         this.dispose();
-        JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
-                JOptionPane.WARNING_MESSAGE, 0, null, jButtons, jButtons[0]);
+        if(result.equals("success")){
+            JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, jButtons, jButtons[0]);
+        }else{
+            JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+        }
+
         this.jDialog.resetTableDataSource();
         this.jDialog.setVisible(true);
 
