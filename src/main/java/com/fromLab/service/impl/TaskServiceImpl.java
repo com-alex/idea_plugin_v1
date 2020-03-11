@@ -29,7 +29,8 @@ public class TaskServiceImpl implements TaskService {
         openprojectURL.setOpenProjectURL(originalUrl + id);
         String json= openprojectURL.getJson();
         JSONObject jsonObject = JSONObject.fromObject(json);
-        openprojectURL.setOpenProjectURL(originalUrl);
+        openprojectURL.setOpenProjectURL(originalUrl.substring(0,originalUrl.length()-1));
+
         return JsonToTask(jsonObject, openprojectURL);
     }
 

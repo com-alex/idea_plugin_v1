@@ -147,9 +147,9 @@ public class StopTaskModal extends JFrame {
             this.dialog.setVisible(true);
         }else{
             Integer taskId = this.selectedTask.getTaskId();
-            openprojectURL.setOpenProjectURL(originalUrl);
+            openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/")+1));
             this.selectedTask = this.taskService.getTaskById(openprojectURL, taskId);
-            openprojectURL.setOpenProjectURL(originalUrl);
+            openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/")+1));
             String response = this.taskService.updateStatusAndProgress(openprojectURL, this.selectedTask.getTaskId(),
                     this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
             if(response.equals(SUCCESS)){
