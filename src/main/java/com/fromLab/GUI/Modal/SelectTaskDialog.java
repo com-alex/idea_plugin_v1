@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SelectTaskDialog extends JDialog {
+public class SelectTaskDialog extends JFrame {
     //常量，防止出现魔法值
     private static final String SET_FROM_DUE_TIME = "from";
     private static final String SET_TO_DUE_TIME = "to";
@@ -86,7 +86,6 @@ public class SelectTaskDialog extends JDialog {
         originalUrl = this.openprojectURL.getOpenProjectURL();
         initInterface();
         setContentPane(contentPane);
-        setModal(true);
     }
 
 

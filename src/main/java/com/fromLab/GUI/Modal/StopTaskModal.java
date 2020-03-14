@@ -7,6 +7,7 @@ import com.fromLab.service.TaskService;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.GUIUtils;
 import com.fromLab.utils.OpenprojectURL;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -152,7 +153,7 @@ public class StopTaskModal extends JFrame {
             openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/")+1));
             String response = this.taskService.updateStatusAndProgress(openprojectURL, this.selectedTask.getTaskId(),
                     this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
-            if(response.equals(SUCCESS)){
+            if(StringUtils.equals(response, SUCCESS)){
                 JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
                 this.dispose();
