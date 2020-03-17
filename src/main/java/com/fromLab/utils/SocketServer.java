@@ -14,7 +14,7 @@ public class SocketServer implements Runnable  {
     }
     public SocketServer(){
         try {
-            server = new ServerSocket(11111);
+            server = new ServerSocket(11222);
         } catch (IOException e) {
             e.printStackTrace();
         }
