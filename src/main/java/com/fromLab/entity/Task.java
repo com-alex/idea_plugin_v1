@@ -3,6 +3,7 @@ package com.fromLab.entity;
 import com.fromLab.annotation.Ignored;
 
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -13,7 +14,7 @@ import java.sql.Timestamp;
  * taskype我认为和后面的activity一个意思，比如有design，develop，consultant
  * 用sql.timestamp类型来表示时间，因为比较精确，就是不知道通过PMS api获得的时间类型是什么，是否容易转换？
  */
-public class Task {
+public class Task implements Serializable {
 
 
     private Integer taskId;
