@@ -1,5 +1,7 @@
 package com.fromLab.action.TaskJavaDoc;
 
+import com.fromLab.entity.Task;
+import com.fromLab.utils.SocketUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.CaretModel;
@@ -16,7 +18,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 public class JavaDocAction extends AnAction {
 
     private JavaDocSetting javaDocSetting;
-
+    private SocketUtil socketUtil=new SocketUtil();
 
 
     @Override
@@ -44,7 +46,8 @@ public class JavaDocAction extends AnAction {
         CaretModel caretModel = editor.getCaretModel();
         int caretOffset = caretModel.getOffset();
         int line = document.getLineNumber(caretOffset);
-        String[] JavaDocStringArr= StringToStringArray(this.javaDocSetting.getJavaDocFormat());
+        Task task = socketUtil.getTask();
+        String[] JavaDocStringArr= TaskToStringArray(task);
         for (int i = 0; i < JavaDocStringArr.length; i++) {
             if(JavaDocStringArr[i]!=null){
                 line++;
@@ -53,29 +56,20 @@ public class JavaDocAction extends AnAction {
             else
                 break;
         }
+//        document.insertString(document.getLineStartOffset(line),task.toString());
 
 
-
-        }
-    private  String[]  StringToStringArray(String defaultFormat){
-        boolean flag=true;
+    }
+    private  String[]  TaskToStringArray(Task task){
         String[] arr=new String[20];
-        int lastindex=3;
         arr[0]="/**";
-        int count=1;
-        while (flag){
-            int i = defaultFormat.indexOf("\n", lastindex+1);
-            if (i==-1) {
-                arr[count] = " */";
-                flag = false;
-            }
-            else {
-                String s=defaultFormat.substring(lastindex+1,i);
-                arr[count]=s;
-                count++;
-                lastindex=i;
-            }
-        }
+        arr[1]=" * @taskId "+task.getTaskId();
+        arr[2]=" * @taskName "+task.getTaskName();
+        arr[3]=" * @projectName "+task.getProjectName();
+        arr[4]=" * @status "+task.getStatus();
+        arr[5]=" * @TaskPriority "+task.getTaskPriority();
+        arr[6]=" * @dueTime "+task.getDueTime();
+        arr[7]=" */ ";
         return arr;
     }
 

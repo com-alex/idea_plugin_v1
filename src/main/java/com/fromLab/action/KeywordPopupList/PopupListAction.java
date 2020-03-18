@@ -1,5 +1,7 @@
 package com.fromLab.action.KeywordPopupList;
 
+import com.fromLab.entity.Task;
+import com.fromLab.utils.SocketUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -16,6 +18,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 public class PopupListAction extends AnAction {
 
     PopupList popupList=new PopupList();
+    private SocketUtil socketUtil=new SocketUtil();
 
     @Override
     public void actionPerformed(AnActionEvent e) {
@@ -37,6 +40,7 @@ public class PopupListAction extends AnAction {
         Document document = editor.getDocument();
         SelectionModel selectionModel = editor.getSelectionModel();
         selectionModel.selectWordAtCaret(false);
+        Task task = socketUtil.getTask();
         String selectedText = selectionModel.getSelectedText();
         //当只输入了@的时候，WordAtCaret会选中两个整行...,改为使用LineAtCaret
         if (selectedText.contains("*")){
@@ -46,7 +50,7 @@ public class PopupListAction extends AnAction {
         int lineStartOffset=selectionModel.getSelectionStart();
         int lineEndOffset= selectionModel.getSelectionEnd();
         if (selectedText!=null) {
-                  popupList.createListPopup(selectedText,psiClass,lineStartOffset,lineEndOffset,document,editor);
+                  popupList.createListPopup(selectedText,psiClass,lineStartOffset,lineEndOffset,document,editor,task);
         }
 
     }
