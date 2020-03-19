@@ -8,7 +8,10 @@ import java.net.Socket;
 
 public class SocketServer implements Runnable  {
     private ServerSocket server;
-    private Task task;
+    public volatile Task task;
+    volatile String message;
+    volatile boolean flag=true;
+    public void setMessage(String message){this.message=message;}
     public void setTask(Task task){
         this.task=task;
     }
@@ -22,6 +25,12 @@ public class SocketServer implements Runnable  {
     @Override
     public void run() {
         while (true) {
+//            System.out.println(message);
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
             try {
                 Socket socket = server.accept();
                 ObjectOutputStream objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
@@ -30,13 +39,22 @@ public class SocketServer implements Runnable  {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         SocketServer socketServer=new SocketServer();
         Thread thread=new Thread(socketServer);
-        socketServer.setTask(null);
+     //   socketServer.setTask(null);
+        socketServer.setMessage("b");
+        thread.start();
+        Thread.sleep(1000);
+      //  socketServer.flag=false;
+        socketServer.setMessage("a");
+   //     socketServer.flag=true;
+
+      //  thread.start();
 
     }
 }

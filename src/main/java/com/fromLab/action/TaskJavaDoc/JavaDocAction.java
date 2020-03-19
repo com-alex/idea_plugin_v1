@@ -47,6 +47,11 @@ public class JavaDocAction extends AnAction {
         int caretOffset = caretModel.getOffset();
         int line = document.getLineNumber(caretOffset);
         Task task = socketUtil.getTask();
+        if(task==null) {
+            System.out.println("task is null");
+            return;
+        }
+        System.out.println(task);
         String[] JavaDocStringArr= TaskToStringArray(task);
         for (int i = 0; i < JavaDocStringArr.length; i++) {
             if(JavaDocStringArr[i]!=null){

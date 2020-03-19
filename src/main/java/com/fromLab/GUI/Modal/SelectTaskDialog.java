@@ -81,6 +81,7 @@ public class SelectTaskDialog extends JFrame {
     private JTable taskTable;
     private TaskServiceImpl taskService;
     private SocketServer socketServer;
+    private Thread thread;
     public SelectTaskDialog(String openProjectUrl, String apiKey) {
         openprojectURL = new OpenprojectURL(openProjectUrl + OpenprojectURL.WORK_PACKAGES_URL, apiKey);
         originalUrl = this.openprojectURL.getOpenProjectURL();
@@ -95,8 +96,8 @@ public class SelectTaskDialog extends JFrame {
      */
     public void initInterface(){
         this.socketServer=new SocketServer();
-        Thread thread=new Thread(socketServer);
-        thread.start();
+        this.thread=new Thread(socketServer);
+        this.thread.start();
         //获取自定义字段的名称
         this.endDateCustomFieldName = GetCustomFieldNumUtil.getCustomFieldNum("End date", openprojectURL);
         this.spentTimeCustomFieldName = GetCustomFieldNumUtil.getCustomFieldNum("Time spent", openprojectURL);
@@ -287,7 +288,8 @@ public class SelectTaskDialog extends JFrame {
                 return;
             }
             this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
-            socketServer.setTask(this.selectedTask);
+            System.out.println(this.selectedTask);
+            socketServer.task=this.selectedTask;
             this.openprojectURL.setOpenProjectURL(originalUrl);
             if("null".equals(this.selectedTask.getStartTime())){
                 String startDate = DateUtils.date2String(new Date());
