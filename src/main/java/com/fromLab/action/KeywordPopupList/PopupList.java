@@ -56,9 +56,18 @@ public class PopupList {
         else {
             //keyword不为空，自动补全
             ArrayList<String> content = new ArrayList<>();
+            char[] chars = keyword.toLowerCase().toCharArray();
             for (int i = 0; i < remainTaskFields.length; i++) {
-                if(remainTaskFields[i].toLowerCase().contains(keyword.toLowerCase()))
-                    content.add(remainTaskFields[i]);
+                int count=0;
+                for (int j = 0; j < chars.length; j++) {
+                    if(remainTaskFields[i].toLowerCase().contains(chars[j]+""))
+                        count++;
+                    else
+                        break;
+                    if(count==chars.length)
+                        content.add(remainTaskFields[i]);
+                }
+
             }
             int size=content.size();
             String[] strings = (String[]) content.toArray(new String[size]);

@@ -16,9 +16,6 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <applicationConfigurable instance="com.fromLab.action.TaskJavaDoc.JavaDocConfigurable"/>
-        <applicationService serviceInterface="com.fromLab.action.TaskJavaDoc.JavaDocSetting"
-                            serviceImplementation="com.fromLab.action.TaskJavaDoc.JavaDocSetting"/>
     </extensions>
 
     <actions>

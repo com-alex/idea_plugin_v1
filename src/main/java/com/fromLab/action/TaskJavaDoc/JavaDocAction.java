@@ -51,7 +51,7 @@ public class JavaDocAction extends AnAction {
             System.out.println("task is null");
             return;
         }
-        System.out.println(task);
+        //System.out.println(task);
         String[] JavaDocStringArr= TaskToStringArray(task);
         for (int i = 0; i < JavaDocStringArr.length; i++) {
             if(JavaDocStringArr[i]!=null){
@@ -72,7 +72,7 @@ public class JavaDocAction extends AnAction {
         arr[2]=" * @taskName "+task.getTaskName();
         arr[3]=" * @projectName "+task.getProjectName();
         arr[4]=" * @status "+task.getStatus();
-        arr[5]=" * @TaskPriority "+task.getTaskPriority();
+        arr[5]=" * @taskPriority "+task.getTaskPriority();
         arr[6]=" * @dueTime "+task.getDueTime();
         arr[7]=" */ ";
         return arr;
