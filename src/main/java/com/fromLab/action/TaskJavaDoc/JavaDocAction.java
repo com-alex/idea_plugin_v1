@@ -59,49 +59,23 @@ public class JavaDocAction extends AnAction {
                     "Tips", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        //System.out.println(task);
-        String[] JavaDocStringArr= TaskToStringArray(task);
-        for (int i = 0; i < JavaDocStringArr.length; i++) {
-            if(JavaDocStringArr[i]!=null){
-                line++;
-                document.insertString(document.getLineStartOffset(line),"    "+JavaDocStringArr[i]);
-            }
-            else{
-                break;
-            }
+        document.insertString(document.getLineStartOffset(line),TaskJavaDocString(task));
 
-        }
-//        document.insertString(document.getLineStartOffset(line),task.toString());
 
 
     }
-    private  String[]  TaskToStringArray(Task task){
-        String[] arr=new String[20];
-        arr[0] = "\n";
-        arr[1] = "\n";
-        arr[2] = "\n";
-        arr[3] = "\n";
-        arr[4] = "\n";
-        arr[5] = "\n";
-        arr[6]="/**";
-        arr[7]=" * @taskId "+task.getTaskId();
-        arr[8]=" * @taskName "+task.getTaskName();
-        arr[9]=" * @projectName "+task.getProjectName();
-        arr[10]=" * @status "+task.getStatus();
-        arr[11]=" * @taskPriority "+task.getTaskPriority();
-        arr[12]=" * @dueTime "+task.getDueTime();
-        arr[13]=" */ ";
-        arr[14] = "\n";
-        arr[15] = "\n";
-        arr[16] = "\n";
-        arr[17] = "\n";
-        arr[18] = "\n";
-        arr[19] = "\n";
-        return arr;
+    private String TaskJavaDocString(Task task){
+        String taskJavaDocString =
+                "    /**\n" +
+                "     * @taskId "+task.getTaskId() + "\n" +
+                "     * @taskName "+task.getTaskName() + "\n"+
+                "     * @projectName "+task.getProjectName() + "\n"+
+                "     * @status "+task.getStatus()+"\n" +
+                "     * @taskPriority "+task.getTaskPriority()+"\n" +
+                "     * @dueTime "+task.getDueTime()+"\n" +
+                "     */ ";
+        return taskJavaDocString;
     }
-
-
-
 
     private PsiClass getPsiMethodFromContext(AnActionEvent e) {
         PsiElement elementAt = this.getPsiElement(e);
