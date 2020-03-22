@@ -1,6 +1,7 @@
 package com.fromLab.service.impl;
 
 
+import com.fromLab.exception.BusinessException;
 import com.fromLab.utils.OpenprojectURL;
 import com.fromLab.entity.*;
 import com.fromLab.service.TaskService;
@@ -24,7 +25,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public Task getTaskById(OpenprojectURL openprojectURL, int id) {
+    public Task getTaskById(OpenprojectURL openprojectURL, int id) throws BusinessException {
         String originalUrl = openprojectURL.getOpenProjectURL();
         openprojectURL.setOpenProjectURL(originalUrl + id);
         String json= openprojectURL.getJson();
@@ -101,7 +102,7 @@ public class TaskServiceImpl implements TaskService {
                                            String fromDueDate,
                                            String toDueDate,
                                            Integer taskTypeNum,
-                                           String subject) {
+                                           String subject) throws BusinessException {
 
 
         JsonArray jsonArray = new JsonArray();

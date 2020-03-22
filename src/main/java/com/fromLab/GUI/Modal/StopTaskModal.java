@@ -3,6 +3,7 @@ package com.fromLab.GUI.Modal;
 import com.fromLab.GUI.component.TaskProgressSlider;
 import com.fromLab.entity.Status;
 import com.fromLab.entity.Task;
+import com.fromLab.exception.BusinessException;
 import com.fromLab.service.TaskService;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.GUIUtils;
@@ -141,27 +142,38 @@ public class StopTaskModal extends JFrame {
             }
         });
         if (result.equals(SUCCESS)) {
+            this.dispose();
             JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
-            this.dispose();
+
             this.dialog.resetTableDataSource();
             this.dialog.setVisible(true);
         }else{
             Integer taskId = this.selectedTask.getTaskId();
             openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/")+1));
-            this.selectedTask = this.taskService.getTaskById(openprojectURL, taskId);
+            try {
+                this.selectedTask = this.taskService.getTaskById(openprojectURL, taskId);
+            } catch (BusinessException e) {
+                this.selectedTask = null;
+            }
             openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/")+1));
-            String response = this.taskService.updateStatusAndProgress(openprojectURL, this.selectedTask.getTaskId(),
-                    this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
-            if(StringUtils.equals(response, SUCCESS)){
-                JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
-                this.dispose();
-                this.dialog.resetTableDataSource();
-                this.dialog.setVisible(true);
-            }else{
+            if(this.selectedTask == null){
                 JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+            }else {
+                String response = this.taskService.updateStatusAndProgress(openprojectURL, this.selectedTask.getTaskId(),
+                        this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
+                if (StringUtils.equals(response, SUCCESS)) {
+                    this.dispose();
+                    JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+
+                    this.dialog.resetTableDataSource();
+                    this.dialog.setVisible(true);
+                } else {
+                    JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+                }
             }
         }
 

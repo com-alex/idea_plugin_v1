@@ -5,6 +5,7 @@ import com.fromLab.GUI.component.TaskTableModel;
 import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Task;
+import com.fromLab.exception.BusinessException;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.*;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SelectTaskDialog extends JFrame {
+public class SelectTaskDialog extends JFrame implements WindowListener {
     //常量，防止出现魔法值
     private static final String SET_FROM_DUE_TIME = "from";
     private static final String SET_TO_DUE_TIME = "to";
@@ -86,25 +87,36 @@ public class SelectTaskDialog extends JFrame {
         openprojectURL = new OpenprojectURL(openProjectUrl + OpenprojectURL.WORK_PACKAGES_URL, apiKey);
         originalUrl = this.openprojectURL.getOpenProjectURL();
         initInterface();
+        init();
         setContentPane(contentPane);
     }
 
+    public void init() {
+        this.socketServer=new SocketServer();
+        this.thread=new Thread(socketServer);
+        this.thread.start();
+        this.selectedTask = new Task();
+        taskService = new TaskServiceImpl();
+        this.dataSource = new ArrayList<>();
+        //获取自定义字段的名称
+        try {
+            this.endDateCustomFieldName = GetCustomFieldNumUtil.getCustomFieldNum("End date", openprojectURL);
+            this.spentTimeCustomFieldName = GetCustomFieldNumUtil.getCustomFieldNum("Time spent", openprojectURL);
+        } catch (BusinessException e) {
+            this.setVisible(false);
+            String errorMsg = e.getMessage();
+            showOptionDialog(errorMsg, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        this.setTableDataSource();
+    }
 
 
     /**
      * 主界面初始化
      */
     public void initInterface(){
-        this.socketServer=new SocketServer();
-        this.thread=new Thread(socketServer);
-        this.thread.start();
-        //获取自定义字段的名称
-        this.endDateCustomFieldName = GetCustomFieldNumUtil.getCustomFieldNum("End date", openprojectURL);
-        this.spentTimeCustomFieldName = GetCustomFieldNumUtil.getCustomFieldNum("Time spent", openprojectURL);
-
-        this.selectedTask = new Task();
-        taskService = new TaskServiceImpl();
-        this.dataSource = new ArrayList<>();
 
         panel1.setLocation(0,0);
         panel1.setLayout(null);
@@ -197,13 +209,14 @@ public class SelectTaskDialog extends JFrame {
          */
         tablePanel = new JPanel();
         tablePanel.setLayout(null);
-
         tablePanel.setBounds(0, 100, 1040, 400);
-
+        TaskTableModel taskTableModel = new TaskTableModel();
+        taskTable = new JTable(taskTableModel);
+        taskTable.setBounds(0, 0, 1020, 340);
+        JScrollPane scrollPane = new JScrollPane(taskTable);
+        scrollPane.setBounds(0,0, 1020, 340);
+        tablePanel.add(scrollPane);
         panel1.add(tablePanel);
-
-        this.setTableDataSource();
-
 
         endButton = new JButton("set end date");
         endButton.setBounds(0, 500, 150, 30);
@@ -248,6 +261,17 @@ public class SelectTaskDialog extends JFrame {
         });
         panel1.add(stopButton);
 
+        this.addWindowListener(this);
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+    }
+
+    public void setTableDataSource(){
+        this.dataSource = this.getDataSource(null, null, null,
+                null, null, null);
+
+        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        setTableStyle();
+        setTableSort();
     }
 
     private void setTaskEndTime(){
@@ -259,6 +283,7 @@ public class SelectTaskDialog extends JFrame {
         }
         this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
         this.setVisible(false);
+        openprojectURL.setOpenProjectURL(originalUrl);
         new SetTimeModal(this, this.selectedTask, this.endDateCustomFieldName, openprojectURL);
     }
 
@@ -288,13 +313,17 @@ public class SelectTaskDialog extends JFrame {
                 return;
             }
             this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
-            System.out.println(this.selectedTask);
             socketServer.task=this.selectedTask;
             this.openprojectURL.setOpenProjectURL(originalUrl);
             if("null".equals(this.selectedTask.getStartTime())){
                 String startDate = DateUtils.date2String(new Date());
-                this.taskService.updateStartDate(openprojectURL, this.selectedTask.getTaskId(),
+                String result = this.taskService.updateStartDate(openprojectURL, this.selectedTask.getTaskId(),
                         this.selectedTask.getLockVersion(), startDate);
+                if(StringUtils.equals(result, ERROR)){
+                    this.setVisible(false);
+                    showOptionDialog("Fail to save the startTime of the task", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             }
             this.getTaskTable().setValueAt("*", row, 0);
             this.chosen = true;
@@ -331,7 +360,6 @@ public class SelectTaskDialog extends JFrame {
         this.startTime = 0L;
         this.endTime = 0L;
         this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
-        //TODO 更新Spent time
         this.openprojectURL.setOpenProjectURL(originalUrl);
         String result = this.taskService.updateSpentTime(openprojectURL, this.selectedTask.getTaskId(),
                 this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
@@ -350,7 +378,11 @@ public class SelectTaskDialog extends JFrame {
         //如果没成功，可能是服务器问题，也有可能是因为lock_version不正确，因此重新获取task，然后再发一次update请求
         else{
             this.openprojectURL.setOpenProjectURL(originalUrl);
-            this.selectedTask = this.taskService.getTaskById(openprojectURL, this.selectedTask.getTaskId());
+            try {
+                this.selectedTask = this.taskService.getTaskById(openprojectURL, this.selectedTask.getTaskId());
+            } catch (BusinessException e) {
+                this.selectedTask = null;
+            }
             this.openprojectURL.setOpenProjectURL(originalUrl);
             String response = this.taskService.updateSpentTime(openprojectURL, this.selectedTask.getTaskId(),
                     this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
@@ -373,24 +405,8 @@ public class SelectTaskDialog extends JFrame {
 
     }
 
-    public void setTableDataSource(){
-        this.dataSource = this.getDataSource(null, null, null,
-                null, null, null);
+    //放的位置
 
-        TaskTableModel taskTableModel = new TaskTableModel(dataSource);
-        taskTable = new JTable(taskTableModel);
-
-        setTableStyle();
-        taskTable.setBounds(0, 0, 1020, 340);
-
-        setTableSort();
-
-        JScrollPane scrollPane = new JScrollPane(taskTable);
-
-        scrollPane.setBounds(0,0, 1020, 340);
-
-        tablePanel.add(scrollPane);
-    }
 
 
     public void resetTableDataSource(){
@@ -629,8 +645,16 @@ public class SelectTaskDialog extends JFrame {
                                        Integer taskTypeNum,
                                        String subject){
         List<TaskVO> taskVOList = new ArrayList<>();
-        List<Task> taskList = taskService.getTasksByConditions(openprojectURL, statusNum, priorityNum,
-                                                                fromDueDate, toDueDate, taskTypeNum, subject);
+        List<Task> taskList = new ArrayList<>();
+        try {
+            taskList = taskService.getTasksByConditions(openprojectURL, statusNum, priorityNum,
+                                                                    fromDueDate, toDueDate, taskTypeNum, subject);
+        } catch (BusinessException e) {
+            taskList = new ArrayList<>();
+            this.setVisible(false);
+            String errorMsg = e.getMessage() + "\n\nFail to get task list!";
+            showOptionDialog(errorMsg, JOptionPane.ERROR_MESSAGE);
+        }
         taskList.forEach(task -> {
             TaskVO taskVO = new TaskVO();
             taskVO = (TaskVO) ReflectionUtils.copyProperties(task, taskVO);
@@ -693,5 +717,58 @@ public class SelectTaskDialog extends JFrame {
         }
         return null;
     }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        UIManager.put("OptionPane.yesButtonText", "Yes");
+        UIManager.put("OptionPane.noButtonText", "No");
+        int option = JOptionPane.showConfirmDialog(this, "Confirm to exit the system? \nAll the selection will be cleared!", "Tips",
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (option == JOptionPane.YES_OPTION)
+        {
+            if (e.getWindow() == this) {
+                this.dispose();
+                System.exit(0);
+            } else {
+                return;
+            }
+        }
+        else if(option == JOptionPane.NO_OPTION){
+            if (e.getWindow() == this) {
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+
+    }
+
 
 }

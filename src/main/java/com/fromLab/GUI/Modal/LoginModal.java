@@ -36,6 +36,8 @@ public class LoginModal extends JFrame {
         contentPanel.add(openProjectUrlLabel);
 
         openProjectUrlTextField = new JTextField();
+        //方便开发
+        openProjectUrlTextField.setText("http://projects.plugininide.com/openproject");
         openProjectUrlTextField.setBounds(170, 25, 350, 30);
         contentPanel.add(openProjectUrlTextField);
 
@@ -44,6 +46,8 @@ public class LoginModal extends JFrame {
         contentPanel.add(apiLabel);
 
         apiTextField = new JTextField();
+        //方便开发
+        apiTextField.setText("e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123");
         apiTextField.setBounds(170, 75, 350, 30);
         contentPanel.add(apiTextField);
 
@@ -85,6 +89,8 @@ public class LoginModal extends JFrame {
             //验证是否认证成功
             boolean flag = userService.authorize(openProjectURL, apiKey);
             if(flag){
+                //把自己关闭
+                this.setVisible(false);
                 //成功
                 //打开SelectTaskDialog
                 int width = 1040;
@@ -93,8 +99,7 @@ public class LoginModal extends JFrame {
                 selectTaskDialog.pack();
                 selectTaskDialog.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
                 selectTaskDialog.setVisible(true);
-                //把自己关闭
-                this.setVisible(false);
+
             }
             else{
                 //不成功

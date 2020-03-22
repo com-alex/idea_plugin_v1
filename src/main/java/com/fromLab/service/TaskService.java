@@ -4,6 +4,7 @@ package com.fromLab.service;
 import com.fromLab.entity.Filter;
 import com.fromLab.entity.Status;
 import com.fromLab.entity.Task;
+import com.fromLab.exception.BusinessException;
 import com.fromLab.utils.OpenprojectURL;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public interface TaskService {
      * @param id
      * @return
      */
-    Task getTaskById(OpenprojectURL openprojectURL, int id);
+    Task getTaskById(OpenprojectURL openprojectURL, int id) throws BusinessException;
 
     /**
      * 根据task的id更新task的status和progress
@@ -88,7 +89,7 @@ public interface TaskService {
                                     String fromDueDate,
                                     String toDueDate,
                                     Integer taskTypeNum,
-                                    String subject);
+                                    String subject) throws BusinessException;
 
 
     /**

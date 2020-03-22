@@ -3,6 +3,7 @@ package com.fromLab.utils;
 
 import com.fromLab.entity.Task;
 
+import com.fromLab.exception.BusinessException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -24,7 +25,7 @@ public class JsonToObjectUtil {
      * @param json
      * @return
      */
-    public static Task JsonToTask(JSONObject json, OpenprojectURL openprojectURL){
+    public static Task JsonToTask(JSONObject json, OpenprojectURL openprojectURL) throws BusinessException {
 
         String task_type= getCustomFieldNum("Task type", openprojectURL);
         String end_date= getCustomFieldNum("End date", openprojectURL);
@@ -112,7 +113,7 @@ public class JsonToObjectUtil {
      * @param json
      * @return
      */
-    public static List<Task> JsonToTaskList (JSONObject json, OpenprojectURL openprojectURL){
+    public static List<Task> JsonToTaskList (JSONObject json, OpenprojectURL openprojectURL) throws BusinessException {
         String task_type= getCustomFieldNum("Task type", openprojectURL);
         String end_date= getCustomFieldNum("End date", openprojectURL);
         String time_spent= getCustomFieldNum("Time spent", openprojectURL);

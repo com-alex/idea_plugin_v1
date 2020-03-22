@@ -22,6 +22,10 @@ public class TaskTableModel extends AbstractTableModel {
             {"", "taskId", "subject", "project_name", "task_priority", "task_type", "start_date", "end_date", "due_date", "status", "progress", "time_spent"};
     Object[][] data;
 
+    public TaskTableModel(){
+        this.data = new Object[0][0];
+    }
+
     /**
      * 构造方法，初始化二维数组data对应的数据
      */

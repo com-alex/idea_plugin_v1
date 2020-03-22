@@ -29,6 +29,7 @@ public class PopupListAction extends AnAction {
 
     private void generatePopupList(final PsiClass psiMethod, AnActionEvent e) {
         (new WriteCommandAction.Simple(psiMethod.getProject(), new PsiFile[]{psiMethod.getContainingFile()}) {
+            @Override
             protected void run() throws Throwable {
                 PopupListAction.this.addPopupList(psiMethod,e);
 

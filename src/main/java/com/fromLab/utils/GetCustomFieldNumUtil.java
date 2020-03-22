@@ -1,8 +1,9 @@
 package com.fromLab.utils;
 
+import com.fromLab.exception.BusinessException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -22,7 +23,7 @@ public class GetCustomFieldNumUtil {
      * @
      * @return customFieldX
      */
-    public static String getCustomFieldNum(String customFieldName, OpenprojectURL openprojectURL){
+    public static String getCustomFieldNum(String customFieldName, OpenprojectURL openprojectURL) throws BusinessException {
         String json= openprojectURL.getJson();
         JSONObject jsonObject = JSONObject.fromObject(json);
 
@@ -43,6 +44,8 @@ public class GetCustomFieldNumUtil {
 
         JSONArray elementsArray = embeddedJsonObject1.getJSONArray("elements");
 
+        String result = null;
+
         int position = 0 ;
         for (int i = 0; i < count ; i++) {
             String s = String.valueOf(elementsArray.getJSONObject(i).getOrDefault("customField1", "null"));
@@ -60,13 +63,17 @@ public class GetCustomFieldNumUtil {
 //                System.out.println(name);
 //                System.out.println("customField" + i);
                 if (customFieldName.equals(name)){
-                    return  "customField" + i;
+                    result = "customField" + i;
+                    return result;
                 }
 
             }
         }
+        if(StringUtils.isBlank(result)){
+            throw new BusinessException("Fail to get CustomField:" + customFieldName);
+        }
 
-        return null;
+        return result;
 
     }
 

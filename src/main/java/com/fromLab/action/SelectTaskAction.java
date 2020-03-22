@@ -7,6 +7,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.URL;
+
 /**
  * @author wsh
  * @date 2019-12-24
@@ -15,6 +17,7 @@ public class SelectTaskAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         // TODO: insert action logic here
+
         Integer width = 600;
         Integer height = 200;
         LoginModal loginModal = new LoginModal();
