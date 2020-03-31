@@ -18,11 +18,11 @@ public class SelectTaskAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         // TODO: insert action logic here
 
-        Integer width = 600;
-        Integer height = 200;
-        LoginModal loginModal = new LoginModal();
-        loginModal.pack();
-        loginModal.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
-        loginModal.setVisible(true);
+//        Integer width = 600;
+//        Integer height = 200;
+//        LoginModal loginModal = new LoginModal();
+//        loginModal.pack();
+//        loginModal.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
+//        loginModal.setVisible(true);
     }
 }
