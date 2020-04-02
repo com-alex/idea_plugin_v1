@@ -8,6 +8,7 @@ import com.fromLab.entity.Task;
 import com.fromLab.exception.BusinessException;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.*;
+import com.intellij.psi.PsiComment;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -86,13 +87,22 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
     public SelectTaskDialog(String openProjectUrl, String apiKey) {
         openprojectURL = new OpenprojectURL(openProjectUrl + OpenprojectURL.WORK_PACKAGES_URL, apiKey);
         originalUrl = this.openprojectURL.getOpenProjectURL();
-        initInterface();
-        init();
-        setContentPane(contentPane);
+        this.socketServer=new SocketServer();
+        boolean flag=socketServer.start();
+        if(flag){
+            System.out.println("server is started");
+            initInterface();
+            init();
+            setContentPane(contentPane);
+        }
+        else{
+            throw new RuntimeException("port is using");
+        }
+
     }
 
     public void init() {
-        this.socketServer=new SocketServer();
+
         this.thread=new Thread(socketServer);
         this.thread.start();
         this.selectedTask = new Task();

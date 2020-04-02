@@ -16,11 +16,21 @@ public class SocketServer implements Runnable  {
         this.task=task;
     }
     public SocketServer(){
+//        try {
+//            server = new ServerSocket(11222);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+    public boolean start(){
+        boolean flag=false;
         try {
             server = new ServerSocket(11222);
+            flag =true;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return flag;
     }
     @Override
     public void run() {

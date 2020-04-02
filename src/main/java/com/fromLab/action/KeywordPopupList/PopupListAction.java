@@ -15,6 +15,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 
+import java.util.HashMap;
+
 public class PopupListAction extends AnAction {
 
     PopupList popupList=new PopupList();
@@ -41,18 +43,22 @@ public class PopupListAction extends AnAction {
         Document document = editor.getDocument();
         SelectionModel selectionModel = editor.getSelectionModel();
         selectionModel.selectWordAtCaret(false);
-        Task task = socketUtil.getTask();
+        HashMap task = socketUtil.getTaskMap();
         String selectedText = selectionModel.getSelectedText();
         //当只输入了@的时候，WordAtCaret会选中两个整行...,改为使用LineAtCaret
+        int lineEndOffset=0;
+        int lineStartOffset=0;
         if (selectedText.contains("*")){
             selectionModel.removeSelection();
             selectionModel.selectLineAtCaret();
+            lineEndOffset = selectionModel.getSelectionEnd();
+            lineStartOffset=selectionModel.getSelectionStart();
         }
-        int lineStartOffset=selectionModel.getSelectionStart();
-        int lineEndOffset= selectionModel.getSelectionEnd();
-        if (selectedText!=null) {
-                  popupList.createListPopup(selectedText,psiClass,lineStartOffset,lineEndOffset,document,editor,task);
+        else {
+            lineStartOffset = selectionModel.getSelectionStart();
+            lineEndOffset = document.getLineEndOffset(document.getLineNumber(selectionModel.getSelectionEnd()));
         }
+        popupList.createListPopup(selectedText,psiClass,lineStartOffset,lineEndOffset,document,editor,task);
 
     }
 

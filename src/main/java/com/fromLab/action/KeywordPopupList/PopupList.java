@@ -25,28 +25,35 @@ public class PopupList {
     PopupList (){}
 
 
-    public void createListPopup(String keyword, PsiClass psiClass, int lineStartOffset, int lineEndOffset, Document document, Editor editor, Task task){
+    public void createListPopup(String keyword, PsiClass psiClass, int lineStartOffset, int lineEndOffset, Document document, Editor editor, HashMap task){
 
         JBList<String> list = new JBList<>();
-        String[] remainTaskFields = new String[7];
+        String[] remainTaskFields = new String[9];
         remainTaskFields[0]="taskType";
         remainTaskFields[1]="startTime";
-        remainTaskFields[2]="endTime";
-        remainTaskFields[3]="progress";
-        remainTaskFields[4]="timeSpent";
-        remainTaskFields[5]="lockVersion";
-        remainTaskFields[6]="taskDetail";
+        remainTaskFields[2]="progress";
+        remainTaskFields[3]="taskName";
+        remainTaskFields[4]="projectName";
+        remainTaskFields[5]="status";
+        remainTaskFields[6]="taskPriority";
+        remainTaskFields[7]="dueTime";
+        remainTaskFields[8]="taskDetail";
         HashMap<String, String> taskHashMap = new HashMap<>();
-        taskHashMap.put(remainTaskFields[0],task.getTaskType());
-        taskHashMap.put(remainTaskFields[1],task.getStartTime());
-        taskHashMap.put(remainTaskFields[2],task.getEndTime());
-        taskHashMap.put(remainTaskFields[3],task.getProgress());
-        taskHashMap.put(remainTaskFields[4],task.getTimeSpent().toString());
-        taskHashMap.put(remainTaskFields[5],task.getLockVersion().toString());
-        taskHashMap.put(remainTaskFields[6],task.getTaskDetail());
+        taskHashMap.put(remainTaskFields[0],(String)task.get("taskType"));
+        taskHashMap.put(remainTaskFields[1],(String)task.get("startTime"));
+        taskHashMap.put(remainTaskFields[2],(String)task.get("progress"));
+        taskHashMap.put(remainTaskFields[3],(String)task.get("taskName"));
+        taskHashMap.put(remainTaskFields[4],(String)task.get("projectName"));
+        taskHashMap.put(remainTaskFields[5],(String)task.get("status"));
+        taskHashMap.put(remainTaskFields[6],(String)task.get("taskPriority"));
+        taskHashMap.put(remainTaskFields[7],(String)task.get("dueTime"));
+        taskHashMap.put(remainTaskFields[8],(String)task.get("taskDetail"));
+
+
+
 
         if (keyword.contains("*")) {
-            String[] content = new String[7];
+            String[] content = new String[9];
             //此时输入为@，显示所有keyword
             for (int i = 0; i < remainTaskFields.length; i++) {
                 content[i] = remainTaskFields[i];

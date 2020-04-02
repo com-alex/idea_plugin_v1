@@ -1,5 +1,6 @@
 package com.fromLab.action.TaskJavaDoc;
 
+import com.fromLab.action.MyTypedActionHandler;
 import com.fromLab.entity.Task;
 import com.fromLab.utils.SocketUtil;
 import com.intellij.openapi.actionSystem.*;
@@ -7,19 +8,31 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.actionSystem.EditorActionManager;
+import com.intellij.openapi.editor.actionSystem.TypedAction;
+import com.intellij.openapi.editor.actionSystem.TypedActionHandler;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 
 import javax.swing.*;
+import java.util.HashMap;
 
 
 public class JavaDocAction extends AnAction {
-
     private JavaDocSetting javaDocSetting;
     private SocketUtil socketUtil=new SocketUtil();
+    static {
+        final EditorActionManager actionManager = EditorActionManager.getInstance();
+        final TypedAction typedAction = actionManager.getTypedAction();
 
+        MyTypedActionHandler handler = new MyTypedActionHandler();
+        //将自定义的TypedActionHandler设置进去后，
+        //返回旧的TypedActionHandler，即IDEA自身的TypedActionHandler
+        TypedActionHandler oldHandler = typedAction.setupHandler(handler);
+        handler.setOldHandler(oldHandler);
+    }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
@@ -51,7 +64,7 @@ public class JavaDocAction extends AnAction {
         CaretModel caretModel = editor.getCaretModel();
         int caretOffset = caretModel.getOffset();
         int line = document.getLineNumber(caretOffset);
-        Task task = socketUtil.getTask();
+        HashMap task = socketUtil.getTaskMap();
 
         if(task==null) {
             JOptionPane.showMessageDialog(null,
@@ -64,16 +77,26 @@ public class JavaDocAction extends AnAction {
 
 
     }
-    private String TaskJavaDocString(Task task){
+    public String format(String s){
+         int length=100;
+         StringBuilder sb=new StringBuilder();
+         sb.append(s);
+         int size=s.length();
+         for(int i=size;i<length;i++){
+             sb.append(".");
+         }
+         return sb.toString();
+    }
+    private String TaskJavaDocString(HashMap task){
         String taskJavaDocString =
                 "    /**\n" +
-                "     * @taskId "+task.getTaskId() + "\n" +
-                "     * @taskName "+task.getTaskName() + "\n"+
-                "     * @projectName "+task.getProjectName() + "\n"+
-                "     * @status "+task.getStatus()+"\n" +
-                "     * @taskPriority "+task.getTaskPriority()+"\n" +
-                "     * @dueTime "+task.getDueTime()+"\n" +
-                "     */ ";
+                        "     * @taskId "+format(task.get("taskId").toString()) + "\n" +
+                        "     * @taskName "+format(task.get("taskName").toString()) + "\n"+
+                        "     * @projectName "+format(task.get("projectName").toString()) + "\n"+
+                        "     * @status "+format(task.get("status").toString())+"\n" +
+                        "     * @taskPriority "+format(task.get("taskPriority").toString())+"\n" +
+                        "     * @dueTime "+format(task.get("dueTime").toString())+"\n" +
+                        "     */ ";
         return taskJavaDocString;
     }
 
