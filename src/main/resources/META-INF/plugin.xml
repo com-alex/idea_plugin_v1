@@ -16,6 +16,12 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
+        <toolWindow anchor="right"
+                    id="Select Task Tool"
+                    canCloseContents="false"
+                    factoryClass="com.fromLab.GUI.window.TaskToolWindow" icon="/icons/task.png">
+
+        </toolWindow>
     </extensions>
 
     <actions>

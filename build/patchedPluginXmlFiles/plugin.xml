@@ -11,7 +11,9 @@
     Enter short description for your plugin here.&lt;br&gt;
     &lt;em&gt;most HTML tags may be used&lt;/em&gt;
     </description>
-  <extensions defaultExtensionNs="com.intellij"/>
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow anchor="right" id="Select Task Tool" canCloseContents="false" factoryClass="com.fromLab.GUI.window.TaskToolWindow" icon="/icons/task.png"/>
+  </extensions>
   <actions>
     <group id="Plugin" text="PMPlugin" description="Plugin for PMS">
       <add-to-group group-id="MainMenu" anchor="last"/>
