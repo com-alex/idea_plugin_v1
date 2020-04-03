@@ -2,13 +2,13 @@ package com.fromLab.GUI.Modal;
 
 import com.fromLab.GUI.component.TableRenderer;
 import com.fromLab.GUI.component.TaskTableModel;
+import com.fromLab.GUI.window.TaskToolWindow;
 import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Task;
 import com.fromLab.exception.BusinessException;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.*;
-import com.intellij.psi.PsiComment;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -34,6 +34,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
 
     private OpenprojectURL openprojectURL;
     private String originalUrl;
+    private TaskToolWindow taskToolWindow;
 
 
     private Long startTime;
@@ -84,28 +85,28 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
     private TaskServiceImpl taskService;
     private SocketServer socketServer;
     private Thread thread;
-    public SelectTaskDialog(String openProjectUrl, String apiKey) {
-        openprojectURL = new OpenprojectURL(openProjectUrl + OpenprojectURL.WORK_PACKAGES_URL, apiKey);
+    //    public SelectTaskDialog(String openProjectUrl, String apiKey) {
+//        openprojectURL = new OpenprojectURL(openProjectUrl + OpenprojectURL.WORK_PACKAGES_URL, apiKey);
+//        originalUrl = this.openprojectURL.getOpenProjectURL();
+//        initInterface();
+//        init();
+//        setContentPane(contentPane);
+//    }
+    public SelectTaskDialog(OpenprojectURL openprojectURL, Boolean chosen, Task selectedTask,
+                            Long startTime, SocketServer socketServer, TaskToolWindow taskToolWindow){
+        this.taskToolWindow = taskToolWindow;
+        this.openprojectURL = openprojectURL;
+        this.chosen = chosen;
+        this.selectedTask = selectedTask;
+        this.startTime = startTime;
+        this.socketServer = socketServer;
         originalUrl = this.openprojectURL.getOpenProjectURL();
-        this.socketServer=new SocketServer();
-        boolean flag=socketServer.start();
-        if(flag){
-            System.out.println("server is started");
-            initInterface();
-            init();
-            setContentPane(contentPane);
-        }
-        else{
-            throw new RuntimeException("port is using");
-        }
-
+        initInterface();
+        init();
+        setContentPane(contentPane);
     }
 
     public void init() {
-
-        this.thread=new Thread(socketServer);
-        this.thread.start();
-        this.selectedTask = new Task();
         taskService = new TaskServiceImpl();
         this.dataSource = new ArrayList<>();
         //获取自定义字段的名称
@@ -262,7 +263,9 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         stopButton = new JButton("stop the task");
         stopButton.setBounds(540, 500, 150, 30);
         //默认停止工作按钮为不能按
-        stopButton.setEnabled(false);
+        if(!this.chosen){
+            stopButton.setEnabled(false);
+        }
         stopButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -279,7 +282,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         this.dataSource = this.getDataSource(null, null, null,
                 null, null, null);
 
-        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        this.getTaskTable().setModel(new TaskTableModel(dataSource, this.selectedTask));
         setTableStyle();
         setTableSort();
     }
@@ -323,7 +326,6 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
                 return;
             }
             this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
-            socketServer.task=this.selectedTask;
             this.openprojectURL.setOpenProjectURL(originalUrl);
             if("null".equals(this.selectedTask.getStartTime())){
                 String startDate = DateUtils.date2String(new Date());
@@ -337,7 +339,11 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             }
             this.getTaskTable().setValueAt("*", row, 0);
             this.chosen = true;
+            socketServer.task = this.selectedTask;
             this.stopButton.setEnabled(true);
+            this.taskToolWindow.setSelectedFlag(this.selectedTask.getTaskId());
+            this.taskToolWindow.setChosen(true);
+            this.taskToolWindow.setSelectedTask(this.selectedTask);
             this.startTime = System.currentTimeMillis();
             System.out.println("Start Task  Time:" + this.startTime);
             this.setVisible(false);
@@ -383,6 +389,9 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
             this.setVisible(false);
             new StopTaskModal(this.selectedTask, progress, this, openprojectURL);
+            this.taskToolWindow.deleteSelectedFlag(this.selectedTask.getTaskId());
+            this.taskToolWindow.setChosen(false);
+            this.taskToolWindow.setSelectedTask(null);
             this.selectedTask = null;
         }
         //如果没成功，可能是服务器问题，也有可能是因为lock_version不正确，因此重新获取task，然后再发一次update请求
@@ -405,6 +414,9 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
                 Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
                 this.setVisible(false);
                 new StopTaskModal(this.selectedTask, progress, this, openprojectURL);
+                this.taskToolWindow.deleteSelectedFlag(this.selectedTask.getTaskId());
+                this.taskToolWindow.setChosen(false);
+                this.taskToolWindow.setSelectedTask(null);
                 this.selectedTask = null;
             }else{
                 this.setVisible(false);
@@ -423,7 +435,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         openprojectURL.setOpenProjectURL(originalUrl);
         //刷新表格数据源
         this.dataSource = this.getDataSource(null, null, null, null, null, null);
-        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        this.getTaskTable().setModel(new TaskTableModel(dataSource, this.selectedTask));
         setTableStyle();
         setTableSort();
         setChosenFlag();
@@ -511,7 +523,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
                     new boolean[]{true,true,true,true,true});
         }
         this.taskPriorityFlag++;
-        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        this.getTaskTable().setModel(new TaskTableModel(dataSource, this.selectedTask));
         setTableStyle();
     }
 
@@ -527,7 +539,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
                     new boolean[]{false, true, false, true, true});
         }
         this.taskTypeFlag++;
-        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        this.getTaskTable().setModel(new TaskTableModel(dataSource, this.selectedTask));
         setTableStyle();
     }
 
@@ -544,7 +556,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
                     new boolean[]{false,false,true,true,true});
         }
         this.taskDueTimeFlag++;
-        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        this.getTaskTable().setModel(new TaskTableModel(dataSource, this.selectedTask));
         setTableStyle();
     }
 
@@ -559,7 +571,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
                     new boolean[]{false,true,false,true,true});
         }
         this.taskNameFlag++;
-        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        this.getTaskTable().setModel(new TaskTableModel(dataSource, this.selectedTask));
         setTableStyle();
     }
 
@@ -574,7 +586,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
                     new boolean[]{false, true, false, true, true});
         }
         this.taskProjectFlag++;
-        this.getTaskTable().setModel(new TaskTableModel(dataSource));
+        this.getTaskTable().setModel(new TaskTableModel(dataSource, this.selectedTask));
         setTableStyle();
     }
 
@@ -638,8 +650,8 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         }
         else{
             this.dataSource = this.getDataSource(queryStatusNum, queryPriorityNum, fromDueTime,
-                                                    toDueTime, queryTaskTypeNum, querySubject);
-            this.getTaskTable().setModel(new TaskTableModel(dataSource));
+                    toDueTime, queryTaskTypeNum, querySubject);
+            this.getTaskTable().setModel(new TaskTableModel(dataSource, this.selectedTask));
             setTableStyle();
             setChosenFlag();
             setTableSort();
@@ -658,7 +670,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         List<Task> taskList = new ArrayList<>();
         try {
             taskList = taskService.getTasksByConditions(openprojectURL, statusNum, priorityNum,
-                                                                    fromDueDate, toDueDate, taskTypeNum, subject);
+                    fromDueDate, toDueDate, taskTypeNum, subject);
         } catch (BusinessException e) {
             taskList = new ArrayList<>();
             this.setVisible(false);
@@ -735,24 +747,25 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
 
     @Override
     public void windowClosing(WindowEvent e) {
-        UIManager.put("OptionPane.yesButtonText", "Yes");
-        UIManager.put("OptionPane.noButtonText", "No");
-        int option = JOptionPane.showConfirmDialog(this, "Confirm to exit the system? \nAll the selection will be cleared!", "Tips",
-                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (option == JOptionPane.YES_OPTION)
-        {
-            if (e.getWindow() == this) {
-                this.dispose();
-                System.exit(0);
-            } else {
-                return;
-            }
-        }
-        else if(option == JOptionPane.NO_OPTION){
-            if (e.getWindow() == this) {
-                return;
-            }
-        }
+//        UIManager.put("OptionPane.yesButtonText", "Yes");
+//        UIManager.put("OptionPane.noButtonText", "No");
+//        int option = JOptionPane.showConfirmDialog(this, "Confirm to exit the system? \nAll the selection will be cleared!", "Tips",
+//                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+//        if (option == JOptionPane.YES_OPTION)
+//        {
+//            if (e.getWindow() == this) {
+//                this.dispose();
+//                System.exit(0);
+//            } else {
+//                return;
+//            }
+//        }
+//        else if(option == JOptionPane.NO_OPTION){
+//            if (e.getWindow() == this) {
+//                return;
+//            }
+//        }
+        this.setVisible(false);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.fromLab.GUI.Modal;
 
+import com.fromLab.GUI.window.TaskToolWindow;
 import com.fromLab.service.UserService;
 import com.fromLab.service.impl.UserServiceImpl;
 import com.fromLab.utils.GUIUtils;
@@ -18,6 +19,7 @@ import java.awt.event.ActionListener;
  */
 
 public class LoginModal extends JFrame {
+    private TaskToolWindow taskToolWindow;
     private UserService userService;
     private JPanel contentPanel;
     private JLabel openProjectUrlLabel;
@@ -26,7 +28,8 @@ public class LoginModal extends JFrame {
     private JTextField apiTextField;
     private JButton loginButton;
 
-    public LoginModal(){
+    public LoginModal(TaskToolWindow taskToolWindow){
+        this.taskToolWindow = taskToolWindow;
         userService = new UserServiceImpl();
         contentPanel = new JPanel();
         contentPanel.setLayout(null);
@@ -92,14 +95,13 @@ public class LoginModal extends JFrame {
                 //把自己关闭
                 this.setVisible(false);
                 //成功
-                //打开SelectTaskDialog
-                int width = 1040;
-                int height = 600;
-                SelectTaskDialog selectTaskDialog = new SelectTaskDialog(openProjectURL, apiKey);
-                selectTaskDialog.pack();
-                selectTaskDialog.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
-                selectTaskDialog.setVisible(true);
 
+                OpenprojectURL openprojectURL = new OpenprojectURL(openProjectURL + OpenprojectURL.WORK_PACKAGES_URL, apiKey);
+                this.taskToolWindow.setOpenprojectURL(openprojectURL);
+                showOptionDialog("Success to authorize!", JOptionPane.ERROR_MESSAGE);
+                this.setVisible(false);
+                this.taskToolWindow.setIsLogin(true);
+                this.taskToolWindow.refresh();
             }
             else{
                 //不成功

@@ -91,6 +91,11 @@ public class OpenprojectURL {
     }
 
 
-
-
+    @Override
+    public String toString() {
+        return "OpenprojectURL{" +
+                "openProjectURL='" + openProjectURL + '\'' +
+                ", apiKey='" + apiKey + '\'' +
+                '}';
+    }
 }

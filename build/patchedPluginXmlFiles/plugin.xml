@@ -15,10 +15,6 @@
     <toolWindow anchor="right" id="Select Task Tool" canCloseContents="false" factoryClass="com.fromLab.GUI.window.TaskToolWindow" icon="/icons/task.png"/>
   </extensions>
   <actions>
-    <group id="Plugin" text="PMPlugin" description="Plugin for PMS">
-      <add-to-group group-id="MainMenu" anchor="last"/>
-      <action id="SelectTaskPlugin" class="com.fromLab.action.SelectTaskAction" text="SelectTaskPlugin" description="A plugin for selecting task"/>
-    </group>
     <action id="Task JavaDoc" class="com.fromLab.action.TaskJavaDoc.JavaDocAction" text="Task JavaDoc" description="generate JavaDoc about Task information ">
       <add-to-group group-id="GenerateGroup" anchor="last"/>
     </action>

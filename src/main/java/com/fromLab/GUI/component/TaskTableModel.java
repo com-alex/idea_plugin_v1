@@ -29,11 +29,16 @@ public class TaskTableModel extends AbstractTableModel {
     /**
      * 构造方法，初始化二维数组data对应的数据
      */
-    public TaskTableModel(List<TaskVO> list) {
+    public TaskTableModel(List<TaskVO> list, Task selectedTask) {
         this.data = new Object[list.size()][this.columnNames.length];
         for (int i = 0; i < list.size(); i++) {
             data[i][0] = "";
             TaskVO task = list.get(i);
+            if(selectedTask != null){
+                if(task.getTaskId().equals(selectedTask.getTaskId())){
+                    data[i][0] = "*";
+                }
+            }
             List<Object> params = ReflectionUtils.getObjectParams(task);
             for (int j = 0; j < params.size(); j++) {
 

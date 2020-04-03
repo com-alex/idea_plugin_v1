@@ -1,5 +1,6 @@
 package com.fromLab.action.taskToolWindowAction;
 
+import com.fromLab.GUI.window.TaskToolWindow;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
@@ -12,11 +13,16 @@ import javax.swing.*;
  */
 public class RefreshAction extends AnAction {
 
-    public RefreshAction(@Nullable String text, @Nullable String description, @Nullable Icon icon){
+    private TaskToolWindow taskToolWindow;
+
+    public RefreshAction(@Nullable String text, @Nullable String description,
+                         @Nullable Icon icon, TaskToolWindow taskToolWindow){
         super(text, description, icon);
+        this.taskToolWindow = taskToolWindow;
     }
+
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        System.out.println("刷新");
+        this.taskToolWindow.refresh();
     }
 }
