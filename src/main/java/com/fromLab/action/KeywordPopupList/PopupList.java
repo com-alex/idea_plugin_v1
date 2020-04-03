@@ -1,6 +1,7 @@
 package com.fromLab.action.KeywordPopupList;
 
 
+import com.fromLab.action.MyTypedActionHandler;
 import com.fromLab.entity.Task;
 import com.fromLab.utils.SocketUtil;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -23,7 +24,7 @@ import java.util.HashMap;
 public class PopupList {
 
     PopupList (){}
-
+    MyTypedActionHandler myTypedActionHandler=new MyTypedActionHandler();
 
     public void createListPopup(String keyword, PsiClass psiClass, int lineStartOffset, int lineEndOffset, Document document, Editor editor, HashMap task){
 
@@ -93,11 +94,11 @@ public class PopupList {
                             //只有@的情况
                             if(keyword.contains("*")) {
 
-                                document.replaceString(lineStartOffset, lineEndOffset, "     * @"+inputContent);
+                                document.replaceString(lineStartOffset, lineEndOffset, myTypedActionHandler.format("     * @"+inputContent));
                             }
                             //写了部分keyword
                             else
-                                document.replaceString(lineStartOffset,lineEndOffset,inputContent);
+                                document.replaceString(lineStartOffset,lineEndOffset,myTypedActionHandler.format(inputContent));
 
 
                     }

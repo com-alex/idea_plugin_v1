@@ -69,12 +69,10 @@ public class MyTypedActionHandler implements TypedActionHandler {
                         StringUtil stringUtil=new StringUtil();
                         ArrayList<String> oldTasks=stringUtil.minusPlus(oldValue);
                         System.out.println(oldTasks);
-                        String after=format(curTaskId);
                         infoBuilder.append("oldValue: " + oldValue + " \n");
                         String[] s = oldValue.split(" ");
-                        System.out.println(oldValue);
-                        System.out.println(after);
-                        if(oldValue!=null&&curTaskId!=null) {
+                        //System.out.println(oldValue);
+                        if(curTaskId!=null&&socketUtil.getTask()!=null) {
                             if (!stringUtil.contains(oldTasks,curTaskId)) {
                                 ChooseDialog chooseDialog = new ChooseDialog(oldTasks,curTaskId);
                                 chooseDialog.setOld(oldTasks);
@@ -91,39 +89,60 @@ public class MyTypedActionHandler implements TypedActionHandler {
                                             document.replaceString(startOffset, endOffset, format(cur));
                                             PsiDocTag taskNameDocTag = docComment.findTagByName("taskName");
                                             if (taskNameDocTag != null) {
-                                                startOffset = taskNameDocTag.getValueElement().getTextOffset();
+                                                startOffset = document.getLineStartOffset(document.getLineNumber(taskNameDocTag.getValueElement().getTextOffset()));
                                                 endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
                                                 String curTaskName = (String) taskHashMap.get("taskName");
                                                 System.out.println(curTaskName);
-                                                document.replaceString(startOffset, endOffset, format(curTaskName));
+                                                document.replaceString(startOffset, endOffset, format("     * @taskName "+curTaskName));
                                             }
                                             PsiDocTag projectNameDocTag = docComment.findTagByName("projectName");
                                             if (projectNameDocTag != null) {
-                                                startOffset = projectNameDocTag.getValueElement().getTextOffset();
+                                                startOffset = document.getLineStartOffset(document.getLineNumber(projectNameDocTag.getValueElement().getTextOffset()));
                                                 endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
                                                 String curProjectName = (String) taskHashMap.get("projectName");
-                                                document.replaceString(startOffset, endOffset, format(curProjectName));
+                                                document.replaceString(startOffset, endOffset, format("     * @projectName "+curProjectName));
                                             }
                                             PsiDocTag statusDocTag = docComment.findTagByName("status");
                                             if (statusDocTag != null) {
-                                                startOffset = statusDocTag.getValueElement().getTextOffset();
+                                                startOffset = document.getLineStartOffset(document.getLineNumber(statusDocTag.getValueElement().getTextOffset()));
                                                 endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
                                                 String curStatus = (String) taskHashMap.get("status");
-                                                document.replaceString(startOffset, endOffset, format(curStatus));
+                                                document.replaceString(startOffset, endOffset, format("     * @status "+curStatus));
+                                            }
+                                            PsiDocTag taskTypeDocTag = docComment.findTagByName("taskType");
+                                            if (taskTypeDocTag != null) {
+                                                startOffset = document.getLineStartOffset(document.getLineNumber(taskTypeDocTag.getValueElement().getTextOffset()));
+                                                endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
+                                                String curTaskType = (String) taskHashMap.get("taskType");
+                                                document.replaceString(startOffset, endOffset, format("     * @taskType "+curTaskType));
+                                            }
+                                            PsiDocTag progressDocTag = docComment.findTagByName("progress");
+                                            if (progressDocTag != null) {
+                                                startOffset = document.getLineStartOffset(document.getLineNumber(progressDocTag.getValueElement().getTextOffset()));
+                                                endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
+                                                String curProgress = (String) taskHashMap.get("progress");
+                                                document.replaceString(startOffset, endOffset, format("     * @progress "+curProgress));
                                             }
                                             PsiDocTag taskPriorityDocTag = docComment.findTagByName("taskPriority");
                                             if (taskPriorityDocTag != null) {
-                                                startOffset = taskPriorityDocTag.getValueElement().getTextOffset();
+                                                startOffset = document.getLineStartOffset(document.getLineNumber(taskPriorityDocTag.getValueElement().getTextOffset()));
                                                 endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
                                                 String curTaskPriority = (String) taskHashMap.get("taskPriority");
-                                                document.replaceString(startOffset, endOffset, format(curTaskPriority));
+                                                document.replaceString(startOffset, endOffset, format("     * @taskPriority "+curTaskPriority));
                                             }
-                                            PsiDocTag dueTimeTag = docComment.findTagByName("dueTime");
-                                            if (dueTimeTag != null) {
-                                                startOffset = dueTimeTag.getValueElement().getTextOffset();
+                                            PsiDocTag dueTimeDocTag = docComment.findTagByName("dueTime");
+                                            if (dueTimeDocTag != null) {
+                                                startOffset = document.getLineStartOffset(document.getLineNumber(dueTimeDocTag.getValueElement().getTextOffset()));
                                                 endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
-                                                String curTime = (String) taskHashMap.get("dueTime");
-                                                document.replaceString(startOffset, endOffset, format(curTime));
+                                                String curDueTime = (String) taskHashMap.get("dueTime");
+                                                document.replaceString(startOffset, endOffset, format("     * @dueTime "+curDueTime));
+                                            }
+                                            PsiDocTag taskDetailDocTag = docComment.findTagByName("taskDetail");
+                                            if (taskDetailDocTag != null) {
+                                                startOffset = document.getLineStartOffset(document.getLineNumber(taskDetailDocTag.getValueElement().getTextOffset()));
+                                                endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
+                                                String curTaskDetail = (String) taskHashMap.get("taskDetail");
+                                                document.replaceString(startOffset, endOffset, format("     * @taskDetail "+curTaskDetail));
                                             }
                                             break;
                                         case 2:
@@ -133,25 +152,25 @@ public class MyTypedActionHandler implements TypedActionHandler {
                                 }
                             }
                         }
-                        int count=0;
-                        for (int i = 0; i <s.length ; i++) {
-                            if(s[i].equals(curTaskId))
-                                return;
-                            else
-                                count++;
-                            if(count==s.length&&taskHashMap.get("taskId")!=null){
-                                TextRange textRangeInParent = docComment.getTextRangeInParent();
-                                //textRangeInParent.replace(docComment.getText(),NewJavaDoc);
-                                int endOffset2 = document.getLineEndOffset((document.getLineNumber(containingMethod.getStartOffsetInParent()) - 1));
-                                int startOffset1 = document.getLineStartOffset(document.getLineNumber(textRange.getStartOffset()));
-                                int endOffset1 = document.getLineEndOffset(document.getLineNumber(textRange.getEndOffset())+2);
-                                //document.deleteString(textRangeInParent.getStartOffset(),textRangeInParent.getEndOffset());
-                                int textOffset = docComment.getTextOffset();
-                                //document.replaceString(startOffset1,endOffset1,NewJavaDoc);
-                                //updateJavaDoc(docComment,document);
-                                infoBuilder.append(updateJavaDoc(docComment.getText(),taskHashMap));
-                            }
-                        }
+//                        int count=0;
+//                        for (int i = 0; i <s.length ; i++) {
+//                            if(s[i].equals(curTaskId))
+//                                return;
+//                            else
+//                                count++;
+//                            if(count==s.length&&taskHashMap.get("taskId")!=null){
+//                                TextRange textRangeInParent = docComment.getTextRangeInParent();
+//                                //textRangeInParent.replace(docComment.getText(),NewJavaDoc);
+//                                int endOffset2 = document.getLineEndOffset((document.getLineNumber(containingMethod.getStartOffsetInParent()) - 1));
+//                                int startOffset1 = document.getLineStartOffset(document.getLineNumber(textRange.getStartOffset()));
+//                                int endOffset1 = document.getLineEndOffset(document.getLineNumber(textRange.getEndOffset())+2);
+//                                //document.deleteString(textRangeInParent.getStartOffset(),textRangeInParent.getEndOffset());
+//                                int textOffset = docComment.getTextOffset();
+//                                //document.replaceString(startOffset1,endOffset1,NewJavaDoc);
+//                                //updateJavaDoc(docComment,document);
+//                                infoBuilder.append(updateJavaDoc(docComment.getText(),taskHashMap));
+//                            }
+//                        }
                     }
 
                 }
@@ -160,29 +179,7 @@ public class MyTypedActionHandler implements TypedActionHandler {
 
         }
     }
-    private void updateJavaDoc(PsiDocComment docComment, Document document){
 
-        PsiDocTag taskNameDocTag = docComment.findTagByName("taskName");
-        if (taskNameDocTag != null) {
-            int startOffset = taskNameDocTag.getValueElement().getTextOffset();
-            int endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
-            document.replaceString(startOffset+2, endOffset,"newTaskName");
-        }
-        PsiDocTag projectNameDocTag = docComment.findTagByName("projectName");
-        if (projectNameDocTag != null) {
-            int startOffset = projectNameDocTag.getValueElement().getTextOffset();
-            int endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
-            document.replaceString(startOffset+"newTaskName".length(), endOffset, "newProjectName");
-        }
-        PsiDocTag statusDocTag = docComment.findTagByName("status");
-        if (statusDocTag != null) {
-            int startOffset = statusDocTag.getValueElement().getTextOffset();
-            int endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
-            document.replaceString(startOffset, endOffset, "newStatus");
-        }
-
-
-    }
     public String updateJavaDoc (String s,HashMap map){
         String newString="/**\n";
         String[] split = s.split("\n");
