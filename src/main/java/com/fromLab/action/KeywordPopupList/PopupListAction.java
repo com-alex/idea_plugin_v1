@@ -46,13 +46,12 @@ public class PopupListAction extends AnAction {
         HashMap task = socketUtil.getTaskMap();
         String selectedText = selectionModel.getSelectedText();
         //当只输入了@的时候，WordAtCaret会选中两个整行...,改为使用LineAtCaret
-        int lineEndOffset=0;
-        int lineStartOffset=0;
+        int lineEndOffset;
+        int lineStartOffset;
         if (selectedText.contains("*")){
             selectionModel.removeSelection();
-            selectionModel.selectLineAtCaret();
-            lineEndOffset = selectionModel.getSelectionEnd();
-            lineStartOffset=selectionModel.getSelectionStart();
+            lineStartOffset= editor.getCaretModel().getOffset();
+            lineEndOffset=document.getLineEndOffset(document.getLineNumber(lineStartOffset));
         }
         else {
             lineStartOffset = selectionModel.getSelectionStart();

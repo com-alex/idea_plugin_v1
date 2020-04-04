@@ -1,7 +1,6 @@
 package com.fromLab.action.TaskJavaDoc;
 
-import com.fromLab.action.MyTypedActionHandler;
-import com.fromLab.entity.Task;
+import com.fromLab.Handler.MyTypedActionHandler;
 import com.fromLab.utils.SocketUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.WriteCommandAction;

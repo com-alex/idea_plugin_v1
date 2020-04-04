@@ -13,13 +13,14 @@ import java.util.HashMap;
 public class SocketUtil {
     HashMap<String,String> taskMap=new HashMap<>();
     public HashMap getTaskMap(){
-        Task task=null;
-        Socket socket= null;
+        Task task;
+        Socket socket;
         try {
             socket = new Socket("127.0.0.1",11222);
             InputStream inputStream=socket.getInputStream();
             ObjectInputStream in=new ObjectInputStream(inputStream);
             task=(Task)in.readObject();
+            if(task!=null) {
                 taskMap.put("taskId", String.valueOf(task.getTaskId()));
                 taskMap.put("taskName", task.getTaskName());
                 taskMap.put("status", task.getStatus());
@@ -30,6 +31,7 @@ public class SocketUtil {
                 taskMap.put("starTime", task.getStartTime());
                 taskMap.put("taskType", task.getTaskType());
                 taskMap.put("taskDetail", task.getTaskDetail());
+            }
             in.close();
             inputStream.close();
         } catch (IOException e) {

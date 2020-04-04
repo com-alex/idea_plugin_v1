@@ -1,9 +1,7 @@
 package com.fromLab.action.KeywordPopupList;
 
 
-import com.fromLab.action.MyTypedActionHandler;
-import com.fromLab.entity.Task;
-import com.fromLab.utils.SocketUtil;
+import com.fromLab.Handler.MyTypedActionHandler;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -94,7 +92,7 @@ public class PopupList {
                             //只有@的情况
                             if(keyword.contains("*")) {
 
-                                document.replaceString(lineStartOffset, lineEndOffset, myTypedActionHandler.format("     * @"+inputContent));
+                                document.replaceString(lineStartOffset, lineEndOffset, myTypedActionHandler.format(inputContent));
                             }
                             //写了部分keyword
                             else
