@@ -1,10 +1,11 @@
 package com.fromLab.action.KeywordPopupList;
 
 
-import com.fromLab.Handler.MyTypedActionHandler;
+import com.fromLab.Handler.UpdateJavaDocActionHandler;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.psi.PsiClass;
@@ -21,10 +22,9 @@ import java.util.HashMap;
  */
 public class PopupList {
 
-    PopupList (){}
-    MyTypedActionHandler myTypedActionHandler=new MyTypedActionHandler();
+    private UpdateJavaDocActionHandler updateJavaDocActionHandler =new UpdateJavaDocActionHandler();
 
-    public void createListPopup(String keyword, PsiClass psiClass, int lineStartOffset, int lineEndOffset, Document document, Editor editor, HashMap task){
+    public void createListPopup(String keyword, Project project, int lineStartOffset, int lineEndOffset, Document document, Editor editor, HashMap task){
 
         JBList<String> list = new JBList<>();
         String[] remainTaskFields = new String[9];
@@ -54,53 +54,46 @@ public class PopupList {
         if (keyword.contains("*")) {
             String[] content = new String[9];
             //此时输入为@，显示所有keyword
-            for (int i = 0; i < remainTaskFields.length; i++) {
-                content[i] = remainTaskFields[i];
-            }
+            System.arraycopy(remainTaskFields, 0, content, 0, remainTaskFields.length);
             list.setListData(content);
         }
         else {
             //keyword不为空，自动补全
             ArrayList<String> content = new ArrayList<>();
             char[] chars = keyword.toLowerCase().toCharArray();
-            for (int i = 0; i < remainTaskFields.length; i++) {
-                int count=0;
-                for (int j = 0; j < chars.length; j++) {
-                    if(remainTaskFields[i].toLowerCase().contains(chars[j]+""))
+            for (String remainTaskField : remainTaskFields) {
+                int count = 0;
+                for (char aChar : chars) {
+                    if (remainTaskField.toLowerCase().contains(aChar + "")) {
                         count++;
-                    else
+                    } else {
                         break;
-                    if(count==chars.length)
-                        content.add(remainTaskFields[i]);
+                    }
+                    if (count == chars.length) {
+                        content.add(remainTaskField);
+                    }
                 }
-
             }
             int size=content.size();
-            String[] strings = (String[]) content.toArray(new String[size]);
+            String[] strings = content.toArray(new String[size]);
             list.setListData(strings);
         }
 
-        JBPopup popup = new PopupChooserBuilder(list).setItemChoosenCallback(new Runnable() { // 添加点击项的监听事件
+        JBPopup popup = new PopupChooserBuilder(list).setItemChoosenCallback(new Runnable() {
+
+    // 添加点击项的监听事件
             @Override
             public void run() {
-                (new WriteCommandAction.Simple(psiClass.getProject(), new PsiFile[]{psiClass.getContainingFile()}) {
+                WriteCommandAction.runWriteCommandAction(project, new Runnable(){
 
-                    protected void run() throws Throwable {
+                    @Override
+                    public void run() {
                         String selectedValue = list.getSelectedValue();
-                        String inputContent= selectedValue + " " + taskHashMap.get(selectedValue);
-                            //替换内容，补全注释
-                            //只有@的情况
-                            if(keyword.contains("*")) {
-
-                                document.replaceString(lineStartOffset, lineEndOffset, myTypedActionHandler.format(inputContent));
-                            }
-                            //写了部分keyword
-                            else
-                                document.replaceString(lineStartOffset,lineEndOffset,myTypedActionHandler.format(inputContent));
-
-
+                        String inputContent = "     * @"+selectedValue + " " + taskHashMap.get(selectedValue);
+                        //替换内容，补全注释
+                        document.replaceString(lineStartOffset, lineEndOffset, updateJavaDocActionHandler.format(inputContent));
                     }
-                }).execute();
+                });
                 }
             }).createPopup();
 

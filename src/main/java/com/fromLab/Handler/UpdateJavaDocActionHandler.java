@@ -28,7 +28,7 @@ import java.util.HashMap;
  * @Auther: JIN KE
  * @Date: 2020/3/5 15:54
  */
-public class MyTypedActionHandler implements TypedActionHandler {
+public class UpdateJavaDocActionHandler implements TypedActionHandler {
     public String format(String s) {
         int length = 100;
         StringBuilder sb = new StringBuilder();
@@ -51,9 +51,7 @@ public class MyTypedActionHandler implements TypedActionHandler {
         PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(dataContext);
         final Document document = editor.getDocument();
         int offset = editor.getCaretModel().getOffset();
-        final StringBuilder infoBuilder = new StringBuilder();
         PsiElement element = psiFile.findElementAt(offset);
-        infoBuilder.append("Element at caret: ").append(element).append("\n");
         if (element != null) {
             PsiMethod containingMethod = PsiTreeUtil.getParentOfType(element, PsiMethod.class);
             if (containingMethod != null) {
@@ -70,9 +68,6 @@ public class MyTypedActionHandler implements TypedActionHandler {
                         StringUtil stringUtil = new StringUtil();
                         ArrayList<String> oldTasks = stringUtil.minusPlus(oldValue);
                         System.out.println(oldTasks);
-                        infoBuilder.append("oldValue: " + oldValue + " \n");
-                        String[] s = oldValue.split(" ");
-                        //System.out.println(oldValue);
                         if (curTaskId != null && socketUtil.getTask() != null) {
                             if (!stringUtil.contains(oldTasks, curTaskId)) {
                                 ChooseDialog chooseDialog = new ChooseDialog(oldTasks, curTaskId);
@@ -160,6 +155,7 @@ public class MyTypedActionHandler implements TypedActionHandler {
             }
         }
     }
+
     public void setOldHandler (TypedActionHandler oldHandler){
                         this.oldHandler = oldHandler;
                     }

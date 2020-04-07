@@ -1,6 +1,7 @@
 package com.fromLab.action.TaskJavaDoc;
 
-import com.fromLab.Handler.MyTypedActionHandler;
+import com.fromLab.Handler.KeywordCompleteActionHandler;
+import com.fromLab.Handler.UpdateJavaDocActionHandler;
 import com.fromLab.utils.SocketUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -20,23 +21,25 @@ import java.util.HashMap;
 
 
 public class JavaDocAction extends AnAction {
-    private JavaDocSetting javaDocSetting;
+
     private SocketUtil socketUtil=new SocketUtil();
     static {
         final EditorActionManager actionManager = EditorActionManager.getInstance();
         final TypedAction typedAction = actionManager.getTypedAction();
 
-        MyTypedActionHandler handler = new MyTypedActionHandler();
-        //将自定义的TypedActionHandler设置进去后，
-        //返回旧的TypedActionHandler，即IDEA自身的TypedActionHandler
+
+        UpdateJavaDocActionHandler handler = new UpdateJavaDocActionHandler();
         TypedActionHandler oldHandler = typedAction.setupHandler(handler);
         handler.setOldHandler(oldHandler);
+
+        KeywordCompleteActionHandler handler1=new KeywordCompleteActionHandler();
+        TypedActionHandler oldHandler1=typedAction.setupHandler(handler1);
+        handler1.setOldHandler(oldHandler1);
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
 
-        this.javaDocSetting = JavaDocSetting.getInstance();
         this.generateJavaDoc(this.getPsiMethodFromContext(e),e);
 
     }

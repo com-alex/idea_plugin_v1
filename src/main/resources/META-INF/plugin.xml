@@ -30,9 +30,5 @@
                     description="generate JavaDoc about Task information ">
                 <add-to-group group-id="GenerateGroup" anchor="last"/>
             </action>
-            <action id="Keyword Prompt and Complete" class="com.fromLab.action.KeywordPopupList.PopupListAction" text="Keyword Prompt and Complete"
-                    description="pop up a list of keywords and complete the keyword and its value">
-                <add-to-group group-id="GenerateGroup" anchor="last"/>
-            </action>
     </actions>
 </idea-plugin>

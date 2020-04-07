@@ -10,6 +10,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -39,7 +40,8 @@ public class PopupListAction extends AnAction {
         }).execute();
     }
     private void addPopupList(PsiClass psiClass, AnActionEvent e) {
-        Editor editor = (Editor)e.getData(PlatformDataKeys.EDITOR);
+        Editor editor = e.getData(PlatformDataKeys.EDITOR);
+        Project project = e.getProject();
         Document document = editor.getDocument();
         SelectionModel selectionModel = editor.getSelectionModel();
         selectionModel.selectWordAtCaret(false);
@@ -57,22 +59,9 @@ public class PopupListAction extends AnAction {
             lineStartOffset = selectionModel.getSelectionStart();
             lineEndOffset = document.getLineEndOffset(document.getLineNumber(selectionModel.getSelectionEnd()));
         }
-        popupList.createListPopup(selectedText,psiClass,lineStartOffset,lineEndOffset,document,editor,task);
+        popupList.createListPopup(selectedText,project,lineStartOffset,lineEndOffset,document,editor,task);
 
     }
-
-    private String getkeyword(String selectedText){
-        String result=null;
-        if (selectedText.contains("@")&selectedText.contains("*")) {
-            String replace = selectedText.replace("@", "").replace("*", "");
-            result = replace.trim();
-        }
-        else return result;
-
-        return result.equals("")?"":result;
-
-    }
-
 
     private PsiClass getPsiMethodFromContext(AnActionEvent e) {
         PsiElement elementAt = this.getPsiElement(e);
