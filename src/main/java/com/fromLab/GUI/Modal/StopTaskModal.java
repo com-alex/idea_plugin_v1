@@ -4,6 +4,7 @@ import com.fromLab.GUI.component.TaskProgressSlider;
 import com.fromLab.entity.Status;
 import com.fromLab.entity.Task;
 import com.fromLab.exception.BusinessException;
+import com.fromLab.loader.IconsLoader;
 import com.fromLab.service.TaskService;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.GUIUtils;
@@ -49,7 +50,7 @@ public class StopTaskModal extends JFrame {
 
 
 
-    public StopTaskModal(Task selectedTask, Integer taskProgress,  SelectTaskDialog dialog, OpenprojectURL openprojectURL){
+    public StopTaskModal(Task selectedTask, Integer taskProgress, OpenprojectURL openprojectURL){
         this.statusDataSourceView = new String[this.statusDataSource.length];
         for (int i = 0; i < statusDataSource.length; i++) {
             statusDataSourceView[i] = statusDataSource[i].getName();
@@ -57,7 +58,7 @@ public class StopTaskModal extends JFrame {
 
         this.setLayout(new BorderLayout());
 
-        this.dialog = dialog;
+
         this.taskService = new TaskServiceImpl();
         this.selectedTask = selectedTask;
         this.taskProgress = taskProgress;
@@ -117,6 +118,11 @@ public class StopTaskModal extends JFrame {
         this.setVisible(true);
     }
 
+    public StopTaskModal(Task selectedTask, Integer taskProgress,  SelectTaskDialog dialog, OpenprojectURL openprojectURL){
+        this(selectedTask, taskProgress, openprojectURL);
+        this.dialog = dialog;
+    }
+
 
 
     private void watchTaskProgress(){
@@ -144,10 +150,12 @@ public class StopTaskModal extends JFrame {
         if (result.equals(SUCCESS)) {
             this.dispose();
             JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON, jButtons, jButtons[0]);
+            if(this.dialog != null){
+                this.dialog.resetTableDataSource();
+                this.dialog.setVisible(true);
+            }
 
-            this.dialog.resetTableDataSource();
-            this.dialog.setVisible(true);
         }else{
             Integer taskId = this.selectedTask.getTaskId();
             openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/")+1));
@@ -159,20 +167,21 @@ public class StopTaskModal extends JFrame {
             openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/")+1));
             if(this.selectedTask == null){
                 JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON, jButtons, jButtons[0]);
             }else {
                 String response = this.taskService.updateStatusAndProgress(openprojectURL, this.selectedTask.getTaskId(),
                         this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
                 if (StringUtils.equals(response, SUCCESS)) {
                     this.dispose();
                     JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
-
-                    this.dialog.resetTableDataSource();
-                    this.dialog.setVisible(true);
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON, jButtons, jButtons[0]);
+                    if(this.dialog != null){
+                        this.dialog.resetTableDataSource();
+                        this.dialog.setVisible(true);
+                    }
                 } else {
                     JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON, jButtons, jButtons[0]);
                 }
             }
         }
@@ -182,7 +191,9 @@ public class StopTaskModal extends JFrame {
 
     private void onCancel(){
         this.setVisible(false);
-        this.dialog.setVisible(true);
+        if(this.dialog != null){
+            this.dialog.setVisible(true);
+        }
     }
 
 }

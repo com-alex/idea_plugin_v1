@@ -7,6 +7,7 @@ import com.fromLab.VO.TaskDetailVO;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Task;
 import com.fromLab.exception.BusinessException;
+import com.fromLab.loader.IconsLoader;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.*;
 import org.apache.commons.lang3.StringUtils;
@@ -116,7 +117,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         } catch (BusinessException e) {
             this.setVisible(false);
             String errorMsg = e.getMessage();
-            showOptionDialog(errorMsg, JOptionPane.ERROR_MESSAGE);
+            showOptionDialog(errorMsg, JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
             return;
         }
 
@@ -291,7 +292,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         Integer row = taskTable.getSelectedRow();
         if (row == -1) {
             this.setVisible(false);
-            showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE);
+            showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             return;
         }
         this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
@@ -308,7 +309,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         Integer row = taskTable.getSelectedRow();
         if (row == -1) {
             this.setVisible(false);
-            showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE);
+            showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             return;
         }
         TaskDetailVO taskDetailVO = this.taskVOConvertToTaskDetailVO(this.dataSource.get(row));
@@ -322,7 +323,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             int row = taskTable.getSelectedRow();
             if(row == -1){
                 this.setVisible(false);
-                showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE);
+                showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
                 return;
             }
             this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
@@ -333,7 +334,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
                         this.selectedTask.getLockVersion(), startDate);
                 if(StringUtils.equals(result, ERROR)){
                     this.setVisible(false);
-                    showOptionDialog("Fail to save the startTime of the task", JOptionPane.ERROR_MESSAGE);
+                    showOptionDialog("Fail to save the startTime of the task", JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
                     return;
                 }
             }
@@ -347,10 +348,10 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             this.startTime = System.currentTimeMillis();
             System.out.println("Start Task  Time:" + this.startTime);
             this.setVisible(false);
-            showOptionDialog("You select a task successfully!", JOptionPane.PLAIN_MESSAGE);
+            showOptionDialog("You select a task successfully!", JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON);
         }else{
             this.setVisible(false);
-            showOptionDialog("You have selected a task!", JOptionPane.WARNING_MESSAGE);
+            showOptionDialog("You have selected a task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             return;
         }
     }
@@ -359,14 +360,14 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         int row = taskTable.getSelectedRow();
         if(row == -1){
             this.setVisible(false);
-            showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE);
+            showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             return;
         }
         TaskVO selectedTaskVO = this.dataSource.get(row);
 
         if(!selectedTaskVO.getTaskId().equals(this.selectedTask.getTaskId())){
             this.setVisible(false);
-            showOptionDialog("You select a wrong task!", JOptionPane.WARNING_MESSAGE);
+            showOptionDialog("You select a wrong task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             return;
         }
         this.endTime = System.currentTimeMillis();
@@ -384,6 +385,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         if (SUCCESS.equals(result)){
             this.chosen = false;
             this.stopButton.setEnabled(false);
+            socketServer.task = null;
             //获取所选行的task的progress
             String progressString = (String) taskTable.getValueAt(row, 10);
             Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
@@ -392,6 +394,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             this.taskToolWindow.deleteSelectedFlag(this.selectedTask.getTaskId());
             this.taskToolWindow.setChosen(false);
             this.taskToolWindow.setSelectedTask(null);
+            this.taskToolWindow.paintStopButton();
             this.selectedTask = null;
         }
         //如果没成功，可能是服务器问题，也有可能是因为lock_version不正确，因此重新获取task，然后再发一次update请求
@@ -409,6 +412,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             if(SUCCESS.equals(response)){
                 this.chosen = false;
                 this.stopButton.setEnabled(false);
+                socketServer.task = null;
                 //获取所选行的task的progress
                 String progressString = (String) taskTable.getValueAt(row, 10);
                 Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
@@ -417,10 +421,11 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
                 this.taskToolWindow.deleteSelectedFlag(this.selectedTask.getTaskId());
                 this.taskToolWindow.setChosen(false);
                 this.taskToolWindow.setSelectedTask(null);
+                this.taskToolWindow.paintStopButton();
                 this.selectedTask = null;
             }else{
                 this.setVisible(false);
-                showOptionDialog("Fail to save", JOptionPane.WARNING_MESSAGE);
+                showOptionDialog("Fail to save", JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
                 this.resetTableDataSource();
             }
         }
@@ -461,7 +466,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         this.getTaskTable().setShowVerticalLines(false);
     }
 
-    private void showOptionDialog(String info, Integer type){
+    private void showOptionDialog(String info, Integer type, Icon icon){
         JButton[] jButtons = new JButton[1];
         JButton button = new JButton("ok");
         jButtons[0] = button;
@@ -472,7 +477,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
                 win.dispose();
             }
         });
-        JOptionPane.showOptionDialog(null, info, "Tips", JOptionPane.DEFAULT_OPTION, type, null, jButtons, jButtons[0]);
+        JOptionPane.showOptionDialog(null, info, "Tips", JOptionPane.DEFAULT_OPTION, type, icon, jButtons, jButtons[0]);
         this.setVisible(true);
     }
 
@@ -544,8 +549,6 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
     }
 
     private void sortDataSourceOrderByDueTime(){
-
-        //TODO 需进行修改，将来时间的排序还得重写
         if(this.taskDueTimeFlag % 2 == 0){
             SortUtils.sort(this.dataSource,
                     new String[]{"dueTime","taskPriority","projectName","taskType","taskId"},
@@ -646,7 +649,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
         Long min = duration.toMillis();
         if(min <= 0L){
             this.setVisible(false);
-            showOptionDialog("Illegal due date", JOptionPane.WARNING_MESSAGE);
+            showOptionDialog("Illegal due date", JOptionPane.WARNING_MESSAGE, IconsLoader.ERROR_ICON);
         }
         else{
             this.dataSource = this.getDataSource(queryStatusNum, queryPriorityNum, fromDueTime,
@@ -675,7 +678,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             taskList = new ArrayList<>();
             this.setVisible(false);
             String errorMsg = e.getMessage() + "\n\nFail to get task list!";
-            showOptionDialog(errorMsg, JOptionPane.ERROR_MESSAGE);
+            showOptionDialog(errorMsg, JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
         }
         taskList.forEach(task -> {
             TaskVO taskVO = new TaskVO();
@@ -765,7 +768,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
 //                return;
 //            }
 //        }
-        this.setVisible(false);
+        this.dispose();
     }
 
     @Override

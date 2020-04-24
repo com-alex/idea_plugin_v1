@@ -1,6 +1,7 @@
 package com.fromLab.GUI.Modal;
 
 import com.fromLab.GUI.window.TaskToolWindow;
+import com.fromLab.loader.IconsLoader;
 import com.fromLab.service.UserService;
 import com.fromLab.service.impl.UserServiceImpl;
 import com.fromLab.utils.GUIUtils;
@@ -78,13 +79,13 @@ public class LoginModal extends JFrame {
             if(StringUtils.isBlank(openProjectURL)){
                 //提示框（需要填写openProjectUrl）
                 this.setVisible(false);
-                showOptionDialog("You need to input Open Project URL!", JOptionPane.ERROR_MESSAGE);
+                showOptionDialog("You need to input Open Project URL!", JOptionPane.ERROR_MESSAGE, IconsLoader.WARNING_ICON);
 //                JOptionPane.showMessageDialog(null,
 //                        "You need to input Open Project URL!", "Tips", JOptionPane.PLAIN_MESSAGE);
             }else{
                 //提示框（需要填写API Key）
                 this.setVisible(false);
-                showOptionDialog("You need to input API Key!", JOptionPane.ERROR_MESSAGE);
+                showOptionDialog("You need to input API Key!", JOptionPane.ERROR_MESSAGE, IconsLoader.WARNING_ICON);
 //                JOptionPane.showMessageDialog(null,
 //                        "You need to input Open Project URL!", "Tips", JOptionPane.ERROR_MESSAGE);
             }
@@ -98,21 +99,22 @@ public class LoginModal extends JFrame {
 
                 OpenprojectURL openprojectURL = new OpenprojectURL(openProjectURL + OpenprojectURL.WORK_PACKAGES_URL, apiKey);
                 this.taskToolWindow.setOpenprojectURL(openprojectURL);
-                showOptionDialog("Success to authorize!", JOptionPane.ERROR_MESSAGE);
+                showOptionDialog("Success to authorize!", JOptionPane.ERROR_MESSAGE, IconsLoader.SUCCESS_ICON);
                 this.setVisible(false);
                 this.taskToolWindow.setIsLogin(true);
                 this.taskToolWindow.refresh();
+                this.taskToolWindow.init();
             }
             else{
                 //不成功
                 this.setVisible(false);
-                showOptionDialog("Unauthorized", JOptionPane.ERROR_MESSAGE);
+                showOptionDialog("Unauthorized", JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
             }
         }
 
     }
 
-    private void showOptionDialog(String info, Integer type){
+    private void showOptionDialog(String info, Integer type, Icon icon){
         JButton[] jButtons = new JButton[1];
         JButton button = new JButton("ok");
         jButtons[0] = button;
@@ -123,7 +125,7 @@ public class LoginModal extends JFrame {
                 win.dispose();
             }
         });
-        JOptionPane.showOptionDialog(null, info, "Tips", type, type, null, jButtons, jButtons[0]);
+        JOptionPane.showOptionDialog(null, info, "Tips", type, type, icon, jButtons, jButtons[0]);
         this.setVisible(true);
     }
 }

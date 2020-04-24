@@ -1,6 +1,7 @@
 package com.fromLab.GUI.window;
 
 import com.fromLab.GUI.Modal.SelectTaskDialog;
+import com.fromLab.GUI.Modal.StopTaskModal;
 import com.fromLab.GUI.component.TaskListModel;
 import com.fromLab.action.taskToolWindowAction.AuthenticationAction;
 import com.fromLab.action.taskToolWindowAction.RefreshAction;
@@ -9,10 +10,7 @@ import com.fromLab.exception.BusinessException;
 import com.fromLab.loader.IconsLoader;
 import com.fromLab.service.TaskService;
 import com.fromLab.service.impl.TaskServiceImpl;
-import com.fromLab.utils.DateUtils;
-import com.fromLab.utils.GUIUtils;
-import com.fromLab.utils.OpenprojectURL;
-import com.fromLab.utils.SocketServer;
+import com.fromLab.utils.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -48,6 +46,7 @@ public class TaskToolWindow implements ToolWindowFactory {
     private JPanel contentPanel;
     private JPanel controlPanel;
     private JButton chooseButton;
+    private JButton stopButton;
     private JButton moreButton;
     private JList taskList;
     private TaskService taskService;
@@ -58,6 +57,8 @@ public class TaskToolWindow implements ToolWindowFactory {
     private Task selectedTask = null;
     private List<Task> datasource;
     private Long startTime;
+    private Long endTime;
+    private String spentTimeCustomFieldName;
 
     private SocketServer socketServer;
     private Thread thread;
@@ -88,15 +89,24 @@ public class TaskToolWindow implements ToolWindowFactory {
         controlPanel = new JPanel();
         controlPanel.setLayout(null);
         chooseButton = new JButton("choose");
-        chooseButton.setBounds(10, 10, 150, 30);
+        chooseButton.setBounds(10, 10, 100, 30);
         chooseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 choose();
             }
         });
+        stopButton = new JButton("stop");
+        stopButton.setBounds(150, 10, 100, 30);
+        paintStopButton();
+        stopButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stop();
+            }
+        });
         moreButton = new JButton("more");
-        moreButton.setBounds(200, 10, 150, 30);
+        moreButton.setBounds(290, 10, 100, 30);
         moreButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -104,6 +114,7 @@ public class TaskToolWindow implements ToolWindowFactory {
             }
         });
         controlPanel.add(chooseButton);
+        controlPanel.add(stopButton);
         controlPanel.add(moreButton);
         contentPanel.add(controlPanel);
 
@@ -121,79 +132,189 @@ public class TaskToolWindow implements ToolWindowFactory {
 
     }
 
+    public void init(){
+        //获取自定义字段的名称
+        try {
+            this.spentTimeCustomFieldName = GetCustomFieldNumUtil.getCustomFieldNum("Time spent", openprojectURL);
+        } catch (BusinessException e) {
+            String errorMsg = e.getMessage();
+            JOptionPane.showMessageDialog(null, errorMsg,
+                    "Tips", JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
+            return;
+        }
+    }
+
 
 
     public void refresh() {
-        this.openprojectURL.setOpenProjectURL(originalUrl);
-        try {
-           this.datasource = this.taskService.getTasksByConditions(this.openprojectURL, null, null,
-                    null, null, null, null);
+        if(this.isLogin){
+            this.openprojectURL.setOpenProjectURL(originalUrl);
+            try {
+                this.datasource = this.taskService.getTasksByConditions(this.openprojectURL, null, null,
+                        null, null, null, null);
 
-            String[] taskStringDatasource = this.datasource.stream().map(
-                    task -> "ID:" + task.getTaskId() + "   Subject:" + task.getTaskName()
-            ).collect(Collectors.toList()).toArray(new String[]{});
-            this.taskList.setModel(new TaskListModel(taskStringDatasource));
-        } catch (BusinessException e) {
-            e.printStackTrace();
+                String[] taskStringDatasource = this.datasource.stream().map(
+                        task -> "ID:" + task.getTaskId() + "   Subject:" + task.getTaskName() + "   Due Time:" + task.getDueTime()
+                ).collect(Collectors.toList()).toArray(new String[]{});
+                this.taskList.setModel(new TaskListModel(taskStringDatasource));
+            } catch (BusinessException e) {
+                e.printStackTrace();
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "Unauthorized!",
+                    "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.ERROR_ICON);
         }
+
 
     }
 
     public void choose() {
-        if(!chosen){
-            Object selectedTaskInfo = this.taskList.getSelectedValue();
-            if(selectedTaskInfo == null){
-                JOptionPane.showMessageDialog(null, "You need to choose the task",
-                        "Tips", JOptionPane.WARNING_MESSAGE);
-                return;
+        if(isLogin){
+            if(!chosen){
+                Object selectedTaskInfo = this.taskList.getSelectedValue();
+                if(selectedTaskInfo == null){
+                    JOptionPane.showMessageDialog(null, "You need to choose the task",
+                            "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
+                    return;
+                }
+                String selectedTaskString = selectedTaskInfo.toString();
+                Integer selectedTaskId = getTaskId(selectedTaskString);
+                this.openprojectURL.setOpenProjectURL(originalUrl);
+                try {
+                    this.selectedTask = this.taskService.getTaskById(openprojectURL, selectedTaskId);
+                } catch (BusinessException e) {
+                    JOptionPane.showMessageDialog(null, "Fail to get task by Id",
+                            "Tips", JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
+                }
+                if(selectedTask.getTaskId() != null){
+                    if("null".equals(this.selectedTask.getStartTime())){
+                        this.openprojectURL.setOpenProjectURL(originalUrl);
+                        String startDate = DateUtils.date2String(new Date());
+                        String result = this.taskService.updateStartDate(openprojectURL, this.selectedTask.getTaskId(),
+                                this.selectedTask.getLockVersion(), startDate);
+                        if(StringUtils.equals(result, ERROR)){
+                            JOptionPane.showMessageDialog(null, "Fail to save the start Date of the task!\nPlease select again!",
+                                    "Tips", JOptionPane.ERROR_MESSAGE, IconsLoader.WARNING_ICON);
+                            return;
+                        }
+                    }
+                    Integer selectedIndex = this.taskList.getSelectedIndex();
+                    repaintSelectedTask(selectedIndex);
+                    this.chosen = true;
+                    this.stopButton.setEnabled(true);
+                    socketServer.task = this.selectedTask;
+                    this.startTime = System.currentTimeMillis();
+                    System.out.println("Start Task  Time:" + this.startTime);
+                    JOptionPane.showMessageDialog(null, "Success to select task!",
+                            "Tips", JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON);
+                }
+
+            }else{
+                JOptionPane.showMessageDialog(null, "You have selected the task",
+                        "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             }
-            String selectedTaskString = selectedTaskInfo.toString();
-            Integer selectedTaskId = getTaskId(selectedTaskString);
-            this.openprojectURL.setOpenProjectURL(originalUrl);
-            try {
-                this.selectedTask = this.taskService.getTaskById(openprojectURL, selectedTaskId);
-            } catch (BusinessException e) {
-                JOptionPane.showMessageDialog(null, "Fail to get task by Id",
-                        "Tips", JOptionPane.ERROR_MESSAGE);
-            }
-            if(selectedTask.getTaskId() != null){
-                if("null".equals(this.selectedTask.getStartTime())){
-                    this.openprojectURL.setOpenProjectURL(originalUrl);
-                    String startDate = DateUtils.date2String(new Date());
-                    String result = this.taskService.updateStartDate(openprojectURL, this.selectedTask.getTaskId(),
-                            this.selectedTask.getLockVersion(), startDate);
-                    if(StringUtils.equals(result, ERROR)){
-                        JOptionPane.showMessageDialog(null, "Fail to save the start Date of the task!\nPlease select again!",
-                                "Tips", JOptionPane.ERROR_MESSAGE);
-                        return;
+        }else {
+            JOptionPane.showMessageDialog(null, "Unauthorized!",
+                    "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.ERROR_ICON);
+        }
+
+    }
+
+    public void stop(){
+        if(isLogin){
+            if(chosen){
+                Object selectedTaskInfo = this.taskList.getSelectedValue();
+                if(selectedTaskInfo == null){
+                    JOptionPane.showMessageDialog(null, "You need to choose the task",
+                            "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
+                    return;
+                }
+                String selectedTaskString = selectedTaskInfo.toString();
+                Integer selectedTaskId = getTaskId(selectedTaskString);
+                if(!this.selectedTask.getTaskId().equals(selectedTaskId)){
+                    JOptionPane.showMessageDialog(null, "You select a wrong task",
+                            "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
+                }
+
+                this.openprojectURL.setOpenProjectURL(originalUrl);
+                if(selectedTask.getTaskId() != null){
+                    this.endTime = System.currentTimeMillis();
+                    Integer timeSpent = (int)((this.endTime - this.startTime) / 1000);
+                    System.out.println("Stop Task! The Spent Time is: " + timeSpent + "s");
+
+                    String result = this.taskService.updateSpentTime(openprojectURL, this.selectedTask.getTaskId(),
+                            this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
+                            this.spentTimeCustomFieldName);
+                    //先发一次update请求，如果成功表示更新成功
+                    if (SUCCESS.equals(result)){
+                        this.chosen = false;
+                        this.stopButton.setEnabled(false);
+                        socketServer.task = null;
+                        //获取所选行的task的progress
+                        String progressString = this.selectedTask.getProgress();
+                        Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
+                        new StopTaskModal(this.selectedTask, progress,  openprojectURL);
+                        deleteSelectedFlag(selectedTaskId);
+                        this.chosen = false;
+                        this.selectedTask = null;
+                    }
+                    //如果没成功，可能是服务器问题，也有可能是因为lock_version不正确，因此重新获取task，然后再发一次update请求
+                    else{
+                        this.openprojectURL.setOpenProjectURL(originalUrl);
+                        try {
+                            this.selectedTask = this.taskService.getTaskById(openprojectURL, this.selectedTask.getTaskId());
+                        } catch (BusinessException e) {
+                            this.selectedTask = null;
+                        }
+                        this.openprojectURL.setOpenProjectURL(originalUrl);
+                        String response = this.taskService.updateSpentTime(openprojectURL, this.selectedTask.getTaskId(),
+                                this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
+                                this.spentTimeCustomFieldName);
+                        if(SUCCESS.equals(response)){
+                            this.chosen = false;
+                            this.stopButton.setEnabled(false);
+                            socketServer.task = null;
+                            //获取所选行的task的progress
+                            String progressString = this.selectedTask.getProgress();
+                            Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
+                            new StopTaskModal(this.selectedTask, progress,  openprojectURL);
+                            deleteSelectedFlag(selectedTaskId);
+                            this.chosen = false;
+                            this.selectedTask = null;
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Fail to save task",
+                                    "Tips", JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
+                        }
                     }
                 }
-                Integer selectedIndex = this.taskList.getSelectedIndex();
-                repaintSelectedTask(selectedIndex);
-                this.chosen = true;
-                socketServer.task = this.selectedTask;
-                this.startTime = System.currentTimeMillis();
-                System.out.println("Start Task  Time:" + this.startTime);
-                JOptionPane.showMessageDialog(null, "Success to select task!",
-                        "Tips", JOptionPane.PLAIN_MESSAGE);
-            }
 
-        }else{
-            JOptionPane.showMessageDialog(null, "You have selected the task",
-                    "Tips", JOptionPane.WARNING_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(null, "There is no selected task",
+                        "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
+            }
+        }else {
+            JOptionPane.showMessageDialog(null, "Unauthorized!",
+                    "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.ERROR_ICON);
         }
+
     }
 
     private void more() {
-        //打开SelectTaskDialog
-        int width = 1040;
-        int height = 600;
-        this.openprojectURL.setOpenProjectURL(originalUrl);
-        SelectTaskDialog selectTaskDialog = new SelectTaskDialog(this.openprojectURL, this.chosen,
-                this.selectedTask, this.startTime, this.socketServer, this);
-        selectTaskDialog.pack();
-        selectTaskDialog.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
-        selectTaskDialog.setVisible(true);
+        if(isLogin){
+            //打开SelectTaskDialog
+            int width = 1040;
+            int height = 600;
+            this.openprojectURL.setOpenProjectURL(originalUrl);
+            SelectTaskDialog selectTaskDialog = new SelectTaskDialog(this.openprojectURL, this.chosen,
+                    this.selectedTask, this.startTime, this.socketServer, this);
+            selectTaskDialog.pack();
+            selectTaskDialog.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
+            selectTaskDialog.setVisible(true);
+        }else{
+            JOptionPane.showMessageDialog(null, "Unauthorized!",
+                    "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.ERROR_ICON);
+        }
+
     }
 
 
@@ -213,7 +334,7 @@ public class TaskToolWindow implements ToolWindowFactory {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    "Fail to select a task", "Tips", JOptionPane.ERROR_MESSAGE);
+                    "Fail to select a task", "Tips", JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
             return null;
         }
         return taskId;
@@ -245,6 +366,12 @@ public class TaskToolWindow implements ToolWindowFactory {
                values[i] = taskString.substring(1);
                this.taskList.repaint();
             }
+        }
+    }
+
+    public void paintStopButton(){
+        if(!this.chosen){
+            this.stopButton.setEnabled(false);
         }
     }
 

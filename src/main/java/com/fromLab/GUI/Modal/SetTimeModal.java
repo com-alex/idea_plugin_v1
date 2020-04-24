@@ -5,6 +5,7 @@ import com.fromLab.GUI.component.TaskTableModel;
 import com.fromLab.VO.TaskVO;
 import com.fromLab.entity.Task;
 import com.fromLab.exception.BusinessException;
+import com.fromLab.loader.IconsLoader;
 import com.fromLab.service.impl.TaskServiceImpl;
 import com.fromLab.utils.DateUtils;
 import com.fromLab.utils.GUIUtils;
@@ -105,7 +106,7 @@ public class SetTimeModal extends JFrame {
         if(StringUtils.equals(result, SUCCESS)){
             this.dispose();
             JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, jButtons, jButtons[0]);
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, IconsLoader.SUCCESS_ICON, jButtons, jButtons[0]);
             this.jDialog.resetTableDataSource();
             this.jDialog.setVisible(true);
         }else{
@@ -119,20 +120,20 @@ public class SetTimeModal extends JFrame {
             openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/")+1));
             if(tempTask == null){
                 JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON, jButtons, jButtons[0]);
             }else {
                 String response = this.taskService.updateEndDate(openprojectURL, this.task.getTaskId(),
                         this.task.getLockVersion(), date, this.endDateCustomFieldName);
                 if (StringUtils.equals(response, SUCCESS)) {
                     this.dispose();
                     JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON, jButtons, jButtons[0]);
 
                     this.jDialog.resetTableDataSource();
                     this.jDialog.setVisible(true);
                 } else {
                     JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, jButtons, jButtons[0]);
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON, jButtons, jButtons[0]);
                 }
             }
         }
@@ -148,18 +149,4 @@ public class SetTimeModal extends JFrame {
         this.jDialog.setVisible(true);
     }
 
-    private void showOptionDialog(String info, Integer type){
-        JButton[] jButtons = new JButton[1];
-        JButton button = new JButton("ok");
-        jButtons[0] = button;
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Window win = SwingUtilities.getWindowAncestor(button);
-                win.dispose();
-            }
-        });
-        JOptionPane.showOptionDialog(null, info, "Tips", JOptionPane.DEFAULT_OPTION, type, null, jButtons, jButtons[0]);
-        this.setVisible(true);
-    }
 }
