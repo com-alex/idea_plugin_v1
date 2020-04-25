@@ -41,13 +41,18 @@ public class KeywordCompleteActionHandler implements TypedActionHandler {
         Project project = editor.getProject();
         PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(dataContext);
         int offset = editor.getCaretModel().getOffset();
-        PsiElement element = psiFile.findElementAt(offset);
+        PsiElement element = null;
+        if (psiFile != null) {
+            element = psiFile.findElementAt(offset);
+        }
         if (element != null) {
             PsiMethod containingMethod = PsiTreeUtil.getParentOfType(element, PsiMethod.class);
+            PsiDocComment docComment = null;
             if (containingMethod != null) {
-                PsiDocComment docComment = containingMethod.getDocComment();
-                TextRange docCommentTextRange = docComment.getTextRange();
-                if (docComment != null) {
+                docComment = containingMethod.getDocComment();
+            }
+            if (docComment != null) {
+                    TextRange docCommentTextRange = docComment.getTextRange();
                     PsiDocTag taskIdDocTag = docComment.findTagByName("taskId");
                     if (taskIdDocTag != null) {
                         int startOffset = taskIdDocTag.getValueElement().getTextOffset();
@@ -55,7 +60,10 @@ public class KeywordCompleteActionHandler implements TypedActionHandler {
                         TextRange textRange = new TextRange(startOffset, endOffset);
                         String oldValue = document.getText(textRange).trim();
                         HashMap taskHashMap = socketUtil.getTaskMap();
-                        String curTaskId = (String) taskHashMap.get("taskId");
+                        String curTaskId="";
+                        if (taskHashMap.size()>0) {
+                            curTaskId = (String) taskHashMap.get("taskId");
+                        }
                         StringUtil stringUtil = new StringUtil();
                         ArrayList<String> oldTasks = stringUtil.minusPlus(oldValue);
                         String lastOldTask = oldTasks.get(oldTasks.size()-1);
@@ -83,7 +91,7 @@ public class KeywordCompleteActionHandler implements TypedActionHandler {
                 }
             }
             }
-        }
+
     public void setOldHandler (TypedActionHandler oldHandler){
         this.oldHandler = oldHandler;
     }

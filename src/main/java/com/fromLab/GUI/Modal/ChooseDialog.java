@@ -28,44 +28,31 @@ public class ChooseDialog extends DialogWrapper {
         this.cur = cur;
     }
 
-    private JLabel label;
-    private JRadioButton radioBtn01 = new JRadioButton("update the function's comment");
-    private JRadioButton radioBtn02 = new JRadioButton("choose the correct task");
-    private ButtonGroup btnGroup = new ButtonGroup();
+
     public ChooseDialog(ArrayList<String> old,String cur){
         super(true);
         this.old=old;
         this.cur=cur;
         init();
+        setTitle("Update Comment");
     }
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
         JPanel dialogPanel = new JPanel(new BorderLayout());
-       label= new JLabel("The work your doing now is not the task you selected," +
-                "please update the task's comment or choose right task"+"\n"+
-                "current taskId is"+
-                old.toString()+" you choice is "+cur);
-        btnGroup.add(radioBtn01);
-        btnGroup.add(radioBtn02);
-        JPanel button=new JPanel();
-        button.add(radioBtn01);
-        button.add(radioBtn02);
-        dialogPanel.add(label,BorderLayout.NORTH);
-        dialogPanel.add(button,BorderLayout.CENTER);
-       // JButton choose=new JButton("choose");
-       // dialogPanel.add(choose,BorderLayout.SOUTH);
+        JPanel labelPanel1 = new JPanel(new BorderLayout());
+        JPanel labelPanel2 = new JPanel(new BorderLayout());
+        JPanel labelPanel3 = new JPanel(new BorderLayout());
+        labelPanel1.add(new JLabel("This function is used by a new Task!"));
+        labelPanel2.add(new JLabel("Old taskId: "+ old.toString()+"          Current TaskId: "+cur));
+        labelPanel3.add(new JLabel("Will you update the comment?"));
+        dialogPanel.add(labelPanel1,BorderLayout.NORTH);
+        dialogPanel.add(labelPanel2,BorderLayout.CENTER);
+        dialogPanel.add(labelPanel3,BorderLayout.SOUTH);
+
+
         return dialogPanel;
     }
-    public int getStatus(){
-        if(radioBtn01.isSelected())
-            return 1;
-        else if(radioBtn02.isSelected())
-            return 2;
-        return 0;
-    }
 
 
-    public static void main(String[] args) {
-    }
 }
