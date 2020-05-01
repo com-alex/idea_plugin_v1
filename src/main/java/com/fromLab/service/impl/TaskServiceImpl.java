@@ -11,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.sf.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.fromLab.utils.JsonToObjectUtil.JsonToTask;
@@ -58,7 +59,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String updateSpentTime(OpenprojectURL openprojectURL, int id, int lockVersion, int time, String customField) {
+    public String updateSpentTime(OpenprojectURL openprojectURL, int id, int lockVersion, BigDecimal time, String customField) {
         JsonObject jsonObject=new JsonObject();
         jsonObject.addProperty("lockVersion",lockVersion);
         jsonObject.addProperty(customField,time);

@@ -7,6 +7,7 @@ import com.fromLab.entity.Task;
 import com.fromLab.exception.BusinessException;
 import com.fromLab.utils.OpenprojectURL;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -70,7 +71,7 @@ public interface TaskService {
      * @param time
      * @param customField
      */
-    String updateSpentTime(OpenprojectURL openprojectURL, int id, int lock_version, int time, String customField);
+    String updateSpentTime(OpenprojectURL openprojectURL, int id, int lock_version, BigDecimal time, String customField);
 
     /**
      * 根据各种条件查询task

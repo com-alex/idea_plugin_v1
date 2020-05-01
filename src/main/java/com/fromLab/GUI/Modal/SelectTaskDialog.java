@@ -17,6 +17,7 @@ import javax.swing.*;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
     private Integer taskNameFlag = 0;
     private Integer taskProjectFlag = 0;
     private Integer taskTypeFlag = 0;
+    private BigDecimal timeSpent = BigDecimal.ZERO;
     private String spentTimeCustomFieldName;
     private String endDateCustomFieldName;
     private Task selectedTask;
@@ -370,16 +372,18 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             showOptionDialog("You select a wrong task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             return;
         }
-        this.endTime = System.currentTimeMillis();
-        Integer timeSpent = (int)((this.endTime - this.startTime) / 1000);
-        System.out.println("Stop Task! The Spent Time is: " + timeSpent + "s");
+        if(this.endTime == 0L){
+            this.endTime = System.currentTimeMillis();
+        }
+        if(timeSpent.compareTo(BigDecimal.ZERO) == 0){
+            timeSpent = NumberUtils.covertTimeToHour(this.endTime - this.startTime);
+        }
+        System.out.println("Stop Task! The Spent Time is: " + timeSpent + "h");
         this.getTaskTable().setValueAt("", row, 0);
-        this.startTime = 0L;
-        this.endTime = 0L;
         this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
         this.openprojectURL.setOpenProjectURL(originalUrl);
         String result = this.taskService.updateSpentTime(openprojectURL, this.selectedTask.getTaskId(),
-                this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
+                this.selectedTask.getLockVersion(), NumberUtils.calUpdateTimeSpent(this.selectedTask.getTimeSpent(), timeSpent),
                 this.spentTimeCustomFieldName);
         //先发一次update请求，如果成功表示更新成功
         if (SUCCESS.equals(result)){
@@ -390,7 +394,11 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             String progressString = (String) taskTable.getValueAt(row, 10);
             Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
             this.setVisible(false);
+            this.openprojectURL.setOpenProjectURL(originalUrl);
             new StopTaskModal(this.selectedTask, progress, this, openprojectURL);
+            this.startTime = 0L;
+            this.endTime = 0L;
+            this.timeSpent = BigDecimal.ZERO;
             this.taskToolWindow.deleteSelectedFlag(this.selectedTask.getTaskId());
             this.taskToolWindow.setChosen(false);
             this.taskToolWindow.setSelectedTask(null);
@@ -407,7 +415,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             }
             this.openprojectURL.setOpenProjectURL(originalUrl);
             String response = this.taskService.updateSpentTime(openprojectURL, this.selectedTask.getTaskId(),
-                    this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
+                    this.selectedTask.getLockVersion(), NumberUtils.calUpdateTimeSpent(this.selectedTask.getTimeSpent(), timeSpent),
                     this.spentTimeCustomFieldName);
             if(SUCCESS.equals(response)){
                 this.chosen = false;
@@ -417,7 +425,11 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
                 String progressString = (String) taskTable.getValueAt(row, 10);
                 Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
                 this.setVisible(false);
+                this.openprojectURL.setOpenProjectURL(originalUrl);
                 new StopTaskModal(this.selectedTask, progress, this, openprojectURL);
+                this.startTime = 0L;
+                this.endTime = 0L;
+                this.timeSpent = BigDecimal.ZERO;
                 this.taskToolWindow.deleteSelectedFlag(this.selectedTask.getTaskId());
                 this.taskToolWindow.setChosen(false);
                 this.taskToolWindow.setSelectedTask(null);

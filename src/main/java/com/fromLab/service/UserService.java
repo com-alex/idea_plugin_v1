@@ -8,5 +8,5 @@ package com.fromLab.service;
 public interface UserService {
 
     //认证
-    public Boolean authorize(String openProjectURl, String apiKey);
+    Boolean authorize(String openProjectURl, String apiKey);
 }

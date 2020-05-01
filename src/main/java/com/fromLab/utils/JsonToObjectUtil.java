@@ -7,6 +7,7 @@ import com.fromLab.exception.BusinessException;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,11 +57,11 @@ public class JsonToObjectUtil {
         //spentTime
         Object timeSpent = json.getOrDefault(time_spent,"null");
         if ("null".equals(timeSpent.toString())){
-            task.setTimeSpent(0);
+            task.setTimeSpent(BigDecimal.ZERO);
         }
 
         else{
-            task.setTimeSpent(Integer.valueOf(timeSpent.toString()));
+            task.setTimeSpent(new BigDecimal(timeSpent.toString()));
         }
 
 
@@ -149,10 +150,10 @@ public class JsonToObjectUtil {
             //timeSpent
             Object timeSpent = elementsArray.getJSONObject(i).getOrDefault(time_spent,"null");
             if ("null".equals(timeSpent.toString())){
-                task.setTimeSpent(0);
+                task.setTimeSpent(BigDecimal.ZERO);
             }
             else{
-                task.setTimeSpent(Integer.valueOf(timeSpent.toString()));
+                task.setTimeSpent(new BigDecimal(timeSpent.toString()));
             }
 
             //taskDetail

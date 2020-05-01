@@ -7,6 +7,7 @@ import com.fromLab.annotation.Ignored;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -141,17 +142,26 @@ public class ReflectionUtils {
                     setMethod.invoke(o2, attributeMap.get(attributeName));
                 } catch (NoSuchMethodException e) {
                     Method setMethod = null;
+                    Method setMethod2 = null;
                     try {
                         setMethod = claz2.getMethod("set" + methodName, Integer.class);
                         setMethod.invoke(o2, attributeMap.get(attributeName));
                     } catch (NoSuchMethodException ex) {
-                        ex.printStackTrace();
+                        try {
+                            setMethod2 = claz2.getMethod("set" + methodName, BigDecimal.class);
+                            setMethod2.invoke(o2, attributeMap.get(attributeName));
+                        } catch (NoSuchMethodException exception) {
+                            exception.printStackTrace();
+                        } catch (IllegalAccessException exception) {
+                            exception.printStackTrace();
+                        } catch (InvocationTargetException exception) {
+                            exception.printStackTrace();
+                        }
                     } catch (IllegalAccessException ex) {
                         ex.printStackTrace();
                     } catch (InvocationTargetException ex) {
                         ex.printStackTrace();
                     }
-
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {

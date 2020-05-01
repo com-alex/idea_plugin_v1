@@ -2,6 +2,8 @@ package com.fromLab.VO;
 
 import com.fromLab.annotation.Ignored;
 
+import java.math.BigDecimal;
+
 /**
  * @author wsh
  * @date 2019-12-17
@@ -29,7 +31,7 @@ public class TaskVO {
 
     private String progress;
 
-    private Integer timeSpent;
+    private BigDecimal timeSpent;
 
     //版本号，更新时需要
     @Ignored
@@ -118,11 +120,11 @@ public class TaskVO {
         this.progress = progress;
     }
 
-    public Integer getTimeSpent() {
+    public BigDecimal getTimeSpent() {
         return timeSpent;
     }
 
-    public void setTimeSpent(Integer timeSpent) {
+    public void setTimeSpent(BigDecimal timeSpent) {
         this.timeSpent = timeSpent;
     }
 

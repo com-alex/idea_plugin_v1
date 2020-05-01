@@ -26,6 +26,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +60,7 @@ public class TaskToolWindow implements ToolWindowFactory {
     private Long startTime;
     private Long endTime;
     private String spentTimeCustomFieldName;
+    private BigDecimal timeSpent;
 
     private SocketServer socketServer;
     private Thread thread;
@@ -72,6 +74,7 @@ public class TaskToolWindow implements ToolWindowFactory {
         this.thread.start();
         taskService = new TaskServiceImpl();
         this.datasource = new ArrayList<>();
+        timeSpent = BigDecimal.ZERO;
 
         panel = new JPanel();
         panel.setLayout(new GridLayout(2, 1));
@@ -154,7 +157,8 @@ public class TaskToolWindow implements ToolWindowFactory {
                         null, null, null, null);
 
                 String[] taskStringDatasource = this.datasource.stream().map(
-                        task -> "ID:" + task.getTaskId() + "   Subject:" + task.getTaskName() + "   Due Time:" + task.getDueTime()
+                        task -> "ID:" + task.getTaskId() + "   Subject:" + task.getTaskName() +
+                                "   Due Time:" + (task.getDueTime() == "null" ? ' ' : task.getDueTime())
                 ).collect(Collectors.toList()).toArray(new String[]{});
                 this.taskList.setModel(new TaskListModel(taskStringDatasource));
             } catch (BusinessException e) {
@@ -238,12 +242,16 @@ public class TaskToolWindow implements ToolWindowFactory {
 
                 this.openprojectURL.setOpenProjectURL(originalUrl);
                 if(selectedTask.getTaskId() != null){
-                    this.endTime = System.currentTimeMillis();
-                    Integer timeSpent = (int)((this.endTime - this.startTime) / 1000);
-                    System.out.println("Stop Task! The Spent Time is: " + timeSpent + "s");
+                    if(this.endTime == 0){
+                        this.endTime = System.currentTimeMillis();
+                    }
+                    if(timeSpent.compareTo(BigDecimal.ZERO) == 0){
+                        timeSpent = NumberUtils.covertTimeToHour(this.endTime - this.startTime);
+                    }
+                    System.out.println("Stop Task! The Spent Time is: " + timeSpent + "h");
 
                     String result = this.taskService.updateSpentTime(openprojectURL, this.selectedTask.getTaskId(),
-                            this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
+                            this.selectedTask.getLockVersion(), NumberUtils.calUpdateTimeSpent(this.selectedTask.getTimeSpent(), timeSpent),
                             this.spentTimeCustomFieldName);
                     //先发一次update请求，如果成功表示更新成功
                     if (SUCCESS.equals(result)){
@@ -253,8 +261,12 @@ public class TaskToolWindow implements ToolWindowFactory {
                         //获取所选行的task的progress
                         String progressString = this.selectedTask.getProgress();
                         Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
+                        this.openprojectURL.setOpenProjectURL(originalUrl);
                         new StopTaskModal(this.selectedTask, progress,  openprojectURL);
                         deleteSelectedFlag(selectedTaskId);
+                        this.startTime = 0L;
+                        this.endTime = 0L;
+                        this.timeSpent = BigDecimal.ZERO;
                         this.chosen = false;
                         this.selectedTask = null;
                     }
@@ -268,7 +280,7 @@ public class TaskToolWindow implements ToolWindowFactory {
                         }
                         this.openprojectURL.setOpenProjectURL(originalUrl);
                         String response = this.taskService.updateSpentTime(openprojectURL, this.selectedTask.getTaskId(),
-                                this.selectedTask.getLockVersion(), this.selectedTask.getTimeSpent() + timeSpent,
+                                this.selectedTask.getLockVersion(), NumberUtils.calUpdateTimeSpent(this.selectedTask.getTimeSpent(), timeSpent),
                                 this.spentTimeCustomFieldName);
                         if(SUCCESS.equals(response)){
                             this.chosen = false;
@@ -277,8 +289,12 @@ public class TaskToolWindow implements ToolWindowFactory {
                             //获取所选行的task的progress
                             String progressString = this.selectedTask.getProgress();
                             Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
+                            this.openprojectURL.setOpenProjectURL(originalUrl);
                             new StopTaskModal(this.selectedTask, progress,  openprojectURL);
                             deleteSelectedFlag(selectedTaskId);
+                            this.startTime = 0L;
+                            this.endTime = 0L;
+                            this.timeSpent = BigDecimal.ZERO;
                             this.chosen = false;
                             this.selectedTask = null;
                         }else{

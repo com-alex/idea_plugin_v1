@@ -11,6 +11,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -112,7 +113,7 @@ public class TaskServiceTest {
         } catch (BusinessException e) {
             e.printStackTrace();
         }
-        taskService.updateSpentTime(openprojectURL, task.getTaskId(), task.getLockVersion(), 10, custom);
+        taskService.updateSpentTime(openprojectURL, task.getTaskId(), task.getLockVersion(), BigDecimal.valueOf(10), custom);
     }
 
     @Test

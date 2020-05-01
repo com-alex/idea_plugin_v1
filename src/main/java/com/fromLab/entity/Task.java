@@ -4,7 +4,7 @@ import com.fromLab.annotation.Ignored;
 
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.math.BigDecimal;
 
 /**
  * @Auther: JIN KE
@@ -40,7 +40,7 @@ public class Task implements Serializable {
 
     private String progress;
 
-    private Integer timeSpent;
+    private BigDecimal timeSpent;
 
     private String taskDetail;
 
@@ -136,11 +136,11 @@ public class Task implements Serializable {
         this.progress = progress;
     }
 
-    public Integer getTimeSpent() {
+    public BigDecimal getTimeSpent() {
         return timeSpent;
     }
 
-    public void setTimeSpent(Integer timeSpent) {
+    public void setTimeSpent(BigDecimal timeSpent) {
         this.timeSpent = timeSpent;
     }
 
