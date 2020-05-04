@@ -57,8 +57,8 @@ public class TaskToolWindow implements ToolWindowFactory {
     private Boolean chosen = false;
     private Task selectedTask = null;
     private List<Task> datasource;
-    private Long startTime;
-    private Long endTime;
+    private Long startTime = 0L;
+    private Long endTime = 0L;
     private String spentTimeCustomFieldName;
     private BigDecimal timeSpent;
 
@@ -242,7 +242,7 @@ public class TaskToolWindow implements ToolWindowFactory {
 
                 this.openprojectURL.setOpenProjectURL(originalUrl);
                 if(selectedTask.getTaskId() != null){
-                    if(this.endTime == 0){
+                    if(this.endTime == 0L){
                         this.endTime = System.currentTimeMillis();
                     }
                     if(timeSpent.compareTo(BigDecimal.ZERO) == 0){
