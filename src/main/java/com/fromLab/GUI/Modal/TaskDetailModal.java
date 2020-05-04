@@ -46,7 +46,6 @@ public class TaskDetailModal extends JFrame {
     public TaskDetailModal(SelectTaskDialog dialog, TaskDetailVO taskDetailVO){
         this.dialog = dialog;
         this.taskDetailVO = taskDetailVO;
-        System.out.println(this.taskDetailVO);
         initModal();
     }
 

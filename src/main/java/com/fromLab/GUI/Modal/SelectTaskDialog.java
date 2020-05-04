@@ -39,8 +39,8 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
     private TaskToolWindow taskToolWindow;
 
 
-    private Long startTime;
-    private Long endTime;
+    private Long startTime = 0L;
+    private Long endTime = 0L;
     private Boolean chosen = false;
     private List<TaskVO> dataSource;
     private Integer taskPriorityFlag = 0;
@@ -353,7 +353,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             showOptionDialog("You select a task successfully!", JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON);
         }else{
             this.setVisible(false);
-            showOptionDialog("You have selected a task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
+            showOptionDialog("You have selected another task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             return;
         }
     }

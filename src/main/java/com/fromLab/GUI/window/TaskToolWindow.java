@@ -214,7 +214,7 @@ public class TaskToolWindow implements ToolWindowFactory {
                 }
 
             }else{
-                JOptionPane.showMessageDialog(null, "You have selected the task",
+                JOptionPane.showMessageDialog(null, "You have selected another task",
                         "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             }
         }else {
