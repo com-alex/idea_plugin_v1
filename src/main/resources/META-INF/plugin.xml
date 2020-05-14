@@ -1,18 +1,42 @@
 <idea-plugin>
-    <id>com.fromLab.idea_plugin_v1</id>
-    <name>Plugin display name here</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
-
+    <id>com.fromLab.idea_plugin</id>
+    <name>OpenProject</name>
+    <vendor >Jin Ke,Wang Shuhao,Zheng Yihua,Bao Jiaang</vendor>
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    </head>
+    This plugin is used for integrating web version of OpenProject to IDEA
+    <br />
+	<br />
+    Before using our plugin please install OpenProject on your own server <br>
+	and configure and apply three custom fields(End date, Task type and Time Spent)
+	<body>
+	<br />
+	<br />
+    <strong>Features</strong>
+	<br />
+    Display task information(project name,task Id,subject,task priority,due time...) <br>
+	Sort,filter,search task <br>
+	Select task and log time spent on it <br>
+    Set end date, update progress and status of task <br>
+	Generate and update JavaDoc which contains task information <br>
+	<br />
+	<br />
+	For any question about our plugin, please contact 947079912@qq.com
+	</body>
+	</html>
     ]]></description>
-
+    <change-notes><![CDATA[
+    2020-05-07 V1.0 Initial release of the OpenProject plugin<br>
+    ]]>
+    </change-notes>
+    <depends>com.intellij.modules.java</depends>
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
-    <!-- uncomment to enable plugin in all products
-    <depends>com.intellij.modules.lang</depends>
-    -->
+
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
