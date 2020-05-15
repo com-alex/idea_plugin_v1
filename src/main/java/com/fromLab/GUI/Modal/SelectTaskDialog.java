@@ -347,6 +347,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             this.taskToolWindow.setSelectedFlag(this.selectedTask.getTaskId());
             this.taskToolWindow.setChosen(true);
             this.taskToolWindow.setSelectedTask(this.selectedTask);
+            this.taskToolWindow.paintStopButton();
             this.startTime = System.currentTimeMillis();
             System.out.println("Start Task  Time:" + this.startTime);
             this.setVisible(false);
@@ -762,24 +763,7 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
 
     @Override
     public void windowClosing(WindowEvent e) {
-//        UIManager.put("OptionPane.yesButtonText", "Yes");
-//        UIManager.put("OptionPane.noButtonText", "No");
-//        int option = JOptionPane.showConfirmDialog(this, "Confirm to exit the system? \nAll the selection will be cleared!", "Tips",
-//                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-//        if (option == JOptionPane.YES_OPTION)
-//        {
-//            if (e.getWindow() == this) {
-//                this.dispose();
-//                System.exit(0);
-//            } else {
-//                return;
-//            }
-//        }
-//        else if(option == JOptionPane.NO_OPTION){
-//            if (e.getWindow() == this) {
-//                return;
-//            }
-//        }
+        this.taskToolWindow.getMoreButton().setEnabled(true);
         this.dispose();
     }
 

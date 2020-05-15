@@ -179,43 +179,6 @@ public class TaskServiceImpl implements TaskService {
         return JsonToTaskList(jsonObject, openprojectURL);
 
     }
-
-
-
-    @Override
-    public List<Task> sortTaskWithProjectName(List<Task> taskList) {
-        String [] sortNameArr = {"projectName","taskType","taskPriority","dueTime","taskId"};
-        boolean [] isAscArr = {true,true,false,true,true};
-        SortUtils.sort(taskList,sortNameArr,isAscArr);
-        return  taskList;
-
-    }
-
-    @Override
-    public List<Task> sortTaskWithTaskType(List<Task> taskList) {
-        String [] sortNameArr = {"taskType","projectName","taskPriority","dueTime","taskId"};
-        boolean [] isAscArr = {true,true,false,true,true};
-        SortUtils.sort(taskList,sortNameArr,isAscArr);
-        return  taskList;
-    }
-
-    @Override
-    public List<Task> sortTaskWithTaskPriority(List<Task> taskList) {
-        String [] sortNameArr = {"taskPriority","taskType","projectName","dueTime","taskId"};
-        boolean [] isAscArr = {false,true,true,true,true};
-        SortUtils.sort(taskList,sortNameArr,isAscArr);
-        return  taskList;
-    }
-
-    @Override
-    public List<Task> sortTaskWithDueTime(List<Task> taskList) {
-        String [] sortNameArr = {"dueTime","taskPriority","taskType","projectName","taskId"};
-        boolean [] isAscArr = {true,true,true,false,true};
-        SortUtils.sort(taskList,sortNameArr,isAscArr);
-        return  taskList;
-    }
-
-
     public String returnUpdateStatus(String returnJson){
         JSONObject jsonObject = JSONObject.fromObject(returnJson);
         String type = jsonObject.getString("_type");

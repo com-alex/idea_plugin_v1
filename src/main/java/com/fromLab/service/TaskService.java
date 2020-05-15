@@ -93,33 +93,6 @@ public interface TaskService {
                                     String subject) throws BusinessException;
 
 
-    /**
-     * 根据项目名称排序查询任务
-     * @param taskList
-     * @return
-     */
-    List<Task> sortTaskWithProjectName(List<Task> taskList);
-
-    /**
-     * 通过项目种类排序查询任务
-     * @param taskList
-     * @return
-     */
-    List<Task> sortTaskWithTaskType(List<Task> taskList);
-
-    /**
-     * 通过项目的优先级排序查询任务
-     * @param taskList
-     * @return
-     */
-    List<Task> sortTaskWithTaskPriority(List<Task> taskList);
-
-    /**
-     * 通过截止日期排序查询任务
-     * @param taskList
-     * @return
-     */
-    List<Task> sortTaskWithDueTime(List<Task> taskList);
 
 
 

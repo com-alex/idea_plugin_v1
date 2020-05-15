@@ -326,6 +326,8 @@ public class TaskToolWindow implements ToolWindowFactory {
             selectTaskDialog.pack();
             selectTaskDialog.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
             selectTaskDialog.setVisible(true);
+            //禁用
+            this.moreButton.setEnabled(false);
         }else{
             JOptionPane.showMessageDialog(null, "Unauthorized!",
                     "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.ERROR_ICON);
@@ -385,9 +387,13 @@ public class TaskToolWindow implements ToolWindowFactory {
         }
     }
 
+
+
     public void paintStopButton(){
         if(!this.chosen){
             this.stopButton.setEnabled(false);
+        }else{
+            this.stopButton.setEnabled(true);
         }
     }
 
@@ -423,6 +429,10 @@ public class TaskToolWindow implements ToolWindowFactory {
 
     public Boolean getIsLogin(){
         return isLogin;
+    }
+
+    public JButton getMoreButton(){
+        return moreButton;
     }
 }
 
