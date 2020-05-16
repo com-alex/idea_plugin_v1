@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SelectTaskDialog extends JFrame implements WindowListener {
+public class SelectTaskDialog extends JDialog implements WindowListener {
     //常量，防止出现魔法值
     private static final String SET_FROM_DUE_TIME = "from";
     private static final String SET_TO_DUE_TIME = "to";
@@ -297,10 +297,10 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
             showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             return;
         }
-        this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
+        Task tempTask = this.taskVOConvertToTask(this.dataSource.get(row));
         this.setVisible(false);
         openprojectURL.setOpenProjectURL(originalUrl);
-        new SetTimeModal(this, this.selectedTask, this.endDateCustomFieldName, openprojectURL);
+        new SetTimeModal(this, tempTask, this.endDateCustomFieldName, openprojectURL);
     }
 
     public JTable getTaskTable(){
@@ -764,6 +764,8 @@ public class SelectTaskDialog extends JFrame implements WindowListener {
     @Override
     public void windowClosing(WindowEvent e) {
         this.taskToolWindow.getMoreButton().setEnabled(true);
+        this.taskToolWindow.getStopButton().setEnabled(true);
+        this.taskToolWindow.getChooseButton().setEnabled(true);
         this.dispose();
     }
 

@@ -328,6 +328,8 @@ public class TaskToolWindow implements ToolWindowFactory {
             selectTaskDialog.setVisible(true);
             //禁用
             this.moreButton.setEnabled(false);
+            this.chooseButton.setEnabled(false);
+            this.stopButton.setEnabled(false);
         }else{
             JOptionPane.showMessageDialog(null, "Unauthorized!",
                     "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.ERROR_ICON);
@@ -433,6 +435,14 @@ public class TaskToolWindow implements ToolWindowFactory {
 
     public JButton getMoreButton(){
         return moreButton;
+    }
+
+    public JButton getChooseButton(){
+        return chooseButton;
+    }
+
+    public JButton getStopButton(){
+        return stopButton;
     }
 }
 

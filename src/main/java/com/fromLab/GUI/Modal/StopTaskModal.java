@@ -152,7 +152,7 @@ public class StopTaskModal extends JFrame {
             JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON, jButtons, jButtons[0]);
             if(this.dialog != null){
-                this.dialog.dispose();
+                this.dialog.setVisible(true);
             }
 
         }else{
@@ -175,7 +175,7 @@ public class StopTaskModal extends JFrame {
                     JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
                             JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON, jButtons, jButtons[0]);
                     if(this.dialog != null){
-                        this.dialog.dispose();
+                        this.dialog.setVisible(true);
                     }
                 } else {
                     JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
