@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
         OpenprojectURL openprojectURL = new OpenprojectURL(openProjectURl + OpenprojectURL.API_URL, apiKey);
         String response = openprojectURL.getJson();
         if(StringUtils.equals(response, ERROR_STRING)){
-            //认证失败,url错误
+            //Authentication failed, url error
             return false;
         }
         JSONObject responseObject = null;
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
         }
         String type = (String)responseObject.get("_type");
         if(StringUtils.equals(type, ERROR_STRING)){
-            //认证失败，apikey错
+            //Authentication failed, API key error
             return false;
         }
         return true;

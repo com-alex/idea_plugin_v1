@@ -14,12 +14,9 @@ import org.apache.commons.lang.StringUtils;
 
 public class GetCustomFieldNumUtil {
 
-    private final static String OPENPROJECT_URL="http://projects.plugininide.com/openproject";
-    private final static String API_KEY="e66517369652fea76049f9c3e1094230ad45fb5b723da5b392d86248c6472123";
-
     /**
      *
-     * @param customFieldName  例如Task type ，End date , Time spent
+     * @param customFieldName  Task type ，End date , Time spent
      * @
      * @return customFieldX
      */
@@ -60,8 +57,6 @@ public class GetCustomFieldNumUtil {
                 String[] split = CustomFieldString.split(",");
                 String[] splitName = split[1].split(":");
                 String name=splitName[1].substring(1,(splitName[1].length()-1));
-//                System.out.println(name);
-//                System.out.println("customField" + i);
                 if (customFieldName.equals(name)){
                     result = "customField" + i;
                     return result;

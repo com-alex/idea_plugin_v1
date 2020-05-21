@@ -22,7 +22,7 @@ public class JsonToObjectUtil {
 
 
     /**
-     * 将返回的json转化为一个task对象
+     * Convert the returned json to a task object
      * @param json
      * @return
      */
@@ -110,7 +110,7 @@ public class JsonToObjectUtil {
     }
 
     /**
-     * 将返回的json转化为一个task列表
+     * Convert the returned json to a task list
      * @param json
      * @return
      */
@@ -197,32 +197,9 @@ public class JsonToObjectUtil {
 
 
 
-            //System.out.println(task.toString());
             taskList.add(task);
         }
 
         return taskList;
     }
-
-    private static double timeSpentTransfer(String s){
-        double result=0;
-        double hours=0;
-        double mins=0;
-        if(s.contains("H")){
-            if (s.contains("M")){
-                int index=s.indexOf("H");
-                hours=Integer.valueOf(s.substring(2,index));
-                mins=Integer.valueOf(s.substring(index+1,s.length()-1));
-                result=Double.valueOf(String.format("%.2f", hours+mins/60));
-            }
-            else {
-                result=Integer.valueOf(s.substring(2,s.length()-1));
-            }
-        }
-        else{
-            result=Double.valueOf(String.format("%.2f", Double.valueOf(s.substring(2,s.length()-1))/60));
-        }
-        return result;
-    }
-
 }

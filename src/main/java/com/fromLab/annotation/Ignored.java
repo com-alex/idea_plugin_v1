@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * @author wsh
  * @date 2019-12-18
- * 显示VO不需要显示的内容
+ * Display content that VO does not need to display
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

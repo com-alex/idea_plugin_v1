@@ -27,7 +27,8 @@ public class JavaDocAction extends AnAction {
         final EditorActionManager actionManager = EditorActionManager.getInstance();
         final TypedAction typedAction = actionManager.getTypedAction();
 
-
+        //After setting the custom TypedActionHandler
+        //Return the old TypedActionHandler, which is IDEA's own TypedActionHandler
         UpdateJavaDocActionHandler handler = new UpdateJavaDocActionHandler();
         TypedActionHandler oldHandler = typedAction.setupHandler(handler);
         handler.setOldHandler(oldHandler);
@@ -54,7 +55,7 @@ public class JavaDocAction extends AnAction {
             }).execute();
         }catch (NullPointerException exception){
             JOptionPane.showMessageDialog(null,
-                    "The JavaDoc Annotation must be generated in a Java Class!",
+                    "The JavaDoc Comments must be generated in a Java Class!",
                     "Tips", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -70,7 +71,7 @@ public class JavaDocAction extends AnAction {
 
         if(task==null) {
             JOptionPane.showMessageDialog(null,
-                    "The JavaDoc Annotation must be generated in a Java Class!",
+                    "The JavaDoc comments must be generated in a Java Class!",
                     "Tips", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -79,6 +80,7 @@ public class JavaDocAction extends AnAction {
 
 
     }
+    //use dots to complete each line of comments to make each line has a length of 100
     public String format(String s){
          int length=100;
          StringBuilder sb=new StringBuilder();

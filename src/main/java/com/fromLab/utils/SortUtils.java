@@ -18,12 +18,12 @@ public class SortUtils {
 
 
         /**
-         * 对list的元素按照多个属性名称排序,
-         * list元素的属性可以是数字(byte?short?int?long?float?double等,支持正数?负数?0)?char?String?java.util.Date
+         * Sort the elements of list according to multiple attribute names,
+         * The attributes of the list element can be numbers ，char，String and java.util.Date
          *
          * @param list
-         * @param sortnameArr list元素的属性名称
-         * @param isAsc    true升序,false降序
+         * @param sortnameArr List element attribute name
+         * @param isAsc    true ascending, false descending
          */
         public static <E> void sort(List<E> list, final boolean isAsc, final String... sortnameArr) {
             Collections.sort(list, new Comparator<E>() {
@@ -47,16 +47,17 @@ public class SortUtils {
         }
 
         /**
-         * 给list的每个属性都指定是升序还是降序
+         * For each attribute of the list, specify whether it is ascending or descending
          *
          * @param list
-         * @param sortnameArr 参数数组
-         * @param typeArr     每个属性对应的升降序数组, true升序,false降序
+         * @param sortnameArr Parameter array
+         * @param typeArr     Array of descending order corresponding to each property, true ascending, false descending
          */
 
         public static <E> void sort(List<E> list, final String[] sortnameArr, final boolean[] typeArr) {
             if (sortnameArr.length != typeArr.length) {
-                throw new RuntimeException("属性数组元素个数和升降序数组元素个数不相等");
+                throw new RuntimeException("The number of elements in the attribute array and the number " +
+                        "of elements in the descending array are not equal");
             }
             Collections.sort(list, new Comparator<E>() {
                 @Override
@@ -78,10 +79,10 @@ public class SortUtils {
         }
 
         /**
-         * 对2个对象按照指定属性名称进行排序
+         * Sort 2 objects according to the specified attribute name
          *
-         * @param sortname 属性名称
-         * @param isAsc    true升序,false降序
+         * @param sortname Attribute name
+         * @param isAsc    true ascending, false descending
          * @param a
          * @param b
          * @return
@@ -91,7 +92,6 @@ public class SortUtils {
             int ret;
             Object value1 = SortUtils.forceGetFieldValue(a, sortname);
             Object value2 = SortUtils.forceGetFieldValue(b, sortname);
-            //有空值防止报错
             if (value1!=null&&value2!=null){
                 String str1 = value1.toString();
                 String str2 = value2.toString();
@@ -117,30 +117,29 @@ public class SortUtils {
         }
 
     /**
-     * 给数字对象按照指定长度在左侧补0.
-     * <p>
-     * 使用案例: addZero2Str(11,4) 返回 "0011", addZero2Str(-18,6)返回 "-000018"
+     * Fill the digital object with 0 on the left according to the specified length.
+     * example: addZero2Str(11,4) 返回 "0011", addZero2Str(-18,6) return "-000018"
      *
-     * @param numObj 数字对象
-     * @param length 指定的长度
+     * @param numObj number object
+     * @param length Specified length
      * @return
      */
     public static String addZero2Str(Number numObj, int length) {
         NumberFormat nf = NumberFormat.getInstance();
-        // 设置是否使用分组
+        // Set whether to use grouping
         nf.setGroupingUsed(false);
-        // 设置最大整数位数
+        // Set the maximum integer digits
         nf.setMaximumIntegerDigits(length);
-        // 设置最小整数位数
+        // Set minimum integer digits
         nf.setMinimumIntegerDigits(length);
         return nf.format(numObj);
     }
 
     /**
-     * 获取指定对象的指定属性值(去除private,protected的限制)
+     * Get the specified attribute value of the specified object (remove the restrictions of private and protected)
      *
-     * @param obj       属性名称所在的对象
-     * @param fieldName 属性名称
+     * @param obj       The object where the property name is
+     * @param fieldName Attribute name
      * @return
      * @throws Exception
      */
@@ -149,10 +148,10 @@ public class SortUtils {
         Object object = null;
         boolean accessible = field.isAccessible();
         if (!accessible) {
-            // 如果是private,protected修饰的属性,需要修改为可以访问的
+            // If it is private or protected, it needs to be modified to be accessible
             field.setAccessible(true);
             object = field.get(obj);
-            // 还原private,protected属性的访问性质
+            // Restore the access properties of private and protected attributes
             field.setAccessible(accessible);
             return object;
         }

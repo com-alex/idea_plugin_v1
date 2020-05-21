@@ -8,8 +8,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiFile;
 import com.intellij.ui.components.JBList;
 
 import java.awt.*;
@@ -23,7 +21,6 @@ import java.util.HashMap;
 public class PopupList {
 
     private UpdateJavaDocActionHandler updateJavaDocActionHandler =new UpdateJavaDocActionHandler();
-
     public void createListPopup(String keyword, Project project, int lineStartOffset, int lineEndOffset, Document document, Editor editor, HashMap task){
 
         JBList<String> list = new JBList<>();
@@ -53,12 +50,12 @@ public class PopupList {
 
         if (keyword.contains("*")) {
             String[] content = new String[9];
-            //此时输入为@，显示所有keyword
+            //Enter "@" at this time ,display all keywords
             System.arraycopy(remainTaskFields, 0, content, 0, remainTaskFields.length);
             list.setListData(content);
         }
         else {
-            //keyword不为空，自动补全
+            //keyword is not empty, complete automatically
             ArrayList<String> content = new ArrayList<>();
             char[] chars = keyword.toLowerCase().toCharArray();
             for (String remainTaskField : remainTaskFields) {
@@ -81,7 +78,7 @@ public class PopupList {
 
         JBPopup popup = new PopupChooserBuilder(list).setItemChoosenCallback(new Runnable() {
 
-    // 添加点击项的监听事件
+    // Add click event monitoring
             @Override
             public void run() {
                 WriteCommandAction.runWriteCommandAction(project, new Runnable(){
@@ -90,17 +87,17 @@ public class PopupList {
                     public void run() {
                         String selectedValue = list.getSelectedValue();
                         String inputContent = "     * @"+selectedValue + " " + taskHashMap.get(selectedValue);
-                        //替换内容，补全注释
+                        //Replace content, complete comments
                         document.replaceString(lineStartOffset, lineEndOffset, updateJavaDocActionHandler.format(inputContent));
                     }
                 });
                 }
             }).createPopup();
 
-// 设置大小
+// Set size
         Dimension dimension = popup.getContent().getPreferredSize();
         popup.setSize(new Dimension(150, dimension.height));
-// 显示
+// display
         popup.showInBestPositionFor(editor);
 
 

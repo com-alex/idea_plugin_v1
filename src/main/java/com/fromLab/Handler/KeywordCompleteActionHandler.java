@@ -52,46 +52,44 @@ public class KeywordCompleteActionHandler implements TypedActionHandler {
                 docComment = containingMethod.getDocComment();
             }
             if (docComment != null) {
-                    TextRange docCommentTextRange = docComment.getTextRange();
-                    PsiDocTag taskIdDocTag = docComment.findTagByName("taskId");
-                    if (taskIdDocTag != null) {
-                        int startOffset = taskIdDocTag.getValueElement().getTextOffset();
-                        int endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
-                        TextRange textRange = new TextRange(startOffset, endOffset);
-                        String oldValue = document.getText(textRange).trim();
-                        HashMap taskHashMap = socketUtil.getTaskMap();
-                        String curTaskId="";
-                        if (taskHashMap.size()>0) {
-                            curTaskId = (String) taskHashMap.get("taskId");
-                        }
-                        StringUtil stringUtil = new StringUtil();
-                        ArrayList<String> oldTasks = stringUtil.minusPlus(oldValue);
-                        String lastOldTask = oldTasks.get(oldTasks.size()-1);
-                        if(curTaskId.equals(lastOldTask)&&docCommentTextRange.contains(offset)){
-                            SelectionModel selectionModel = editor.getSelectionModel();
-                            selectionModel.selectWordAtCaret(false);
-                            int selectionStart = selectionModel.getSelectionStart();
-                            int selectionEnd = selectionModel.getSelectionEnd();
-                            String selectedText = selectionModel.getSelectedText();
-                            selectionModel.removeSelection();
-                            HashMap task = socketUtil.getTaskMap();
-                            int lineStartOffset=document.getLineStartOffset(document.getLineNumber(selectionStart));
-                            int lineEndOffset=document.getLineEndOffset(document.getLineNumber(selectionEnd));
-                            //当只输入了@的时候，WordAtCaret会选中两个整行...
-                            if (selectedText.contains("*")) {
-                                lineStartOffset = document.getLineStartOffset(document.getLineNumber(editor.getCaretModel().getOffset()));
-                                lineEndOffset = document.getLineEndOffset(document.getLineNumber(lineStartOffset));
-                            }
-                            else {
-                                editor.getCaretModel().moveToOffset(selectionEnd);
-                            }
-                        popupList.createListPopup(selectedText, project, lineStartOffset, lineEndOffset, document, editor, task);
+                TextRange docCommentTextRange = docComment.getTextRange();
+                PsiDocTag taskIdDocTag = docComment.findTagByName("taskId");
+                if (taskIdDocTag != null) {
+                    int startOffset = taskIdDocTag.getValueElement().getTextOffset();
+                    int endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
+                    TextRange textRange = new TextRange(startOffset, endOffset);
+                    String oldValue = document.getText(textRange).trim();
+                    HashMap taskHashMap = socketUtil.getTaskMap();
+                    String curTaskId = "";
+                    if (taskHashMap.size() > 0) {
+                        curTaskId = (String) taskHashMap.get("taskId");
                     }
+                    StringUtil stringUtil = new StringUtil();
+                    ArrayList<String> oldTasks = stringUtil.minusPlus(oldValue);
+                    String lastOldTask = oldTasks.get(oldTasks.size() - 1);
+                    if (curTaskId.equals(lastOldTask) && docCommentTextRange.contains(offset)) {
+                        SelectionModel selectionModel = editor.getSelectionModel();
+                        selectionModel.selectWordAtCaret(false);
+                        int selectionStart = selectionModel.getSelectionStart();
+                        int selectionEnd = selectionModel.getSelectionEnd();
+                        String selectedText = selectionModel.getSelectedText();
+                        selectionModel.removeSelection();
+                        HashMap task = socketUtil.getTaskMap();
+                        int lineStartOffset = document.getLineStartOffset(document.getLineNumber(selectionStart));
+                        int lineEndOffset = document.getLineEndOffset(document.getLineNumber(selectionEnd));
+                        //When only @ is entered, WordAtCaret will select two entire lines ...
+                        if (selectedText.contains("*")) {
+                            lineStartOffset = document.getLineStartOffset(document.getLineNumber(editor.getCaretModel().getOffset()));
+                            lineEndOffset = document.getLineEndOffset(document.getLineNumber(lineStartOffset));
+                        } else {
+                            editor.getCaretModel().moveToOffset(selectionEnd);
+                        }
+                        popupList.createListPopup(selectedText, project, lineStartOffset, lineEndOffset, document, editor, task);
                     }
                 }
             }
-            }
-
+        }
+    }
     public void setOldHandler (TypedActionHandler oldHandler){
         this.oldHandler = oldHandler;
     }

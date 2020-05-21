@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 /**
  * @author wsh
  * @date 2019-12-17
- * 返回数据的实体类
+ * Entity class of returns data
  */
 public class TaskVO {
 
@@ -33,7 +33,7 @@ public class TaskVO {
 
     private BigDecimal timeSpent;
 
-    //版本号，更新时需要
+    //Version number, required for update
     @Ignored
     private Integer lockVersion;
 

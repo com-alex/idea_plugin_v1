@@ -113,7 +113,7 @@ public class TaskServiceImpl implements TaskService {
         typeConditionObject.addProperty("values", "1");
         typeObject.add("type_id", typeConditionObject);
         jsonArray.add(typeObject);
-        //status条件
+        //status condition
         if(statusNum != null){
             JsonObject statusObject = new JsonObject();
             JsonObject statusConditionObject = new JsonObject();
@@ -124,7 +124,7 @@ public class TaskServiceImpl implements TaskService {
             statusObject.add("status", statusConditionObject);
             jsonArray.add(statusObject);
         }
-        //priority条件
+        //priority condition
         if(priorityNum != null){
             JsonObject priorityObject = new JsonObject();
             JsonObject priorityConditionObject = new JsonObject();
@@ -135,7 +135,7 @@ public class TaskServiceImpl implements TaskService {
             priorityObject.add("priority", priorityConditionObject);
             jsonArray.add(priorityObject);
         }
-        //dueDate条件
+        //dueDate condition
         if(fromDueDate != null && toDueDate != null){
             JsonObject dueDateObject = new JsonObject();
             JsonObject dueDateConditionObject = new JsonObject();
@@ -147,7 +147,7 @@ public class TaskServiceImpl implements TaskService {
             dueDateObject.add("dueDate", dueDateConditionObject);
             jsonArray.add(dueDateObject);
         }
-        //taskType条件
+        //taskType condition
         if(taskTypeNum != null){
             JsonObject taskTypeObject = new JsonObject();
             JsonObject taskTypeConditonObject = new JsonObject();
@@ -159,7 +159,7 @@ public class TaskServiceImpl implements TaskService {
             taskTypeObject.add(customName, taskTypeConditonObject);
             jsonArray.add(taskTypeObject);
         }
-        //subject条件
+        //subject condition
         if(subject != null){
             JsonObject subjectObject = new JsonObject();
             JsonObject subjectConditionObject = new JsonObject();

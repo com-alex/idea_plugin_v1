@@ -25,6 +25,7 @@ import java.util.HashMap;
  * @Date: 2020/3/5 15:54
  */
 public class UpdateJavaDocActionHandler implements TypedActionHandler {
+    //use dots to complete each line of comments to make each line has a length of 100
     public String format(String s) {
         int length = 100;
         StringBuilder sb = new StringBuilder();

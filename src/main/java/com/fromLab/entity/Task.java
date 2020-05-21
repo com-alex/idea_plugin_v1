@@ -9,10 +9,6 @@ import java.math.BigDecimal;
 /**
  * @Auther: JIN KE
  * @Date: 2019/12/11 09:12
- * 用整数1到5表示任务的优先级，数值越大，优先级越高
- * project我认为和后面提到的topic一个意思，表示任务所属的主题或者说是项目
- * taskype我认为和后面的activity一个意思，比如有design，develop，consultant
- * 用sql.timestamp类型来表示时间，因为比较精确，就是不知道通过PMS api获得的时间类型是什么，是否容易转换？
  */
 public class Task implements Serializable {
 
@@ -29,7 +25,7 @@ public class Task implements Serializable {
 
     private String startTime;
 
-    //版本号，更新时需要
+    //Version number, required for update
     private Integer lockVersion;
 
     private String endTime;

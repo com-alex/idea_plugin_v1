@@ -3,10 +3,10 @@ package com.fromLab.service;
 /**
  * @author wsh
  * @date 2020-03-01
- * 用于用户的认证
+ * Used for user authentication
  */
 public interface UserService {
 
-    //认证
+    // Authentication
     Boolean authorize(String openProjectURl, String apiKey);
 }

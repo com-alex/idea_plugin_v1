@@ -17,17 +17,9 @@ import java.util.List;
  */
 public interface TaskService {
 
-    /**
-     * 通过检索条件获取所有的task，此方法可以被弃用，可以直接使用getTasksByConditons
-     * @param openprojectURL
-     * @param apikey
-     * @param filters
-     * @return
-     */
-//    List<Task> getTasks(String openprojectURL, String apikey, List<Filter> filters);
 
     /**
-     * 通过taskId 获取task
+     * Get task by taskId
      * @param openprojectURL
      * @param id
      * @return
@@ -35,7 +27,7 @@ public interface TaskService {
     Task getTaskById(OpenprojectURL openprojectURL, int id) throws BusinessException;
 
     /**
-     * 根据task的id更新task的status和progress
+     * Update task status and progress according to task id
      * @param openprojectURL
      * @param id
      * @param lock_version
@@ -45,7 +37,7 @@ public interface TaskService {
     String updateStatusAndProgress(OpenprojectURL openprojectURL, int id, int lock_version, Status status, int percentage);
 
     /**
-     * 根据task的id更新task的startDate
+     * Update task's startDate according to task id
      * @param openprojectURL
      * @param id
      * @param lock_version
@@ -54,7 +46,7 @@ public interface TaskService {
     String updateStartDate(OpenprojectURL openprojectURL, int id, int lock_version, String start_date);
 
     /**
-     * 根据task的id更新自定义字段endDate
+     * Update custom field endDate according to task id
      * @param openprojectURL
      * @param id
      * @param lock_version
@@ -64,7 +56,7 @@ public interface TaskService {
     String updateEndDate(OpenprojectURL openprojectURL, int id, int lock_version, String end_date, String customField);
 
     /**
-     * 根据task的id更新自定义字段time spent
+     * Update custom field endDate according to task id
      * @param openprojectURL
      * @param id
      * @param lock_version
@@ -74,7 +66,7 @@ public interface TaskService {
     String updateSpentTime(OpenprojectURL openprojectURL, int id, int lock_version, BigDecimal time, String customField);
 
     /**
-     * 根据各种条件查询task
+     * Query task according to various conditions
      * @param openprojectURL
      * @param statusNum
      * @param priorityNum
