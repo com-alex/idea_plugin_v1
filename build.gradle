@@ -42,6 +42,12 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+      Modify plugin description <br>
+      Compatible with more IDE versions
+           """
+
+    sinceBuild "161"
 }
+
+
+

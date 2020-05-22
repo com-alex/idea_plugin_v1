@@ -27,6 +27,7 @@ public class LoginModal extends JFrame {
     private JTextField openProjectUrlTextField;
     private JLabel apiLabel;
     private JTextField apiTextField;
+    private JPasswordField apiKeyField;
     private JButton loginButton;
 
     public LoginModal(TaskToolWindow taskToolWindow) {
@@ -47,9 +48,9 @@ public class LoginModal extends JFrame {
         apiLabel.setBounds(50, 80, 200, 20);
         contentPanel.add(apiLabel);
 
-        apiTextField = new JTextField();
-        apiTextField.setBounds(170, 75, 350, 30);
-        contentPanel.add(apiTextField);
+        apiKeyField = new JPasswordField();
+        apiKeyField.setBounds(170, 75, 350, 30);
+        contentPanel.add(apiKeyField);
 
         loginButton = new JButton("confirm");
         loginButton.setBounds(250, 130, 100, 30);
@@ -69,7 +70,7 @@ public class LoginModal extends JFrame {
         //get the OpenProject url
         String openProjectURL = this.openProjectUrlTextField.getText();
         //get the API key
-        String apiKey = this.apiTextField.getText();
+        String apiKey = new String(apiKeyField.getPassword());
         //Verify that openProjectURL and API Key are legal
         if (StringUtils.isBlank(openProjectURL) || StringUtils.isBlank(apiKey)) {
             if (StringUtils.isBlank(openProjectURL)) {

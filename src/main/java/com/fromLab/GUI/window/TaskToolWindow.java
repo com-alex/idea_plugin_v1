@@ -177,8 +177,6 @@ public class TaskToolWindow implements ToolWindowFactory {
             JOptionPane.showMessageDialog(null, "Unauthorized!",
                     "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.ERROR_ICON);
         }
-
-
     }
 
     /**
