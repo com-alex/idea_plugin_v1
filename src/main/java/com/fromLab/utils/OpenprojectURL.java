@@ -34,6 +34,9 @@ public class OpenprojectURL {
         this.apiKey = apiKey;
     }
 
+
+
+    // get json from PMS server using Okhttp
     public String getJson() {
         Base64 b = new Base64();
         String key = "apikey:" + this.apiKey;
@@ -63,8 +66,7 @@ public class OpenprojectURL {
     }
 
 
-
-
+    //update the record
     public String patch(String json) {
         Base64 b = new Base64();
         String key = "apikey:" + this.apiKey;

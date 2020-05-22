@@ -5,7 +5,10 @@ import com.fromLab.entity.Task;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+/**
+ * use this socket server to send task to GUI
+ *
+ */
 public class SocketServer implements Runnable  {
     private ServerSocket server;
     public volatile Task task;

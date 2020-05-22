@@ -9,6 +9,9 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+/**
+ * use this client to get task from socket server
+ */
 
 public class SocketUtil {
     HashMap<String,String> taskMap=new HashMap<>();
