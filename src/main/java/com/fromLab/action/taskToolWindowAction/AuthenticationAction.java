@@ -2,6 +2,7 @@ package com.fromLab.action.taskToolWindowAction;
 
 import com.fromLab.GUI.Modal.LoginModal;
 import com.fromLab.GUI.window.TaskToolWindow;
+import com.fromLab.loader.IconsLoader;
 import com.fromLab.utils.GUIUtils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -9,9 +10,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+
 /**
  * @author zyh
  * @date 2020-03-31
+ * The action for Opening the login dialog
  */
 public class AuthenticationAction extends AnAction {
 
@@ -25,16 +28,17 @@ public class AuthenticationAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        if(!taskToolWindow.getIsLogin()){
+        if (!taskToolWindow.getIsLogin()) {
+            //If the user is not logged in, open the login dialog
             Integer width = 600;
             Integer height = 200;
             LoginModal loginModal = new LoginModal(taskToolWindow);
             loginModal.pack();
             loginModal.setBounds(GUIUtils.getCenterX(width), GUIUtils.getCenterY(height), width, height);
             loginModal.setVisible(true);
-        }else{
+        } else {
             JOptionPane.showMessageDialog(null, "You have been authorized!",
-                    "Tips", JOptionPane.WARNING_MESSAGE);
+                    "Tips", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
         }
 
     }

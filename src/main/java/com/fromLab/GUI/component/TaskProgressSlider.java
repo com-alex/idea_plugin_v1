@@ -6,19 +6,21 @@ import java.awt.*;
 /**
  * @author wsh
  * @date 2019-12-26
+ * The component for setting the progress
  */
 public class TaskProgressSlider extends JSlider {
 
-    public TaskProgressSlider(){
+    public TaskProgressSlider() {
         super();
         initProgressSlider();
     }
-    public TaskProgressSlider(Integer value){
+
+    public TaskProgressSlider(Integer value) {
         super(0, 100, value);
         initProgressSlider();
     }
 
-    private void initProgressSlider(){
+    private void initProgressSlider() {
         this.setMajorTickSpacing(10);
         this.setMinorTickSpacing(5);
         this.setPaintTicks(true);

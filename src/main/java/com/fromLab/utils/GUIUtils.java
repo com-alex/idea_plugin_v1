@@ -6,10 +6,17 @@ import java.awt.*;
 /**
  * @author wsh
  * @date 2019-12-17
+ * The static utility class for GUI
  */
 public class GUIUtils {
 
-    public static Integer getCenterX(Integer frameWidth){
+    /**
+     * Get the center position
+     *
+     * @param frameWidth
+     * @return center x
+     */
+    public static Integer getCenterX(Integer frameWidth) {
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
         Integer screenWidth = screenSize.width;
@@ -17,7 +24,13 @@ public class GUIUtils {
         return framePosition;
     }
 
-    public static Integer getCenterY(Integer frameHeight){
+    /**
+     * Get the center position
+     *
+     * @param frameHeight
+     * @return center y
+     */
+    public static Integer getCenterY(Integer frameHeight) {
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
         Integer screenHeight = screenSize.height;
@@ -34,17 +47,19 @@ public class GUIUtils {
         while (start + len < longString.length()) {
             while (true) {
                 len++;
-                if (start + len > longString.length())break;
+                if (start + len > longString.length()) {
+                    break;
+                }
                 if (fontMetrics.charsWidth(chars, start, len)
                         > jLabel.getWidth()) {
                     break;
                 }
             }
-            builder.append(chars, start, len-1).append("<br/>");
+            builder.append(chars, start, len - 1).append("<br/>");
             start = start + len - 1;
             len = 0;
         }
-        builder.append(chars, start, longString.length()-start);
+        builder.append(chars, start, longString.length() - start);
         builder.append("</html>");
         jLabel.setText(builder.toString());
     }

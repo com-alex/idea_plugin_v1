@@ -39,12 +39,13 @@ public class UpdateJavaDocActionHandler implements TypedActionHandler {
 
     private TypedActionHandler oldHandler;
     SocketUtil socketUtil = new SocketUtil();
+
     @Override
     public void execute(@NotNull Editor editor, char charTyped, @NotNull DataContext dataContext) {
         if (oldHandler != null) {
             oldHandler.execute(editor, charTyped, dataContext);
         }
-        ArrayList<String> docTagStringList=new ArrayList<>();
+        ArrayList<String> docTagStringList = new ArrayList<>();
         docTagStringList.add("taskName");
         docTagStringList.add("projectName");
         docTagStringList.add("status");
@@ -83,8 +84,8 @@ public class UpdateJavaDocActionHandler implements TypedActionHandler {
                                     oldTasks.add(curTaskId);
                                     String cur = stringUtil.addPlus(oldTasks);
                                     document.replaceString(startOffset, endOffset, format(cur));
-                                    for (String docTag: docTagStringList) {
-                                        updateJavaDoc(docTag,docComment,document,taskHashMap);
+                                    for (String docTag : docTagStringList) {
+                                        updateJavaDoc(docTag, docComment, document, taskHashMap);
                                     }
                                 }
                             }
@@ -97,18 +98,19 @@ public class UpdateJavaDocActionHandler implements TypedActionHandler {
 
         }
     }
-     public void updateJavaDoc(String TagName, PsiDocComment docComment, Document document,  HashMap taskHashMap){
-         PsiDocTag DocTag = docComment.findTagByName(TagName);
-         if (DocTag != null) {
-             int startOffset = document.getLineStartOffset(document.getLineNumber(DocTag.getValueElement().getTextOffset()));
-             int endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
-             String curTaskDetail = (String) taskHashMap.get(TagName);
-             document.replaceString(startOffset, endOffset, format("     * @"+TagName+" " + curTaskDetail));
-         }
-     }
 
-            public void setOldHandler (TypedActionHandler oldHandler){
-                this.oldHandler = oldHandler;
-            }
+    public void updateJavaDoc(String TagName, PsiDocComment docComment, Document document, HashMap taskHashMap) {
+        PsiDocTag DocTag = docComment.findTagByName(TagName);
+        if (DocTag != null) {
+            int startOffset = document.getLineStartOffset(document.getLineNumber(DocTag.getValueElement().getTextOffset()));
+            int endOffset = document.getLineEndOffset(document.getLineNumber(startOffset));
+            String curTaskDetail = (String) taskHashMap.get(TagName);
+            document.replaceString(startOffset, endOffset, format("     * @" + TagName + " " + curTaskDetail));
         }
+    }
+
+    public void setOldHandler(TypedActionHandler oldHandler) {
+        this.oldHandler = oldHandler;
+    }
+}
 

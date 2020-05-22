@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 /**
  * @author wsh
  * @date 2019-12-17
- * Entity class of returns data
+ * The view object on the Select Task Dialog TaskVO
  */
 public class TaskVO {
 

@@ -36,10 +36,11 @@ public class StopTaskModal extends JFrame {
     private Integer timeSpent;
     private Status selectedStatus;
     private String []statusDataSourceView;
+    //The data set shown in the drop-down menu
     private Status[] statusDataSource = {Status.NEW, Status.InProgress, Status.Closed, Status.OnHold, Status.Rejected};
 
-    //放滑块与状态选择控件
     private JPanel contentPanel;
+    //The progress silder
     private TaskProgressSlider taskProgressSlider;
     private JLabel taskProgressLabel;
     private JLabel taskStatusLabel;
@@ -57,7 +58,6 @@ public class StopTaskModal extends JFrame {
         }
 
         this.setLayout(new BorderLayout());
-
 
         this.taskService = new TaskServiceImpl();
         this.selectedTask = selectedTask;
@@ -123,20 +123,15 @@ public class StopTaskModal extends JFrame {
         this.dialog = dialog;
     }
 
-
-
+    /**
+     * Get the value of the progress slider in real time
+     */
     private void watchTaskProgress(){
         this.taskProgress = taskProgressSlider.getValue();
         taskProgressLabel.setText("Progress: " + this.taskProgress + "%");
     }
 
     private void updateTask(){
-
-        this.selectedStatus = statusDataSource[this.comboBox.getSelectedIndex()];
-        String originalUrl = openprojectURL.getOpenProjectURL();
-        String result = this.taskService.updateStatusAndProgress(openprojectURL, this.selectedTask.getTaskId(),
-                this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
-
         JButton[] jButtons = new JButton[1];
         JButton button = new JButton("ok");
         jButtons[0] = button;
@@ -147,15 +142,19 @@ public class StopTaskModal extends JFrame {
                 win.dispose();
             }
         });
+        this.selectedStatus = statusDataSource[this.comboBox.getSelectedIndex()];
+        String originalUrl = openprojectURL.getOpenProjectURL();
+        //Update the status and progress
+        String result = this.taskService.updateStatusAndProgress(openprojectURL, this.selectedTask.getTaskId(),
+                this.selectedTask.getLockVersion(), this.selectedStatus, this.taskProgress);
+
         if (result.equals(SUCCESS)) {
             this.dispose();
             JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON, jButtons, jButtons[0]);
-            if(this.dialog != null){
-                this.dialog.setVisible(true);
-            }
-
-        }else{
+        }
+        //If it fails, the program will update automatically again and the parameters, flag, user interface have no change.
+        else{
             Integer taskId = this.selectedTask.getTaskId();
             openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/")+1));
             try {
@@ -174,23 +173,29 @@ public class StopTaskModal extends JFrame {
                     this.dispose();
                     JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
                             JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON, jButtons, jButtons[0]);
-                    if(this.dialog != null){
-                        this.dialog.setVisible(true);
-                    }
+
                 } else {
                     JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON, jButtons, jButtons[0]);
                 }
             }
         }
+        //If user operate on the Select Task Dialog, then display the dialog
+        if(this.dialog != null){
+            this.dialog.setVisible(true);
+            this.dialog.resetTableDataSource();
+        }
 
     }
 
-
+    /**
+     * Click cancel button, do not update the status and progress
+     */
     private void onCancel(){
         this.setVisible(false);
         if(this.dialog != null){
-            this.dialog.dispose();
+            this.dialog.setVisible(true);
+            this.dialog.resetTableDataSource();
         }
     }
 

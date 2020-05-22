@@ -26,4 +26,12 @@ public class DateUtilsTest {
     public void testDate2String(){
         System.out.println(DateUtils.date2String(new Date()));
     }
+
+    @Test
+    public void testStirng2Date(){
+        Date now = new Date();
+        String beginDate = "2020-01-01";
+        Date b = DateUtils.string2Date(beginDate);
+        System.out.println(now.after(b));
+    }
 }

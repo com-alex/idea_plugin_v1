@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @author wsh
  * @date 2019-12-17
- * 设置开始时间与结束时间的模态框
+ * The dialog for setting the end date and update it
  */
 public class SetTimeModal extends JFrame {
 
@@ -43,7 +43,7 @@ public class SetTimeModal extends JFrame {
     private JButton okButton;
     private JButton cancelButton;
 
-    public SetTimeModal(SelectTaskDialog dialog, Task task, String endDateCustomFieldName, OpenprojectURL openprojectURL){
+    public SetTimeModal(SelectTaskDialog dialog, Task task, String endDateCustomFieldName, OpenprojectURL openprojectURL) {
         this.task = task;
         this.jDialog = dialog;
         this.openprojectURL = openprojectURL;
@@ -54,7 +54,7 @@ public class SetTimeModal extends JFrame {
         timePanel.setBounds(0, 0, 300, 150);
         timePanel.setLayout(null);
         timeLabel = new JLabel("End Date:");
-        timeLabel.setBounds(50,0, 100, 100);
+        timeLabel.setBounds(50, 0, 100, 100);
         timePanel.add(timeLabel);
 
         dateChooserJButton = new DateChooserJButton();
@@ -87,12 +87,7 @@ public class SetTimeModal extends JFrame {
         this.setVisible(true);
     }
 
-    private void onOk(){
-        //更新数据
-        String time = this.dateChooserJButton.getText();
-        String date = DateUtils.date2String(DateUtils.string2Date(time));
-        String result = this.taskService.updateEndDate(openprojectURL, this.task.getTaskId(),
-                this.task.getLockVersion(), date, this.endDateCustomFieldName);
+    private void onOk() {
         JButton[] jButtons = new JButton[1];
         JButton button = new JButton("ok");
         jButtons[0] = button;
@@ -103,37 +98,61 @@ public class SetTimeModal extends JFrame {
                 win.dispose();
             }
         });
-        if(StringUtils.equals(result, SUCCESS)){
+        openprojectURL.setOpenProjectURL(this.originalUrl);
+        String time = this.dateChooserJButton.getText();
+        if (time == null) {
+            time = DateUtils.date2String(new Date());
+        }
+        Date endDate = DateUtils.string2Date(time);
+        Date startDate = null;
+        if (task.getStartTime() == null || StringUtils.equals(task.getStartTime(), "null")) {
+            startDate = new Date();
+        } else {
+            startDate = DateUtils.string2Date(task.getStartTime());
+        }
+        if (startDate.after(endDate)) {
+            this.setVisible(false);
+            JOptionPane.showOptionDialog(null, "The end date can not be smaller than the start date", "Tips",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON, jButtons, jButtons[0]);
+            this.setVisible(true);
+            return;
+        }
+        String date = DateUtils.date2String(endDate);
+        //Update the end date
+        String result = this.taskService.updateEndDate(openprojectURL, this.task.getTaskId(),
+                this.task.getLockVersion(), date, this.endDateCustomFieldName);
+        if (StringUtils.equals(result, SUCCESS)) {
             this.dispose();
             JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, IconsLoader.SUCCESS_ICON, jButtons, jButtons[0]);
-            this.jDialog.resetTableDataSource();
-            this.jDialog.setVisible(true);
-        }else{
-            openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/")+1));
+        } else {
+            openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/") + 1));
             Task tempTask = new Task();
             try {
                 tempTask = this.taskService.getTaskById(openprojectURL, this.task.getTaskId());
             } catch (BusinessException e) {
                 tempTask = null;
             }
-            openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/")+1));
-            if(tempTask == null){
+            openprojectURL.setOpenProjectURL(originalUrl.substring(0, originalUrl.lastIndexOf("/") + 1));
+            if (tempTask == null) {
+                this.setVisible(false);
                 JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON, jButtons, jButtons[0]);
-            }else {
+                this.setVisible(true);
+                return;
+            } else {
                 String response = this.taskService.updateEndDate(openprojectURL, this.task.getTaskId(),
                         this.task.getLockVersion(), date, this.endDateCustomFieldName);
                 if (StringUtils.equals(response, SUCCESS)) {
                     this.dispose();
                     JOptionPane.showOptionDialog(null, "Save successfully", "Tips",
                             JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON, jButtons, jButtons[0]);
-
-                    this.jDialog.resetTableDataSource();
-                    this.jDialog.setVisible(true);
                 } else {
+                    this.setVisible(false);
                     JOptionPane.showOptionDialog(null, "Fail to save", "Tips",
                             JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON, jButtons, jButtons[0]);
+                    this.setVisible(true);
+                    return;
                 }
             }
         }
@@ -144,7 +163,7 @@ public class SetTimeModal extends JFrame {
 
     }
 
-    private void onCancel(){
+    private void onCancel() {
         this.setVisible(false);
         this.jDialog.setVisible(true);
     }

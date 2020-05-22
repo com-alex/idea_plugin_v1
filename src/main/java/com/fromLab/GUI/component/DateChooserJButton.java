@@ -33,7 +33,7 @@ import javax.swing.event.ChangeListener;
 /**
  * @author wsh
  * @date 2019-12-18
- * 时间选择器组件
+ * The component for setting the date
  */
 public class DateChooserJButton extends JButton {
 
@@ -49,18 +49,13 @@ public class DateChooserJButton extends JButton {
     public DateChooserJButton(String dateString) {
         this();
         setText(getDefaultDateFormat(), dateString);
-        //保存原始是日期时间
         initOriginalText(dateString);
     }
 
     public DateChooserJButton(SimpleDateFormat df, String dateString) {
         this();
         setText(df, dateString);
-
-        //记忆当前的日期格式化器
         this.sdf = df;
-
-        //记忆原始日期时间
         Date originalDate = null;
         try {
             originalDate = df.parse(dateString);
@@ -72,7 +67,6 @@ public class DateChooserJButton extends JButton {
 
     public DateChooserJButton(Date date) {
         this("", date);
-        //记忆原始日期时间
         initOriginalText(date);
     }
 
@@ -81,7 +75,6 @@ public class DateChooserJButton extends JButton {
             this.preLabel = preLabel;
         }
         setDate(date);
-        //记忆原始是日期时间
         initOriginalText(date);
 
         setBorder(null);
@@ -108,38 +101,26 @@ public class DateChooserJButton extends JButton {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 
-    /**
-     * 得到当前使用的日期格式化器
-     * @return 日期格式化器
-     */
-    public SimpleDateFormat getCurrentSimpleDateFormat(){
-        if(this.sdf != null){
+    public SimpleDateFormat getCurrentSimpleDateFormat() {
+        if (this.sdf != null) {
             return sdf;
-        }else{
+        } else {
             return getDefaultDateFormat();
         }
     }
 
-
-    //保存原始是日期时间
     private void initOriginalText(String dateString) {
         this.originalText = dateString;
     }
 
-    //保存原始是日期时间
     private void initOriginalText(Date date) {
         this.originalText = preLabel + getDefaultDateFormat().format(date);
     }
 
-    /**
-     * 得到当前记忆的原始日期时间
-     * @return 当前记忆的原始日期时间（未修改前的日期时间）
-     */
     public String getOriginalText() {
         return originalText;
     }
 
-    // 覆盖父类的方法
     @Override
     public void setText(String s) {
         Date date;
@@ -175,39 +156,29 @@ public class DateChooserJButton extends JButton {
         }
     }
 
-    /**
-     * 覆盖父类的方法使之无效
-     * @param listener 响应监听器
-     */
     @Override
     public void addActionListener(ActionListener listener) {
     }
 
-    /**
-     * 内部类，主要是定义一个JPanel，然后把日历相关的所有内容填入本JPanel，
-     * 然后再创建一个JDialog，把本内部类定义的JPanel放入JDialog的内容区
-     */
     private class DateChooser extends JPanel implements ActionListener, ChangeListener {
 
-        int startYear = 1980; // 默认【最小】显示年份
-        int lastYear = 2050; // 默认【最大】显示年份
-        int width = 620; // 界面宽度
-        int height = 300; // 界面高度
-        Color backGroundColor = Color.gray; // 底色
-        // 月历表格配色----------------//
-        Color palletTableColor = Color.white; // 日历表底色
-        Color todayBackColor = Color.orange; // 今天背景色
-        Color weekFontColor = Color.blue; // 星期文字色
-        Color dateFontColor = Color.black; // 日期文字色
-        Color weekendFontColor = Color.red; // 周末文字色
-        // 控制条配色------------------//
-        Color controlLineColor = Color.pink; // 控制条底色
-        Color controlTextColor = Color.white; // 控制条标签文字色
-        Color rbFontColor = Color.white; // RoundBox文字色
-        Color rbBorderColor = Color.red; // RoundBox边框色
-        Color rbButtonColor = Color.pink; // RoundBox按钮色
-        Color rbBtFontColor = Color.red; // RoundBox按钮文字色
-        /** 点击DateChooserButton时弹出的对话框，日历内容在这个对话框内 */
+        int startYear = 1980;
+        int lastYear = 2050;
+        int width = 620;
+        int height = 300;
+        Color backGroundColor = Color.gray;
+        Color palletTableColor = Color.white;
+        Color todayBackColor = Color.orange;
+        Color weekFontColor = Color.blue;
+        Color dateFontColor = Color.black;
+        Color weekendFontColor = Color.red;
+        Color controlLineColor = Color.pink;
+        Color controlTextColor = Color.white;
+        Color rbFontColor = Color.white;
+        Color rbBorderColor = Color.red;
+        Color rbButtonColor = Color.pink;
+        Color rbBtFontColor = Color.red;
+
         JDialog dialog;
         JSpinner yearSpin;
         JSpinner monthSpin;
@@ -270,15 +241,12 @@ public class DateChooserJButton extends JButton {
             dayLabel.setForeground(controlTextColor);
             result.add(dayLabel);
 
-
-
-            //如果这里要能够选择,会要判断很多东西,比如每个月分别由多少日,以及闰年问题.所以,就干脆把Enable设为false
             daySpin = new JSpinner(new SpinnerNumberModel(currentMonth, 1, 31, 1));
             daySpin.setPreferredSize(new Dimension(50, 27));
             daySpin.setName("Day");
             daySpin.addChangeListener(this);
             daySpin.setEnabled(false);
-            daySpin.setToolTipText("请下下面的日历面板中进行选择哪一天！");
+            daySpin.setToolTipText("Please choose a day");
             result.add(daySpin);
 
 
@@ -313,14 +281,12 @@ public class DateChooserJButton extends JButton {
             result.add(secondSpin);
 
 
-
             return result;
         }
 
         private JPanel createWeekAndDayPanal() {
             String colname[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
             JPanel result = new JPanel();
-            // 设置固定字体，以免调用环境改变影响界面美观
             result.setFont(new Font("宋体", Font.PLAIN, 12));
             result.setLayout(new GridLayout(7, 7));
             result.setBackground(Color.white);
@@ -361,12 +327,10 @@ public class DateChooserJButton extends JButton {
             return result;
         }
 
-        /** 得到DateChooserButton的当前text，本方法是为按钮事件匿名类准备的。 */
         public String getTextOfDateChooserButton() {
             return getText();
         }
 
-        /** 恢复DateChooserButton的原始日期时间text，本方法是为按钮事件匿名类准备的。 */
         public void restoreTheOriginalDate() {
             String originalText = getOriginalText();
             setText(originalText);
@@ -381,9 +345,7 @@ public class DateChooserJButton extends JButton {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //记忆原始日期时间
                     initOriginalText(getTextOfDateChooserButton());
-                    //隐藏日历对话框
                     dialog.setVisible(false);
                 }
             });
@@ -394,9 +356,7 @@ public class DateChooserJButton extends JButton {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //恢复原始的日期时间
                     restoreTheOriginalDate();
-                    //隐藏日历对话框
                     dialog.setVisible(false);
                 }
             });
@@ -406,7 +366,7 @@ public class DateChooserJButton extends JButton {
         }
 
         private JDialog createDialog(Frame owner) {
-            JDialog result = new JDialog(owner, "日期时间选择", true);
+            JDialog result = new JDialog(owner, "Date Chooser", true);
             result.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
             result.getContentPane().add(this, BorderLayout.CENTER);
             result.pack();
@@ -499,9 +459,7 @@ public class DateChooserJButton extends JButton {
             dayColorUpdate(false);
         }
 
-        /**
-         * 选择日期时的响应事件
-         */
+
         @Override
         public void stateChanged(ChangeEvent e) {
             JSpinner source = (JSpinner) e.getSource();
@@ -533,9 +491,6 @@ public class DateChooserJButton extends JButton {
             flushWeekAndDay();
         }
 
-        /**
-         * 选择日期时的响应事件
-         */
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton source = (JButton) e.getSource();
@@ -548,29 +503,7 @@ public class DateChooserJButton extends JButton {
             Calendar c = getCalendar();
             c.set(Calendar.DAY_OF_MONTH, newDay);
             setDate(c.getTime());
-            //把daySpin中的值也变了
             daySpin.setValue(Integer.valueOf(newDay));
         }
-    }
-
-    /**
-     * 测试方法
-     */
-    public static void main(String[] args) {
-        JFrame mainFrame = new JFrame("测试");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(300, 300);
-        mainFrame.setLayout(new java.awt.BorderLayout());
-        mainFrame.add(new DateChooserJButton(), java.awt.BorderLayout.CENTER);
-
-        Toolkit kit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = kit.getScreenSize();
-        int width = (int) screenSize.getWidth();
-        int height = (int) screenSize.getHeight();
-        int w = mainFrame.getWidth();
-        int h = mainFrame.getHeight();
-        mainFrame.setLocation((width - w) / 2, (height - h) / 2);
-
-        mainFrame.setVisible(true);
     }
 }

@@ -90,7 +90,8 @@ public class KeywordCompleteActionHandler implements TypedActionHandler {
             }
         }
     }
-    public void setOldHandler (TypedActionHandler oldHandler){
+
+    public void setOldHandler(TypedActionHandler oldHandler) {
         this.oldHandler = oldHandler;
     }
 }

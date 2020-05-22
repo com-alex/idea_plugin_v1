@@ -12,6 +12,7 @@ import java.util.Date;
 /**
  * @author wsh
  * @date 2019-12-27
+ * The dialog for setting the due date in search area
  */
 public class SetDueTimeModal extends JFrame {
 
@@ -26,14 +27,14 @@ public class SetDueTimeModal extends JFrame {
     private JButton okButton;
     private JButton cancelButton;
 
-    public SetDueTimeModal(String type, SelectTaskDialog selectTaskDialog, Date date){
+    public SetDueTimeModal(String type, SelectTaskDialog selectTaskDialog, Date date) {
         this.jDialog = selectTaskDialog;
         this.type = type;
         timePanel = new JPanel();
         timePanel.setBounds(0, 0, 300, 150);
         timePanel.setLayout(null);
         timeLabel = new JLabel("Due Time:");
-        timeLabel.setBounds(50,0, 100, 100);
+        timeLabel.setBounds(50, 0, 100, 100);
         timePanel.add(timeLabel);
 
         dateChooserJButton = new DateChooserJButton(date);
@@ -66,20 +67,22 @@ public class SetDueTimeModal extends JFrame {
         this.setVisible(true);
     }
 
-
-    private void onOk(){
+    /**
+     * Confirm the time and make the time shown on the Select Task Dialog
+     */
+    private void onOk() {
         String dateStirng = this.dateChooserJButton.getText();
         String date = DateUtils.date2String(DateUtils.string2Date(dateStirng));
-        if(SET_FROM_DUE_TIME.equals(this.type)){
+        if (SET_FROM_DUE_TIME.equals(this.type)) {
             this.jDialog.getFromDatePickerButton().setText(date);
-        }else{
+        } else {
             this.jDialog.getToDatePickerButton().setText(date);
         }
         this.setVisible(false);
         this.jDialog.setVisible(true);
     }
 
-    private void onCancel(){
+    private void onCancel() {
         this.setVisible(false);
         this.jDialog.setVisible(true);
     }

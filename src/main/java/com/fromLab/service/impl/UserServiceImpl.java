@@ -18,18 +18,18 @@ public class UserServiceImpl implements UserService {
     public Boolean authorize(String openProjectURl, String apiKey) {
         OpenprojectURL openprojectURL = new OpenprojectURL(openProjectURl + OpenprojectURL.API_URL, apiKey);
         String response = openprojectURL.getJson();
-        if(StringUtils.equals(response, ERROR_STRING)){
+        if (StringUtils.equals(response, ERROR_STRING)) {
             //Authentication failed, url error
             return false;
         }
         JSONObject responseObject = null;
-        try{
-           responseObject = JSONObject.fromObject(response);
-        }catch (Exception e){
+        try {
+            responseObject = JSONObject.fromObject(response);
+        } catch (Exception e) {
             return false;
         }
-        String type = (String)responseObject.get("_type");
-        if(StringUtils.equals(type, ERROR_STRING)){
+        String type = (String) responseObject.get("_type");
+        if (StringUtils.equals(type, ERROR_STRING)) {
             //Authentication failed, API key error
             return false;
         }

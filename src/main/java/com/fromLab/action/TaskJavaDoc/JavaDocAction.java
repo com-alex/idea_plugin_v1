@@ -2,6 +2,7 @@ package com.fromLab.action.TaskJavaDoc;
 
 import com.fromLab.Handler.KeywordCompleteActionHandler;
 import com.fromLab.Handler.UpdateJavaDocActionHandler;
+import com.fromLab.loader.IconsLoader;
 import com.fromLab.utils.SocketUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -22,7 +23,8 @@ import java.util.HashMap;
 
 public class JavaDocAction extends AnAction {
 
-    private SocketUtil socketUtil=new SocketUtil();
+    private SocketUtil socketUtil = new SocketUtil();
+
     static {
         final EditorActionManager actionManager = EditorActionManager.getInstance();
         final TypedAction typedAction = actionManager.getTypedAction();
@@ -33,17 +35,18 @@ public class JavaDocAction extends AnAction {
         TypedActionHandler oldHandler = typedAction.setupHandler(handler);
         handler.setOldHandler(oldHandler);
 
-        KeywordCompleteActionHandler handler1=new KeywordCompleteActionHandler();
-        TypedActionHandler oldHandler1=typedAction.setupHandler(handler1);
+        KeywordCompleteActionHandler handler1 = new KeywordCompleteActionHandler();
+        TypedActionHandler oldHandler1 = typedAction.setupHandler(handler1);
         handler1.setOldHandler(oldHandler1);
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
 
-        this.generateJavaDoc(this.getPsiMethodFromContext(e),e);
+        this.generateJavaDoc(this.getPsiMethodFromContext(e), e);
 
     }
+
     private void generateJavaDoc(final PsiClass psiMethod, AnActionEvent e) {
         try {
             (new WriteCommandAction.Simple(psiMethod.getProject(), new PsiFile[]{psiMethod.getContainingFile()}) {
@@ -53,10 +56,10 @@ public class JavaDocAction extends AnAction {
 
                 }
             }).execute();
-        }catch (NullPointerException exception){
+        } catch (NullPointerException exception) {
             JOptionPane.showMessageDialog(null,
                     "The JavaDoc Comments must be generated in a Java Class!",
-                    "Tips", JOptionPane.ERROR_MESSAGE);
+                    "Tips", JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
         }
     }
 
@@ -69,50 +72,51 @@ public class JavaDocAction extends AnAction {
         int line = document.getLineNumber(caretOffset);
         HashMap task = socketUtil.getTaskMap();
 
-        if(task==null) {
+        if (task == null) {
             JOptionPane.showMessageDialog(null,
                     "The JavaDoc comments must be generated in a Java Class!",
-                    "Tips", JOptionPane.ERROR_MESSAGE);
+                    "Tips", JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
             return;
         }
-        document.insertString(document.getLineStartOffset(line),TaskJavaDocString(task));
-
+        document.insertString(document.getLineStartOffset(line), TaskJavaDocString(task));
 
 
     }
+
     //use dots to complete each line of comments to make each line has a length of 100
-    public String format(String s){
-         int length=100;
-         StringBuilder sb=new StringBuilder();
-         sb.append(s);
-         int size=s.length();
-         for(int i=size;i<length;i++){
-             sb.append(".");
-         }
-         return sb.toString();
+    public String format(String s) {
+        int length = 100;
+        StringBuilder sb = new StringBuilder();
+        sb.append(s);
+        int size = s.length();
+        for (int i = size; i < length; i++) {
+            sb.append(".");
+        }
+        return sb.toString();
     }
-    private String TaskJavaDocString(HashMap task){
+
+    private String TaskJavaDocString(HashMap task) {
         String taskJavaDocString =
                 "    /**\n" +
-                        "     * @taskId "+format(task.get("taskId").toString()) + "\n" +
-                        "     * @taskName "+format(task.get("taskName").toString()) + "\n"+
-                        "     * @projectName "+format(task.get("projectName").toString()) + "\n"+
-                        "     * @status "+format(task.get("status").toString())+"\n" +
-                        "     * @taskPriority "+format(task.get("taskPriority").toString())+"\n" +
-                        "     * @dueTime "+format(task.get("dueTime").toString())+"\n" +
+                        "     * @taskId " + format(task.get("taskId").toString()) + "\n" +
+                        "     * @taskName " + format(task.get("taskName").toString()) + "\n" +
+                        "     * @projectName " + format(task.get("projectName").toString()) + "\n" +
+                        "     * @status " + format(task.get("status").toString()) + "\n" +
+                        "     * @taskPriority " + format(task.get("taskPriority").toString()) + "\n" +
+                        "     * @dueTime " + format(task.get("dueTime").toString()) + "\n" +
                         "     */ ";
         return taskJavaDocString;
     }
 
     private PsiClass getPsiMethodFromContext(AnActionEvent e) {
         PsiElement elementAt = this.getPsiElement(e);
-        return elementAt == null?null:(PsiClass) PsiTreeUtil.getParentOfType(elementAt, PsiClass.class);
+        return elementAt == null ? null : (PsiClass) PsiTreeUtil.getParentOfType(elementAt, PsiClass.class);
     }
 
     private PsiElement getPsiElement(AnActionEvent e) {
-        PsiFile psiFile = (PsiFile)e.getData(LangDataKeys.PSI_FILE);
-        Editor editor = (Editor)e.getData(PlatformDataKeys.EDITOR);
-        if(psiFile != null && editor != null) {
+        PsiFile psiFile = (PsiFile) e.getData(LangDataKeys.PSI_FILE);
+        Editor editor = (Editor) e.getData(PlatformDataKeys.EDITOR);
+        if (psiFile != null && editor != null) {
             int offset = editor.getCaretModel().getOffset();
             return psiFile.findElementAt(offset);
         } else {

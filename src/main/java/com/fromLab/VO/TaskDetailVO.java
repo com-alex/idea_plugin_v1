@@ -3,6 +3,7 @@ package com.fromLab.VO;
 /**
  * @author wsh
  * @date 2019-12-26
+ * The view object TaskDetail
  */
 public class TaskDetailVO {
 

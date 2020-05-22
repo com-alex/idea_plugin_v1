@@ -14,16 +14,12 @@ import java.awt.event.ActionListener;
 /**
  * @author wsh
  * @date 2019-12-26
- * 查询任务的detail的模态框
+ * The dialog for displaying the task detail
  */
 public class TaskDetailModal extends JFrame {
-
     private SelectTaskDialog dialog;
-
     private TaskDetailVO taskDetailVO;
 
-
-    //5,2 GridLayout
     private JPanel contentPanel;
     private JLabel taskNameLabel;
     private JLabel taskNameText;
@@ -34,7 +30,6 @@ public class TaskDetailModal extends JFrame {
     private JLabel taskDetailLabel;
     private JScrollPane scrollPane;
     private JLabel taskDetailText;
-
     private JPanel buttonPanel;
     private JButton backButton;
 
@@ -42,7 +37,6 @@ public class TaskDetailModal extends JFrame {
 
 
     }
-
     public TaskDetailModal(SelectTaskDialog dialog, TaskDetailVO taskDetailVO){
         this.dialog = dialog;
         this.taskDetailVO = taskDetailVO;
@@ -51,11 +45,9 @@ public class TaskDetailModal extends JFrame {
 
     private void initModal(){
 
-        //获取数据源
-//        taskDetailVO = taskService.queryTaskDetailByTaskId(taskId);
-
         this.setLayout(new BorderLayout());
         this.contentPanel = new JPanel();
+        //5,2 GridLayout
         contentPanel.setLayout(new GridLayout(5, 2));
 
         taskNameLabel = new JLabel("Task Name: ");

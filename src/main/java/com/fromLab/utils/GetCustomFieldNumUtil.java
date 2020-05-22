@@ -9,21 +9,20 @@ import org.apache.commons.lang.StringUtils;
 /**
  * @Auther: JIN KE
  * @Date: 2020/2/19 13:17
+ * The static utility class to get the name of the custom field
  */
 
 
 public class GetCustomFieldNumUtil {
 
     /**
-     *
-     * @param customFieldName  Task type ，End date , Time spent
-     * @
+     * @param customFieldName Task type ，End date , Time spent
      * @return customFieldX
+     * @
      */
     public static String getCustomFieldNum(String customFieldName, OpenprojectURL openprojectURL) throws BusinessException {
-        String json= openprojectURL.getJson();
+        String json = openprojectURL.getJson();
         JSONObject jsonObject = JSONObject.fromObject(json);
-
 
 
         String embedded = jsonObject.getString("_embedded");
@@ -43,11 +42,11 @@ public class GetCustomFieldNumUtil {
 
         String result = null;
 
-        int position = 0 ;
-        for (int i = 0; i < count ; i++) {
+        int position = 0;
+        for (int i = 0; i < count; i++) {
             String s = String.valueOf(elementsArray.getJSONObject(i).getOrDefault("customField1", "null"));
-            if (!"null".equals(s)){
-                position=i;
+            if (!"null".equals(s)) {
+                position = i;
             }
         }
         for (int i = 1; i < 20; i++) {
@@ -56,15 +55,15 @@ public class GetCustomFieldNumUtil {
             if (!"null".equals(CustomFieldString)) {
                 String[] split = CustomFieldString.split(",");
                 String[] splitName = split[1].split(":");
-                String name=splitName[1].substring(1,(splitName[1].length()-1));
-                if (customFieldName.equals(name)){
+                String name = splitName[1].substring(1, (splitName[1].length() - 1));
+                if (customFieldName.equals(name)) {
                     result = "customField" + i;
                     return result;
                 }
 
             }
         }
-        if(StringUtils.isBlank(result)){
+        if (StringUtils.isBlank(result)) {
             throw new BusinessException("Fail to get CustomField:" + customFieldName);
         }
 

@@ -13,7 +13,7 @@ public class OpenprojectURL {
     private String apiKey;
 
 
-    public OpenprojectURL(String openProjectURL, String apiKey){
+    public OpenprojectURL(String openProjectURL, String apiKey) {
         this.openProjectURL = openProjectURL;
         this.apiKey = apiKey;
     }
@@ -33,7 +33,6 @@ public class OpenprojectURL {
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
-
 
 
     // get json from PMS server using Okhttp

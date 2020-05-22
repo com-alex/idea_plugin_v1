@@ -1,7 +1,6 @@
 package com.fromLab.service;
 
 
-import com.fromLab.entity.Filter;
 import com.fromLab.entity.Status;
 import com.fromLab.entity.Task;
 import com.fromLab.exception.BusinessException;
@@ -11,15 +10,15 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- *
- *@Auther: JIN KE
- *@Date: 2019/12/11 17:47
+ * @Auther: JIN KE
+ * @Date: 2019/12/11 17:47
  */
 public interface TaskService {
 
 
     /**
      * Get task by taskId
+     *
      * @param openprojectURL
      * @param id
      * @return
@@ -28,6 +27,7 @@ public interface TaskService {
 
     /**
      * Update task status and progress according to task id
+     *
      * @param openprojectURL
      * @param id
      * @param lock_version
@@ -38,6 +38,7 @@ public interface TaskService {
 
     /**
      * Update task's startDate according to task id
+     *
      * @param openprojectURL
      * @param id
      * @param lock_version
@@ -47,6 +48,7 @@ public interface TaskService {
 
     /**
      * Update custom field endDate according to task id
+     *
      * @param openprojectURL
      * @param id
      * @param lock_version
@@ -57,6 +59,7 @@ public interface TaskService {
 
     /**
      * Update custom field endDate according to task id
+     *
      * @param openprojectURL
      * @param id
      * @param lock_version
@@ -67,6 +70,7 @@ public interface TaskService {
 
     /**
      * Query task according to various conditions
+     *
      * @param openprojectURL
      * @param statusNum
      * @param priorityNum
@@ -83,9 +87,6 @@ public interface TaskService {
                                     String toDueDate,
                                     Integer taskTypeNum,
                                     String subject) throws BusinessException;
-
-
-
 
 
 }

@@ -38,7 +38,7 @@ public class TaskServiceTest {
 
         Task task = null;
         try {
-            task = taskService.getTaskById(openprojectURL,8);
+            task = taskService.getTaskById(openprojectURL,25);
         } catch (BusinessException e) {
             e.printStackTrace();
         }

@@ -27,10 +27,9 @@ import java.util.Date;
 import java.util.List;
 
 public class SelectTaskDialog extends JDialog implements WindowListener {
-    //常量，防止出现魔法值
+    //Static constants
     private static final String SET_FROM_DUE_TIME = "from";
     private static final String SET_TO_DUE_TIME = "to";
-
     private static final String SUCCESS = "success";
     private static final String ERROR = "error";
 
@@ -38,11 +37,14 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
     private String originalUrl;
     private TaskToolWindow taskToolWindow;
 
-
     private Long startTime = 0L;
     private Long endTime = 0L;
+    //Flag to determime whether the user choose the task
     private Boolean chosen = false;
+    //Variable to save the selected task
+    private Task selectedTask;
     private List<TaskVO> dataSource;
+    //Flag for sorting tasks
     private Integer taskPriorityFlag = 0;
     private Integer taskDueTimeFlag = 0;
     private Integer taskNameFlag = 0;
@@ -51,7 +53,7 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
     private BigDecimal timeSpent = BigDecimal.ZERO;
     private String spentTimeCustomFieldName;
     private String endDateCustomFieldName;
-    private Task selectedTask;
+    //The data set shown in the drop-down menu
     private String[] statusShowDate = {"-- Please Choose --", "New", "In progress", "Closed", "On hold", "Rejected"};
     private String[] priorityShowData = {"-- Please Choose --", "Immediate", "High", "Normal", "Low"};
     private String[] typeShowDate = {"-- Please Choose --", "Management", "Specification", "Development", "Testing", "Support", "Other"};
@@ -59,7 +61,7 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
     private JPanel contentPane;
     private JPanel panel1;
     private JPanel conditionPanel;
-    //查询条件控件
+    //The area for search criteria
     private JLabel statusPickerLabel;
     private JComboBox statusPicker;
     private JLabel dueTimeFromLabel;
@@ -72,13 +74,9 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
     private JComboBox priorityPicker;
     private JLabel typeLabel;
     private JComboBox typePicker;
-
-
     private JButton searchButton;
 
-
-
-    //数据显示控件
+    //The area for displaying the task
     private JPanel tablePanel;
     private JButton endButton;
     private JButton chooseButton;
@@ -87,14 +85,7 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
     private JTable taskTable;
     private TaskServiceImpl taskService;
     private SocketServer socketServer;
-    private Thread thread;
-    //    public SelectTaskDialog(String openProjectUrl, String apiKey) {
-//        openprojectURL = new OpenprojectURL(openProjectUrl + OpenprojectURL.WORK_PACKAGES_URL, apiKey);
-//        originalUrl = this.openprojectURL.getOpenProjectURL();
-//        initInterface();
-//        init();
-//        setContentPane(contentPane);
-//    }
+
     public SelectTaskDialog(OpenprojectURL openprojectURL, Boolean chosen, Task selectedTask,
                             Long startTime, SocketServer socketServer, TaskToolWindow taskToolWindow){
         this.taskToolWindow = taskToolWindow;
@@ -109,6 +100,9 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         setContentPane(contentPane);
     }
 
+    /**
+     * Initialization for getting the custom fields and show the task
+     */
     public void init() {
         taskService = new TaskServiceImpl();
         this.dataSource = new ArrayList<>();
@@ -122,20 +116,20 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
             showOptionDialog(errorMsg, JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
             return;
         }
-
+        //Search and display tasks
         this.setTableDataSource();
     }
 
 
     /**
-     * 主界面初始化
+     * User interface initialization
      */
     public void initInterface(){
 
         panel1.setLocation(0,0);
         panel1.setLayout(null);
         /**
-         * 查询条件部分
+         * the search area
          */
         conditionPanel = new JPanel();
         conditionPanel.setLayout(null);
@@ -219,7 +213,7 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
 
 
         /**
-         * 数据显示部分
+         * The task displaying area
          */
         tablePanel = new JPanel();
         tablePanel.setLayout(null);
@@ -247,7 +241,7 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         viewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //查看task的detail
+                //view the detail of the task
                 viewTaskDetail();
             }
         });
@@ -265,7 +259,7 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
 
         stopButton = new JButton("stop the task");
         stopButton.setBounds(540, 500, 150, 30);
-        //默认停止工作按钮为不能按
+        //By default, The stop button cannot be pressed
         if(!this.chosen){
             stopButton.setEnabled(false);
         }
@@ -278,18 +272,28 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         panel1.add(stopButton);
 
         this.addWindowListener(this);
+        this.setResizable(false);
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }
 
+    /**
+     * Function for displaying the task
+     */
     public void setTableDataSource(){
+        //Search the task from the OpenProject
         this.dataSource = this.getDataSource(null, null, null,
                 null, null, null);
-
+        //Put the tasks into the taskTable for displaying
         this.getTaskTable().setModel(new TaskTableModel(dataSource, this.selectedTask));
+        //Set the taskTable style
         setTableStyle();
+        //Enable to sort the task
         setTableSort();
     }
 
+    /**
+     * Update the end date of the task
+     */
     private void setTaskEndTime(){
         Integer row = taskTable.getSelectedRow();
         if (row == -1) {
@@ -297,16 +301,17 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
             showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             return;
         }
+        //Convert the TaskVO into the entity task to operate
         Task tempTask = this.taskVOConvertToTask(this.dataSource.get(row));
         this.setVisible(false);
         openprojectURL.setOpenProjectURL(originalUrl);
+        //Open the dialog for updating the end date
         new SetTimeModal(this, tempTask, this.endDateCustomFieldName, openprojectURL);
     }
 
-    public JTable getTaskTable(){
-        return this.taskTable;
-    }
-
+    /**
+     * Show the detail
+     */
     private void viewTaskDetail(){
         Integer row = taskTable.getSelectedRow();
         if (row == -1) {
@@ -314,12 +319,16 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
             showOptionDialog("You need to select a task!", JOptionPane.WARNING_MESSAGE, IconsLoader.WARNING_ICON);
             return;
         }
+        //Convert the TaskVO into the taskDetailVO to show the detail
         TaskDetailVO taskDetailVO = this.taskVOConvertToTaskDetailVO(this.dataSource.get(row));
+        //Open the dialog to show the detail
         new TaskDetailModal(this, taskDetailVO);
         this.setVisible(false);
     }
 
-
+    /**
+     * Choose the task on Select Task Dialog
+     */
     private void chooseTask(){
         if(!this.chosen){
             int row = taskTable.getSelectedRow();
@@ -330,6 +339,7 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
             }
             this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
             this.openprojectURL.setOpenProjectURL(originalUrl);
+            //If the start date of the selected task is empty, the start data becomes the current time and is updated
             if("null".equals(this.selectedTask.getStartTime())){
                 String startDate = DateUtils.date2String(new Date());
                 String result = this.taskService.updateStartDate(openprojectURL, this.selectedTask.getTaskId(),
@@ -340,15 +350,21 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
                     return;
                 }
             }
+            //After choosing, the flag '*' will be added in the Select Task Dialog
             this.getTaskTable().setValueAt("*", row, 0);
+            //Set the flag
             this.chosen = true;
+            //Put the task into Socket
             socketServer.task = this.selectedTask;
+            //The stop button is available
             this.stopButton.setEnabled(true);
+            //Synchronous task display on tool window
             this.taskToolWindow.setSelectedFlag(this.selectedTask.getTaskId());
             this.taskToolWindow.setChosen(true);
             this.taskToolWindow.setSelectedTask(this.selectedTask);
-            this.taskToolWindow.paintStopButton();
+            this.taskToolWindow.getStopButton().setEnabled(false);
             this.startTime = System.currentTimeMillis();
+            this.taskToolWindow.setStartTime(this.startTime);
             System.out.println("Start Task  Time:" + this.startTime);
             this.setVisible(false);
             showOptionDialog("You select a task successfully!", JOptionPane.PLAIN_MESSAGE, IconsLoader.SUCCESS_ICON);
@@ -359,6 +375,9 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         }
     }
 
+    /**
+     * Stop the task
+     */
     private void stopTask(){
         int row = taskTable.getSelectedRow();
         if(row == -1){
@@ -376,37 +395,45 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         if(this.endTime == 0L){
             this.endTime = System.currentTimeMillis();
         }
+        //If time is spent, the calculation is not performed and the original time spent is updated.
+        //If no time is spent, calculate and update the new time spent.
         if(timeSpent.compareTo(BigDecimal.ZERO) == 0){
             timeSpent = NumberUtils.covertTimeToHour(this.endTime - this.startTime);
         }
-        System.out.println("Stop Task! The Spent Time is: " + timeSpent + "h");
-        this.getTaskTable().setValueAt("", row, 0);
+        System.out.println("Stop Task! The Spent Time is: " + this.endTime);
+        System.out.println("The Spent Time is: " + timeSpent + "h");
         this.selectedTask = this.taskVOConvertToTask(this.dataSource.get(row));
         this.openprojectURL.setOpenProjectURL(originalUrl);
+        //Update the spent time of the task
         String result = this.taskService.updateSpentTime(openprojectURL, this.selectedTask.getTaskId(),
                 this.selectedTask.getLockVersion(), NumberUtils.calUpdateTimeSpent(this.selectedTask.getTimeSpent(), timeSpent),
                 this.spentTimeCustomFieldName);
-        //先发一次update请求，如果成功表示更新成功
+        //If succeed, the interface, parameters,
+        // and flags are initialized and Open the dialog to update status and progress
         if (SUCCESS.equals(result)){
             this.chosen = false;
             this.stopButton.setEnabled(false);
             socketServer.task = null;
-            //获取所选行的task的progress
+            //Get progress of the task
             String progressString = (String) taskTable.getValueAt(row, 10);
             Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
             this.setVisible(false);
             this.openprojectURL.setOpenProjectURL(originalUrl);
+            //Open the StopTaskModal to update status and progress
             new StopTaskModal(this.selectedTask, progress, this, openprojectURL);
             this.startTime = 0L;
             this.endTime = 0L;
             this.timeSpent = BigDecimal.ZERO;
+            //Remove the flag on Select Task Dialog
+            this.getTaskTable().setValueAt("", row, 0);
+            //Initialze the parameters and flags
             this.taskToolWindow.deleteSelectedFlag(this.selectedTask.getTaskId());
             this.taskToolWindow.setChosen(false);
             this.taskToolWindow.setSelectedTask(null);
             this.taskToolWindow.paintStopButton();
             this.selectedTask = null;
         }
-        //如果没成功，可能是服务器问题，也有可能是因为lock_version不正确，因此重新获取task，然后再发一次update请求
+        //If it fails, the program will update automatically again and the parameters, flag, user interface have no change.
         else{
             this.openprojectURL.setOpenProjectURL(originalUrl);
             try {
@@ -422,7 +449,7 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
                 this.chosen = false;
                 this.stopButton.setEnabled(false);
                 socketServer.task = null;
-                //获取所选行的task的progress
+                //Get the progress
                 String progressString = (String) taskTable.getValueAt(row, 10);
                 Integer progress = Integer.parseInt(progressString.substring(0, progressString.indexOf("%")));
                 this.setVisible(false);
@@ -431,12 +458,15 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
                 this.startTime = 0L;
                 this.endTime = 0L;
                 this.timeSpent = BigDecimal.ZERO;
+                this.getTaskTable().setValueAt("", row, 0);
                 this.taskToolWindow.deleteSelectedFlag(this.selectedTask.getTaskId());
                 this.taskToolWindow.setChosen(false);
                 this.taskToolWindow.setSelectedTask(null);
                 this.taskToolWindow.paintStopButton();
                 this.selectedTask = null;
-            }else{
+            }
+            //If it still fails, the message dialog will be pop up to prompt the user to update again
+            else{
                 this.setVisible(false);
                 showOptionDialog("Fail to save", JOptionPane.ERROR_MESSAGE, IconsLoader.ERROR_ICON);
                 this.resetTableDataSource();
@@ -445,13 +475,12 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
 
     }
 
-    //放的位置
-
-
-
+    /**
+     * Refresh the data
+     */
     public void resetTableDataSource(){
         openprojectURL.setOpenProjectURL(originalUrl);
-        //刷新表格数据源
+        //Search the task
         this.dataSource = this.getDataSource(null, null, null, null, null, null);
         this.getTaskTable().setModel(new TaskTableModel(dataSource, this.selectedTask));
         setTableStyle();
@@ -459,6 +488,9 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         setChosenFlag();
     }
 
+    /**
+     * Set the style of the task table
+     */
     public void setTableStyle(){
         this.getTaskTable().setDefaultRenderer(Object.class, new TableRenderer());
         this.getTaskTable().getColumnModel().getColumn(0).setPreferredWidth(50);
@@ -494,6 +526,9 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         this.setVisible(true);
     }
 
+    /**
+     * Function to implement to sort the task
+     */
     private void setTableSort(){
         int flag = 0;
         final JTableHeader tableHeader = this.taskTable.getTableHeader();
@@ -526,11 +561,10 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
     }
 
 
-
+    /**
+     * Sort task by Priority
+     */
     private void sortDataSourceOrderByPriority(){
-
-        //TODO 需进行修改，taskPriority是String类型
-
         if(this.taskPriorityFlag % 2 == 0){
             SortUtils.sort(this.dataSource,
                     new String[]{"taskPriority","dueTime","projectName","taskType","taskId"},
@@ -545,6 +579,9 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         setTableStyle();
     }
 
+    /**
+     * Sort task by Task Type
+     */
     private void sortDataSourceOrderByTaskType() {
         if(this.taskTypeFlag % 2 == 0){
             SortUtils.sort(this.dataSource,
@@ -561,6 +598,9 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         setTableStyle();
     }
 
+    /**
+     * Sort task by due date
+     */
     private void sortDataSourceOrderByDueTime(){
         if(this.taskDueTimeFlag % 2 == 0){
             SortUtils.sort(this.dataSource,
@@ -576,6 +616,9 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         setTableStyle();
     }
 
+    /**
+     * Sort task by Subject
+     */
     private void sortDataSourceOrderByTaskName(){
         if(this.taskNameFlag % 2 == 0){
             SortUtils.sort(this.dataSource,
@@ -591,6 +634,9 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         setTableStyle();
     }
 
+    /**
+     * Sort task by Project name
+     */
     private void sortDataSourceOrderByProjectName(){
         if(this.taskProjectFlag % 2 == 0){
             SortUtils.sort(this.dataSource,
@@ -617,19 +663,28 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         return toDatePickerButton;
     }
 
+    /**
+     * Press the button in search area to select the start and end times of due time
+     * @param type
+     */
     private void onDatePicker(String type){
         this.setVisible(false);
         if(SET_FROM_DUE_TIME.equals(type)){
+            //Open the dialog for selecting start due time for searching
             new SetDueTimeModal(
                     type, this,
                     DateUtils.string2Date(this.fromDatePickerButton.getText()));
         }
         else{
+            //Open the dialog for selecting end due time for searching
             new SetDueTimeModal(type, this,
                     DateUtils.string2Date(this.toDatePickerButton.getText()));
         }
     }
 
+    /**
+     * The function after pressing the search button
+     */
     private void searchDataSource(){
         //Get the condition
         //status
@@ -660,11 +715,14 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         LocalDateTime toLocalDateTime = DateUtils.string2LocalDateTime(toDueTime);
         Duration duration = Duration.between(fromLocalDateTime, toLocalDateTime);
         Long min = duration.toMillis();
+        //If the start due date bigger than the end due date,
+        // that means the due date for search is illegal
         if(min <= 0L){
             this.setVisible(false);
             showOptionDialog("Illegal due date", JOptionPane.WARNING_MESSAGE, IconsLoader.ERROR_ICON);
         }
         else{
+            //filter the task by condition and display
             this.dataSource = this.getDataSource(queryStatusNum, queryPriorityNum, fromDueTime,
                     toDueTime, queryTaskTypeNum, querySubject);
             this.getTaskTable().setModel(new TaskTableModel(dataSource, this.selectedTask));
@@ -674,8 +732,16 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         }
     }
 
-
-
+    /**
+     * Filter and search the tasks by condition
+     * @param statusNum
+     * @param priorityNum
+     * @param fromDueDate
+     * @param toDueDate
+     * @param taskTypeNum
+     * @param subject
+     * @return
+     */
     private List<TaskVO> getDataSource(Integer statusNum,
                                        Integer priorityNum,
                                        String fromDueDate,
@@ -701,6 +767,9 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         return taskVOList;
     }
 
+    /**
+     * The function is to perform synchronous task display on Select Task Dialog
+     */
     private void setChosenFlag(){
         if(this.chosen){
             if(this.selectedTask != null){
@@ -713,12 +782,21 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         }
     }
 
-
+    /**
+     * Covert the view object TaskVO to entity Task
+     * @param taskVO
+     * @return Task
+     */
     private Task taskVOConvertToTask(TaskVO taskVO){
         Task task = new Task();
         return (Task) ReflectionUtils.copyProperties(taskVO, task);
     }
 
+    /**
+     * Covert the view object TaskVO to view object TaskDetailVO
+     * @param taskVO
+     * @return TaskDetailVO
+     */
     private TaskDetailVO taskVOConvertToTaskDetailVO(TaskVO taskVO){
         Task task = new Task();
         task = (Task) ReflectionUtils.copyProperties(taskVO, task);
@@ -726,6 +804,11 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         return (TaskDetailVO) ReflectionUtils.copyProperties(task, taskDetailVO);
     }
 
+    /**
+     * Filter for priority
+     * @param input
+     * @return
+     */
     private Integer priorityFilter(String input){
 
         if("Low".equals(input)){
@@ -740,7 +823,11 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         return null;
     }
 
-
+    /**
+     * Filter for status
+     * @param input
+     * @return
+     */
     private Integer statusFilter(String input){
         if("New".equals(input)){
             return 1;
@@ -756,15 +843,31 @@ public class SelectTaskDialog extends JDialog implements WindowListener {
         return null;
     }
 
+    public JTable getTaskTable(){
+        return this.taskTable;
+    }
+
     @Override
     public void windowOpened(WindowEvent e) {
 
     }
 
+    /**
+     * Listen for Select Task Dialog close events
+     * @param e
+     */
     @Override
     public void windowClosing(WindowEvent e) {
+
+        if(selectedTask != null){
+            //If there is a selected task, the stop button is available when closing the Select Task Dialog
+            this.taskToolWindow.getStopButton().setEnabled(true);
+        }else{
+            //If there is no selected task, the stop button is unavailable when closing the Select Task Dialog
+            this.taskToolWindow.getStopButton().setEnabled(false);
+        }
+        //The more and choose button is available when closing the Select Task Dialog
         this.taskToolWindow.getMoreButton().setEnabled(true);
-        this.taskToolWindow.getStopButton().setEnabled(true);
         this.taskToolWindow.getChooseButton().setEnabled(true);
         this.dispose();
     }

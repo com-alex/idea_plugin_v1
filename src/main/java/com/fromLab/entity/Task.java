@@ -9,9 +9,9 @@ import java.math.BigDecimal;
 /**
  * @Auther: JIN KE
  * @Date: 2019/12/11 09:12
+ * Entity Task
  */
 public class Task implements Serializable {
-
 
     private Integer taskId;
 

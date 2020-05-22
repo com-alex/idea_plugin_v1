@@ -17,104 +17,104 @@ import java.util.List;
 public class SortUtils {
 
 
-        /**
-         * Sort the elements of list according to multiple attribute names,
-         * The attributes of the list element can be numbers ，char，String and java.util.Date
-         *
-         * @param list
-         * @param sortnameArr List element attribute name
-         * @param isAsc    true ascending, false descending
-         */
-        public static <E> void sort(List<E> list, final boolean isAsc, final String... sortnameArr) {
-            Collections.sort(list, new Comparator<E>() {
+    /**
+     * Sort the elements of list according to multiple attribute names,
+     * The attributes of the list element can be numbers ，char，String and java.util.Date
+     *
+     * @param list
+     * @param sortnameArr List element attribute name
+     * @param isAsc       true ascending, false descending
+     */
+    public static <E> void sort(List<E> list, final boolean isAsc, final String... sortnameArr) {
+        Collections.sort(list, new Comparator<E>() {
 
-                @Override
-                public int compare(E a, E b) {
-                    int ret = 0;
-                    try {
-                        for (int i = 0; i < sortnameArr.length; i++) {
-                            ret = SortUtils.compareObject(sortnameArr[i], isAsc, a, b);
-                            if (0 != ret) {
-                                break;
-                            }
+            @Override
+            public int compare(E a, E b) {
+                int ret = 0;
+                try {
+                    for (int i = 0; i < sortnameArr.length; i++) {
+                        ret = SortUtils.compareObject(sortnameArr[i], isAsc, a, b);
+                        if (0 != ret) {
+                            break;
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                    return ret;
-                }
-            });
-        }
-
-        /**
-         * For each attribute of the list, specify whether it is ascending or descending
-         *
-         * @param list
-         * @param sortnameArr Parameter array
-         * @param typeArr     Array of descending order corresponding to each property, true ascending, false descending
-         */
-
-        public static <E> void sort(List<E> list, final String[] sortnameArr, final boolean[] typeArr) {
-            if (sortnameArr.length != typeArr.length) {
-                throw new RuntimeException("The number of elements in the attribute array and the number " +
-                        "of elements in the descending array are not equal");
-            }
-            Collections.sort(list, new Comparator<E>() {
-                @Override
-                public int compare(E a, E b) {
-                    int ret = 0;
-                    try {
-                        for (int i = 0; i < sortnameArr.length; i++) {
-                            ret = SortUtils.compareObject(sortnameArr[i], typeArr[i], a, b);
-                            if (0 != ret) {
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return ret;
-                }
-            });
-        }
-
-        /**
-         * Sort 2 objects according to the specified attribute name
-         *
-         * @param sortname Attribute name
-         * @param isAsc    true ascending, false descending
-         * @param a
-         * @param b
-         * @return
-         * @throws Exception
-         */
-        private static <E> int compareObject(final String sortname, final boolean isAsc, E a, E b) throws Exception {
-            int ret;
-            Object value1 = SortUtils.forceGetFieldValue(a, sortname);
-            Object value2 = SortUtils.forceGetFieldValue(b, sortname);
-            if (value1!=null&&value2!=null){
-                String str1 = value1.toString();
-                String str2 = value2.toString();
-                if (value1 instanceof Number && value2 instanceof Number) {
-                    int maxlen = Math.max(str1.length(), str2.length());
-                    str1 = SortUtils.addZero2Str((Number) value1, maxlen);
-                    str2 = SortUtils.addZero2Str((Number) value2, maxlen);
-                } else if (value1 instanceof Timestamp && value2 instanceof Timestamp) {
-                    long time1 = ((Timestamp) value1).getTime();
-                    long time2 = ((Timestamp) value2).getTime();
-                    int maxlen = Long.toString(Math.max(time1, time2)).length();
-                    str1 = SortUtils.addZero2Str(time1, maxlen);
-                    str2 = SortUtils.addZero2Str(time2, maxlen);
-                }
-                if (isAsc) {
-                    ret = str1.compareTo(str2);
-                } else {
-                    ret = str2.compareTo(str1);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 return ret;
             }
-            return 0;
+        });
+    }
+
+    /**
+     * For each attribute of the list, specify whether it is ascending or descending
+     *
+     * @param list
+     * @param sortnameArr Parameter array
+     * @param typeArr     Array of descending order corresponding to each property, true ascending, false descending
+     */
+
+    public static <E> void sort(List<E> list, final String[] sortnameArr, final boolean[] typeArr) {
+        if (sortnameArr.length != typeArr.length) {
+            throw new RuntimeException("The number of elements in the attribute array and the number " +
+                    "of elements in the descending array are not equal");
         }
+        Collections.sort(list, new Comparator<E>() {
+            @Override
+            public int compare(E a, E b) {
+                int ret = 0;
+                try {
+                    for (int i = 0; i < sortnameArr.length; i++) {
+                        ret = SortUtils.compareObject(sortnameArr[i], typeArr[i], a, b);
+                        if (0 != ret) {
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return ret;
+            }
+        });
+    }
+
+    /**
+     * Sort 2 objects according to the specified attribute name
+     *
+     * @param sortname Attribute name
+     * @param isAsc    true ascending, false descending
+     * @param a
+     * @param b
+     * @return
+     * @throws Exception
+     */
+    private static <E> int compareObject(final String sortname, final boolean isAsc, E a, E b) throws Exception {
+        int ret;
+        Object value1 = SortUtils.forceGetFieldValue(a, sortname);
+        Object value2 = SortUtils.forceGetFieldValue(b, sortname);
+        if (value1 != null && value2 != null) {
+            String str1 = value1.toString();
+            String str2 = value2.toString();
+            if (value1 instanceof Number && value2 instanceof Number) {
+                int maxlen = Math.max(str1.length(), str2.length());
+                str1 = SortUtils.addZero2Str((Number) value1, maxlen);
+                str2 = SortUtils.addZero2Str((Number) value2, maxlen);
+            } else if (value1 instanceof Timestamp && value2 instanceof Timestamp) {
+                long time1 = ((Timestamp) value1).getTime();
+                long time2 = ((Timestamp) value2).getTime();
+                int maxlen = Long.toString(Math.max(time1, time2)).length();
+                str1 = SortUtils.addZero2Str(time1, maxlen);
+                str2 = SortUtils.addZero2Str(time2, maxlen);
+            }
+            if (isAsc) {
+                ret = str1.compareTo(str2);
+            } else {
+                ret = str2.compareTo(str1);
+            }
+            return ret;
+        }
+        return 0;
+    }
 
     /**
      * Fill the digital object with 0 on the left according to the specified length.
@@ -158,12 +158,13 @@ public class SortUtils {
         object = field.get(obj);
         return object;
     }
+
     public static void printfTaskInfoList(List<Task> list) {
         for (Task task : list) {
             System.out.println(task.toString());
         }
     }
 
-    }
+}
 
 

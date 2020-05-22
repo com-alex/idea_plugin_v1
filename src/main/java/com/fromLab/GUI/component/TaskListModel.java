@@ -5,16 +5,18 @@ import javax.swing.*;
 /**
  * @author zyh
  * @date 2020-03-28
+ * The component for showing the brief information of the task on tool window
  */
 public class TaskListModel extends AbstractListModel {
 
-    String values[];
+    private String values[];
 
-    public TaskListModel(){
+    public TaskListModel() {
         super();
         this.values = new String[0];
     }
-    public TaskListModel(String[] values){
+
+    public TaskListModel(String[] values) {
         super();
         this.values = values;
     }

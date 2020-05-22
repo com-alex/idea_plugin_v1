@@ -12,30 +12,31 @@ import java.util.List;
 /**
  * @author wsh
  * @date 2019-12-17
- * 任务主界面的任务表格列表
+ * Task Table on Select Task Dialog
  */
 public class TaskTableModel extends AbstractTableModel {
     /*
-     * 这里和刚才一样，定义列名和每个数据的值
+     * Define the column of the table
      */
     String[] columnNames =
             {"", "taskId", "subject", "project_name", "task_priority", "task_type", "start_date", "end_date", "due_date", "status", "progress", "time_spent"};
     Object[][] data;
 
-    public TaskTableModel(){
+    public TaskTableModel() {
         this.data = new Object[0][0];
     }
 
     /**
-     * 构造方法，初始化二维数组data对应的数据
+     * Show the task information in table
      */
     public TaskTableModel(List<TaskVO> list, Task selectedTask) {
         this.data = new Object[list.size()][this.columnNames.length];
         for (int i = 0; i < list.size(); i++) {
             data[i][0] = "";
             TaskVO task = list.get(i);
-            if(selectedTask != null){
-                if(task.getTaskId().equals(selectedTask.getTaskId())){
+            if (selectedTask != null) {
+                //If the task is selected task, add the flag '*'
+                if (task.getTaskId().equals(selectedTask.getTaskId())) {
                     data[i][0] = "*";
                 }
             }
@@ -43,13 +44,14 @@ public class TaskTableModel extends AbstractTableModel {
             for (int j = 0; j < params.size(); j++) {
 
                 if (params.get(j) != null) {
-                    if(StringUtils.equals(params.get(j) + "", "null")){
+                    if (StringUtils.equals(params.get(j) + "", "null")) {
                         data[i][j + 1] = "";
-                    }
-                    else{
-                        if(j == 3){
+                    } else {
+                        if (j == 3) {
+                            //If the field is Priority,
+                            // use filter to convert the number to String in order to show what the number means
                             data[i][j + 1] = this.taskPriorityFilter(params.get(j));
-                        }else{
+                        } else {
                             data[i][j + 1] = params.get(j);
                         }
                     }
@@ -63,83 +65,60 @@ public class TaskTableModel extends AbstractTableModel {
         }
     }
 
-    private String taskPriorityFilter(Object input){
+    /**
+     * The filter to convert the number to the String
+     *
+     * @param input
+     * @return
+     */
+    private String taskPriorityFilter(Object input) {
         Integer param = (Integer) input;
-        if(param.equals(7)){
+        if (param.equals(7)) {
             return "Low";
-        }else if(param.equals(8)){
+        } else if (param.equals(8)) {
             return "Normal";
-        }else if(param.equals(9)){
+        } else if (param.equals(9)) {
             return "High";
-        }else if (param.equals(10)){
+        } else if (param.equals(10)) {
             return "Immediate";
         }
         return " ";
     }
 
-    // 以下为继承自AbstractTableModle的方法，可以自定义
 
-    /**
-     * 得到列名
-     */
     @Override
     public String getColumnName(int column) {
         return columnNames[column];
     }
 
-    /**
-     * 重写方法，得到表格列数
-     */
     @Override
     public int getColumnCount() {
         return columnNames.length;
     }
 
-    /**
-     * 得到表格行数
-     */
     @Override
     public int getRowCount() {
         return data.length;
     }
 
-    /**
-     * 得到数据所对应对象
-     */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         return data[rowIndex][columnIndex];
     }
 
-    /**
-     * 得到指定列的数据类型
-     */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         return data[0][columnIndex].getClass();
     }
 
-
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-//        if (columnIndex < 2){
-//            return false;
-//        }
-//
-//        else{
-//            return true;
-//        }
         return false;
-
     }
 
-    /**
-     * 如果数据单元为可编辑，则将编辑后的值替换原来的值
-     */
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         data[rowIndex][columnIndex] = aValue;
-        /*通知监听器数据单元数据已经改变*/
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
